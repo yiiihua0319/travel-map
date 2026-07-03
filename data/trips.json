@@ -1,61 +1,1195 @@
 {
   "meta": {
     "source": "Notion Travel Journal (1601fb4f-a467-41c5-887e-0d3e8d820200)",
-    "updated": "2026-07-03",
+    "updated": "2026-07-04",
     "notes": [
-      "斯洛維尼亞/斯洛伐克：Travel Diary 有 Slovenia 頁但總目錄旗幟為 🇸🇰，待與 Eva 確認 2023 德捷法瑞斯行程的『斯』是哪一國",
-      "2024 鹽燒藍迪德諾（5/17-5/18）目的地待確認（推測威爾斯 Llandudno）",
-      "Sequoia National Park 2026/2 確切日期待確認"
+      "Sequoia National Park 2026/2 確切日期待確認",
+      "2023德捷法瑞斯的斯=斯洛伐克（已從行程頁確認 1/8 Bratislava）",
+      "鹽燒藍迪德諾=威爾斯 Llandudno（頁面為威爾斯旗）"
     ]
   },
   "trips": [
-    {"id": "2022-tokyo", "title": "日本東京", "dateStart": "2022-12-28", "dateEnd": "2023-01-03", "countries": ["JP"], "cities": [{"name": "東京", "lat": 35.6762, "lng": 139.6503}], "notionId": "e7fa586b4d3d48a18eeaade31b31d47e"},
-    {"id": "2023-seoul", "title": "韓國首爾", "dateStart": "2023-01-07", "dateEnd": "2023-01-11", "countries": ["KR"], "cities": [{"name": "首爾", "lat": 37.5665, "lng": 126.978}], "notionId": "e04684d935b341d1a1ebb7afa0e27464"},
-    {"id": "2023-kansai", "title": "日本關西", "dateStart": "2023-06-13", "dateEnd": "2023-06-21", "countries": ["JP"], "cities": [{"name": "大阪", "lat": 34.6937, "lng": 135.5023}, {"name": "京都", "lat": 35.0116, "lng": 135.7681}], "notionId": "322bcb733ca5473aa20dca699f5be731"},
-    {"id": "2023-nagoya", "title": "日本名古屋", "dateStart": "2023-06-21", "dateEnd": "2023-06-27", "countries": ["JP"], "cities": [{"name": "名古屋", "lat": 35.1815, "lng": 136.9066}], "notionId": "2fbd32c3f1874fd59d0ac6abeb7c36df"},
-    {"id": "2023-beijing-chengdu", "title": "中國北京成都", "dateStart": "2023-07-25", "dateEnd": "2023-07-31", "countries": ["CN"], "cities": [{"name": "北京", "lat": 39.9042, "lng": 116.4074}, {"name": "成都", "lat": 30.5728, "lng": 104.0668}], "notionId": "5d3ed629c33042bba9b76887abe333a1"},
-    {"id": "2023-tokyo", "title": "日本東京", "dateStart": "2023-08-16", "dateEnd": "2023-08-22", "countries": ["JP"], "cities": [{"name": "東京", "lat": 35.6762, "lng": 139.6503}], "notionId": "e8b64b47a69243049e5ca0b5657e805e"},
-    {"id": "2023-munich", "title": "德國慕尼黑", "dateStart": "2023-09-21", "dateEnd": "2023-09-23", "countries": ["DE"], "cities": [{"name": "慕尼黑", "lat": 48.1351, "lng": 11.582}], "notionId": "25ac0a3fce6941469d3eb1bdc50de2f3"},
-    {"id": "2023-paris", "title": "法國巴黎", "dateStart": "2023-09-27", "dateEnd": "2023-09-29", "countries": ["FR"], "cities": [{"name": "巴黎", "lat": 48.8566, "lng": 2.3522}], "notionId": "500366efb5b2400e9de4d7dbf94a0eef"},
-    {"id": "2023-uk-nl-de", "title": "歐洲英荷德", "dateStart": "2023-09-30", "dateEnd": "2023-10-12", "countries": ["GB", "NL", "DE"], "cities": [{"name": "倫敦", "lat": 51.5074, "lng": -0.1278}, {"name": "阿姆斯特丹", "lat": 52.3676, "lng": 4.9041}], "notionId": "f7f7bf6c615648febfa547fb514d3179"},
-    {"id": "2023-barcelona", "title": "西班牙巴賽隆納", "dateStart": "2023-10-19", "dateEnd": "2023-10-22", "countries": ["ES"], "cities": [{"name": "巴賽隆納", "lat": 41.3874, "lng": 2.1686}], "notionId": "0c26f4ad2f284699b6b5499b149f7a24"},
-    {"id": "2023-berlin-hamburg", "title": "德國柏林漢堡", "dateStart": "2023-11-01", "dateEnd": "2023-11-06", "countries": ["DE"], "cities": [{"name": "柏林", "lat": 52.52, "lng": 13.405}, {"name": "漢堡", "lat": 53.5511, "lng": 9.9937}], "notionId": "449752807e7a4a43be2b52d0ae0006a2"},
-    {"id": "2023-copenhagen", "title": "丹麥哥本哈根", "dateStart": "2023-11-11", "dateEnd": "2023-11-13", "countries": ["DK"], "cities": [{"name": "哥本哈根", "lat": 55.6761, "lng": 12.5683}], "notionId": "c4a68c2b03044bc2b83c3fb7721dc0d0"},
-    {"id": "2023-be-lu-hu-at", "title": "歐洲比盧匈奧", "dateStart": "2023-11-15", "dateEnd": "2023-11-20", "countries": ["BE", "LU", "HU", "AT"], "cities": [{"name": "布魯塞爾", "lat": 50.8503, "lng": 4.3517}, {"name": "盧森堡", "lat": 49.6117, "lng": 6.1319}, {"name": "布達佩斯", "lat": 47.4979, "lng": 19.0402}, {"name": "維也納", "lat": 48.2082, "lng": 16.3738}], "notionId": "134f279572a644fdb9a8de3b2ed7bb40"},
-    {"id": "2023-oxford", "title": "英國牛津", "dateStart": "2023-11-25", "dateEnd": "2023-11-25", "countries": ["GB"], "cities": [{"name": "牛津", "lat": 51.752, "lng": -1.2577}], "notionId": "59d8884cdcb54fda93289ce2f5dee066"},
-    {"id": "2023-rome", "title": "義大利羅馬", "dateStart": "2023-11-30", "dateEnd": "2023-12-04", "countries": ["IT", "VA"], "cities": [{"name": "羅馬", "lat": 41.9028, "lng": 12.4964}], "notionId": "f50e187429224c3caf70414ed72a433f"},
-    {"id": "2023-lisbon", "title": "葡萄牙里斯本", "dateStart": "2023-12-09", "dateEnd": "2023-12-12", "countries": ["PT"], "cities": [{"name": "里斯本", "lat": 38.7223, "lng": -9.1393}], "notionId": "5506527a24614884813c3a4bcd068804"},
-    {"id": "2023-france-ski", "title": "法國滑雪", "dateStart": "2023-12-15", "dateEnd": "2023-12-22", "countries": ["FR"], "cities": [{"name": "法國阿爾卑斯", "lat": 45.9237, "lng": 6.8694}], "notionId": "a78fc5fbe93746d9b0bb9ee538993de3"},
-    {"id": "2023-de-cz-fr-ch", "title": "歐洲德捷法瑞斯", "dateStart": "2023-12-24", "dateEnd": "2024-01-08", "countries": ["DE", "CZ", "FR", "CH", "SK"], "citiesPending": "斯=斯洛伐克（Notion Slovenia頁標題為Bratislava，佐證為SK），細節待確認", "cities": [{"name": "布拉格", "lat": 50.0755, "lng": 14.4378}, {"name": "蘇黎世", "lat": 47.3769, "lng": 8.5417}], "notionId": "6688c3ba39314e9db196b75bba703a4d"},
-    {"id": "2024-italy", "title": "義大利比薩五漁村佛羅倫斯", "dateStart": "2024-01-19", "dateEnd": "2024-01-23", "countries": ["IT"], "cities": [{"name": "比薩", "lat": 43.7228, "lng": 10.4017}, {"name": "五漁村", "lat": 44.1461, "lng": 9.6439}, {"name": "佛羅倫斯", "lat": 43.7696, "lng": 11.2558}], "notionId": "e08533cde492427db87146a7d3d360aa"},
-    {"id": "2024-fi-no", "title": "北歐芬蘭挪威", "dateStart": "2024-01-25", "dateEnd": "2024-02-03", "countries": ["FI", "NO"], "cities": [{"name": "赫爾辛基", "lat": 60.1699, "lng": 24.9384}, {"name": "特羅姆瑟", "lat": 69.6492, "lng": 18.9553}, {"name": "卑爾根", "lat": 60.3913, "lng": 5.3221}, {"name": "奧斯陸", "lat": 59.9139, "lng": 10.7522}], "notionId": "a1b12c09751749b3bc64bb94a230d38d"},
-    {"id": "2024-london", "title": "英國倫敦", "dateStart": "2024-02-09", "dateEnd": "2024-02-12", "countries": ["GB"], "cities": [{"name": "倫敦", "lat": 51.5074, "lng": -0.1278}], "notionId": "7dd37b74fff6428c8d64e0b41fc21ac1"},
-    {"id": "2024-edinburgh", "title": "英國愛丁堡", "dateStart": "2024-02-15", "dateEnd": "2024-02-16", "countries": ["GB"], "cities": [{"name": "愛丁堡", "lat": 55.9533, "lng": -3.1883}], "notionId": "55913846270b4df6bf354820dca9dd46"},
-    {"id": "2024-york", "title": "英國約克", "dateStart": "2024-02-18", "dateEnd": "2024-02-18", "countries": ["GB"], "cities": [{"name": "約克", "lat": 53.96, "lng": -1.0873}], "notionId": "525b434f5ac04abcbb584d0f7cc438ef"},
-    {"id": "2024-malta", "title": "馬爾他", "dateStart": "2024-02-23", "dateEnd": "2024-02-26", "countries": ["MT"], "cities": [{"name": "瓦萊塔", "lat": 35.8989, "lng": 14.5146}], "notionId": "792f471f22e14c159688c46704249ff1"},
-    {"id": "2024-iceland", "title": "冰島", "dateStart": "2024-03-01", "dateEnd": "2024-03-08", "countries": ["IS"], "cities": [{"name": "雷克雅維克", "lat": 64.1466, "lng": -21.9426}], "notionId": "2b332176a0c34782bea067d37606a691"},
-    {"id": "2024-ireland", "title": "愛爾蘭都柏林", "dateStart": "2024-03-17", "dateEnd": "2024-03-20", "countries": ["IE", "GB"], "cities": [{"name": "都柏林", "lat": 53.3498, "lng": -6.2603}, {"name": "貝爾法斯特", "lat": 54.5973, "lng": -5.9301}], "notionId": "f67719ec799c40f2a1646011de3c0b80"},
-    {"id": "2024-baltics", "title": "瑞典波羅的海三小國波蘭", "dateStart": "2024-03-22", "dateEnd": "2024-03-30", "countries": ["SE", "EE", "LV", "LT", "PL"], "cities": [{"name": "斯德哥爾摩", "lat": 59.3293, "lng": 18.0686}, {"name": "塔林", "lat": 59.437, "lng": 24.7536}, {"name": "里加", "lat": 56.9496, "lng": 24.1052}, {"name": "維爾紐斯", "lat": 54.6872, "lng": 25.2797}, {"name": "華沙", "lat": 52.2297, "lng": 21.0122}], "notionId": "e0c4a723a3fa474d92ffa4a2eafeb6a0"},
-    {"id": "2024-croatia", "title": "克羅埃西亞", "dateStart": "2024-04-02", "dateEnd": "2024-04-08", "countries": ["HR"], "cities": [{"name": "札格瑞布", "lat": 45.815, "lng": 15.9819}, {"name": "十六湖國家公園", "lat": 44.8654, "lng": 15.582}], "notionId": "3319eeaa8c33420f8f8a380e10e3020d"},
-    {"id": "2024-greece", "title": "希臘雅典聖托里尼", "dateStart": "2024-04-13", "dateEnd": "2024-04-17", "countries": ["GR"], "cities": [{"name": "雅典", "lat": 37.9838, "lng": 23.7275}, {"name": "聖托里尼", "lat": 36.3932, "lng": 25.4615}], "notionId": "fccb6ca2af72416a997ed5cf8bb3d1ad"},
-    {"id": "2024-nice-monaco", "title": "法國尼斯摩納哥", "dateStart": "2024-04-27", "dateEnd": "2024-04-30", "countries": ["FR", "MC"], "cities": [{"name": "尼斯", "lat": 43.7102, "lng": 7.262}, {"name": "摩納哥", "lat": 43.7384, "lng": 7.4246}], "notionId": "0f8c816270cc4269aec505e096a17e10"},
-    {"id": "2024-llandudno", "title": "鹽燒藍迪德諾", "dateStart": "2024-05-17", "dateEnd": "2024-05-18", "countries": ["GB"], "cities": [{"name": "Llandudno（待確認）", "lat": 53.3241, "lng": -3.8276}], "notionId": "001b3d6844f54a9c9b5430339ba9787d"},
-    {"id": "2024-egypt", "title": "埃及", "dateStart": "2024-05-20", "dateEnd": "2024-05-29", "countries": ["EG"], "cities": [{"name": "開羅", "lat": 30.0444, "lng": 31.2357}], "notionId": "7d45bdbd7a87435b9b1abe9db74ad1ff"},
-    {"id": "2024-turkey", "title": "土耳其", "dateStart": "2024-06-09", "dateEnd": "2024-06-15", "countries": ["TR"], "cities": [{"name": "伊斯坦堡", "lat": 41.0082, "lng": 28.9784}, {"name": "卡帕多奇亞", "lat": 38.6431, "lng": 34.8289}], "notionId": "f0d430535a4d41eaab269051c6e24f5f"},
-    {"id": "2024-hongkong", "title": "香港", "dateStart": "2024-08-02", "dateEnd": "2024-08-05", "countries": ["HK"], "cities": [{"name": "香港", "lat": 22.3193, "lng": 114.1694}], "notionId": "7d45cbaab1164b82a01c4a7f21fc5946"},
-    {"id": "2024-us-west", "title": "美國西部遊", "dateStart": "2024-12-23", "dateEnd": "2025-01-12", "countries": ["US"], "cities": [{"name": "洛杉磯", "lat": 34.0522, "lng": -118.2437}, {"name": "拉斯維加斯", "lat": 36.1699, "lng": -115.1398}], "notionId": "145ee7c056988097932cd319494dbd2c"},
-    {"id": "2025-hokkaido", "title": "日本北海道", "dateStart": "2025-02-22", "dateEnd": "2025-03-01", "countries": ["JP"], "cities": [{"name": "札幌", "lat": 43.0618, "lng": 141.3545}], "notionId": "145ee7c0569880caa55cd84668443f3a"},
-    {"id": "2025-shanghai", "title": "中國上海", "dateStart": "2025-04-10", "dateEnd": "2025-04-14", "countries": ["CN"], "cities": [{"name": "上海", "lat": 31.2304, "lng": 121.4737}], "notionId": "1c9ee7c0569880a98998f747902f35e9"},
-    {"id": "2025-busan", "title": "韓國釜山", "dateStart": "2025-05-11", "dateEnd": "2025-05-16", "countries": ["KR"], "cities": [{"name": "釜山", "lat": 35.1796, "lng": 129.0756}], "notionId": "1ebee7c056988085a9fadc99e21ed94f"},
-    {"id": "2025-okinawa", "title": "日本沖繩", "dateStart": "2025-07-06", "dateEnd": "2025-07-11", "countries": ["JP"], "cities": [{"name": "那霸", "lat": 26.2124, "lng": 127.6809}], "notionId": "227ee7c05698805f9b59ff5c07c0e5e7"},
-    {"id": "2025-chicago", "title": "美國芝加哥", "dateStart": "2025-11-24", "dateEnd": "2025-11-28", "countries": ["US"], "cities": [{"name": "芝加哥", "lat": 41.8781, "lng": -87.6298}], "notionId": "2b5ee7c0569880a8af66f52d303b2643"},
-    {"id": "2025-us-east", "title": "美國洛杉磯奧蘭多紐約波士頓", "dateStart": "2025-12-18", "dateEnd": "2026-01-02", "countries": ["US"], "cities": [{"name": "奧蘭多", "lat": 28.5383, "lng": -81.3792}, {"name": "紐約", "lat": 40.7128, "lng": -74.006}, {"name": "波士頓", "lat": 42.3601, "lng": -71.0589}], "notionId": "283ee7c0569880db8cd3ef453a85dfde"},
-    {"id": "2026-sequoia", "title": "Sequoia National Park", "dateStart": "2026-02-01", "dateEnd": "2026-02-28", "datePending": true, "countries": ["US"], "cities": [{"name": "Sequoia NP", "lat": 36.4864, "lng": -118.5658}], "notionId": "304ee7c05698805d8202d72ebe3417ae"},
-    {"id": "2026-hawaii", "title": "Hawaii", "dateStart": "2026-03-13", "dateEnd": "2026-03-17", "countries": ["US"], "cities": [{"name": "檀香山", "lat": 21.3069, "lng": -157.8583}], "notionId": "322ee7c056988089a716fb4093e55965"},
-    {"id": "2026-disney-wonder", "title": "Disney Wonder 郵輪", "dateStart": "2026-03-20", "dateEnd": "2026-03-23", "countries": ["US", "MX"], "cities": [{"name": "聖地牙哥出發", "lat": 32.7157, "lng": -117.1611}], "notionId": "db4fc3b7927544b8a4df2a5fdb2f0930"},
-    {"id": "2026-sedona", "title": "Sedona", "dateStart": "2026-03-27", "dateEnd": "2026-03-31", "countries": ["US"], "cities": [{"name": "Sedona", "lat": 34.8697, "lng": -111.761}], "notionId": "351ee7c056988067855ef3a086195482"},
-    {"id": "2026-bay-area", "title": "Bay Area", "dateStart": "2026-04-09", "dateEnd": "2026-04-13", "countries": ["US"], "cities": [{"name": "舊金山", "lat": 37.7749, "lng": -122.4194}], "notionId": "351ee7c0569880c4983dc565e319f9ec"},
-    {"id": "2026-east-cal", "title": "East California", "dateStart": "2026-04-16", "dateEnd": "2026-04-22", "countries": ["US"], "cities": [{"name": "Death Valley", "lat": 36.5323, "lng": -116.9325}, {"name": "Mammoth Lakes", "lat": 37.6485, "lng": -118.9721}], "notionId": "351ee7c05698806aa857ea1107ff9044"},
-    {"id": "2026-fukuoka-kansai", "title": "日本福岡關西", "dateStart": "2026-06-04", "dateEnd": "2026-06-08", "countries": ["JP"], "cities": [{"name": "福岡", "lat": 33.5902, "lng": 130.4017}, {"name": "大阪", "lat": 34.6937, "lng": 135.5023}], "notionId": "378ee7c05698802fb7f2c2d8bcf06c4f"}
+    {
+      "id": "2022-tokyo",
+      "title": "日本東京",
+      "dateStart": "2022-12-28",
+      "dateEnd": "2023-01-03",
+      "countries": [
+        "JP"
+      ],
+      "cities": [
+        {
+          "name": "東京",
+          "lat": 35.6762,
+          "lng": 139.6503
+        }
+      ],
+      "notionId": "e7fa586b4d3d48a18eeaade31b31d47e",
+      "expenses": {
+        "currency": "TWD",
+        "items": {
+          "機票": 14778,
+          "住宿": 11692,
+          "交通": 6003,
+          "食物": 8949,
+          "購物": 12536,
+          "門票": 2397
+        },
+        "note": "日幣支出以約0.224匯率換算為台幣"
+      }
+    },
+    {
+      "id": "2023-seoul",
+      "title": "韓國首爾",
+      "dateStart": "2023-01-07",
+      "dateEnd": "2023-01-11",
+      "countries": [
+        "KR"
+      ],
+      "cities": [
+        {
+          "name": "首爾",
+          "lat": 37.5665,
+          "lng": 126.978
+        }
+      ],
+      "notionId": "e04684d935b341d1a1ebb7afa0e27464"
+    },
+    {
+      "id": "2023-kansai",
+      "title": "日本關西",
+      "dateStart": "2023-06-13",
+      "dateEnd": "2023-06-21",
+      "countries": [
+        "JP"
+      ],
+      "cities": [
+        {
+          "name": "大阪",
+          "lat": 34.6937,
+          "lng": 135.5023
+        },
+        {
+          "name": "京都",
+          "lat": 35.0116,
+          "lng": 135.7681
+        }
+      ],
+      "notionId": "322bcb733ca5473aa20dca699f5be731"
+    },
+    {
+      "id": "2023-nagoya",
+      "title": "日本名古屋",
+      "dateStart": "2023-06-21",
+      "dateEnd": "2023-06-27",
+      "countries": [
+        "JP"
+      ],
+      "cities": [
+        {
+          "name": "名古屋",
+          "lat": 35.1815,
+          "lng": 136.9066
+        }
+      ],
+      "notionId": "2fbd32c3f1874fd59d0ac6abeb7c36df"
+    },
+    {
+      "id": "2023-beijing-chengdu",
+      "title": "中國北京成都",
+      "dateStart": "2023-07-25",
+      "dateEnd": "2023-07-31",
+      "countries": [
+        "CN"
+      ],
+      "cities": [
+        {
+          "name": "北京",
+          "lat": 39.9042,
+          "lng": 116.4074
+        },
+        {
+          "name": "成都",
+          "lat": 30.5728,
+          "lng": 104.0668
+        }
+      ],
+      "notionId": "5d3ed629c33042bba9b76887abe333a1"
+    },
+    {
+      "id": "2023-tokyo",
+      "title": "日本東京",
+      "dateStart": "2023-08-16",
+      "dateEnd": "2023-08-22",
+      "countries": [
+        "JP"
+      ],
+      "cities": [
+        {
+          "name": "東京",
+          "lat": 35.6762,
+          "lng": 139.6503
+        }
+      ],
+      "notionId": "e8b64b47a69243049e5ca0b5657e805e"
+    },
+    {
+      "id": "2023-munich",
+      "title": "德國慕尼黑",
+      "dateStart": "2023-09-21",
+      "dateEnd": "2023-09-23",
+      "countries": [
+        "DE"
+      ],
+      "cities": [
+        {
+          "name": "慕尼黑",
+          "lat": 48.1351,
+          "lng": 11.582
+        }
+      ],
+      "notionId": "25ac0a3fce6941469d3eb1bdc50de2f3"
+    },
+    {
+      "id": "2023-paris",
+      "title": "法國巴黎",
+      "dateStart": "2023-09-27",
+      "dateEnd": "2023-09-29",
+      "countries": [
+        "FR"
+      ],
+      "cities": [
+        {
+          "name": "巴黎",
+          "lat": 48.8566,
+          "lng": 2.3522
+        }
+      ],
+      "notionId": "500366efb5b2400e9de4d7dbf94a0eef"
+    },
+    {
+      "id": "2023-uk-nl-de",
+      "title": "歐洲英荷德",
+      "dateStart": "2023-09-30",
+      "dateEnd": "2023-10-12",
+      "countries": [
+        "GB",
+        "NL",
+        "DE",
+        "AT",
+        "LI"
+      ],
+      "cities": [
+        {
+          "name": "倫敦",
+          "lat": 51.5074,
+          "lng": -0.1278
+        },
+        {
+          "name": "劍橋",
+          "lat": 52.2053,
+          "lng": 0.1218
+        },
+        {
+          "name": "曼徹斯特",
+          "lat": 53.4808,
+          "lng": -2.2426
+        },
+        {
+          "name": "阿姆斯特丹",
+          "lat": 52.3676,
+          "lng": 4.9041
+        },
+        {
+          "name": "法蘭克福",
+          "lat": 50.1109,
+          "lng": 8.6821
+        },
+        {
+          "name": "慕尼黑",
+          "lat": 48.1351,
+          "lng": 11.582
+        },
+        {
+          "name": "新天鵝堡",
+          "lat": 47.5576,
+          "lng": 10.7498
+        },
+        {
+          "name": "哈修塔特",
+          "lat": 47.5622,
+          "lng": 13.6493
+        },
+        {
+          "name": "薩爾斯堡",
+          "lat": 47.8095,
+          "lng": 13.055
+        },
+        {
+          "name": "科隆",
+          "lat": 50.9375,
+          "lng": 6.9603
+        }
+      ],
+      "notionId": "f7f7bf6c615648febfa547fb514d3179"
+    },
+    {
+      "id": "2023-barcelona",
+      "title": "西班牙巴賽隆納",
+      "dateStart": "2023-10-19",
+      "dateEnd": "2023-10-22",
+      "countries": [
+        "ES"
+      ],
+      "cities": [
+        {
+          "name": "巴賽隆納",
+          "lat": 41.3874,
+          "lng": 2.1686
+        }
+      ],
+      "notionId": "0c26f4ad2f284699b6b5499b149f7a24",
+      "expenses": {
+        "currency": "TWD",
+        "items": {
+          "住宿": 3925,
+          "食物": 3000
+        },
+        "note": "僅記錄住宿與食物"
+      }
+    },
+    {
+      "id": "2023-berlin-hamburg",
+      "title": "德國柏林漢堡",
+      "dateStart": "2023-11-01",
+      "dateEnd": "2023-11-06",
+      "countries": [
+        "DE"
+      ],
+      "cities": [
+        {
+          "name": "柏林",
+          "lat": 52.52,
+          "lng": 13.405
+        },
+        {
+          "name": "漢堡",
+          "lat": 53.5511,
+          "lng": 9.9937
+        }
+      ],
+      "notionId": "449752807e7a4a43be2b52d0ae0006a2"
+    },
+    {
+      "id": "2023-copenhagen",
+      "title": "丹麥哥本哈根",
+      "dateStart": "2023-11-11",
+      "dateEnd": "2023-11-13",
+      "countries": [
+        "DK"
+      ],
+      "cities": [
+        {
+          "name": "哥本哈根",
+          "lat": 55.6761,
+          "lng": 12.5683
+        }
+      ],
+      "notionId": "c4a68c2b03044bc2b83c3fb7721dc0d0"
+    },
+    {
+      "id": "2023-be-lu-hu-at",
+      "title": "歐洲比盧匈奧",
+      "dateStart": "2023-11-15",
+      "dateEnd": "2023-11-20",
+      "countries": [
+        "BE",
+        "LU",
+        "HU",
+        "AT"
+      ],
+      "cities": [
+        {
+          "name": "布魯塞爾",
+          "lat": 50.8503,
+          "lng": 4.3517
+        },
+        {
+          "name": "盧森堡",
+          "lat": 49.6117,
+          "lng": 6.1319
+        },
+        {
+          "name": "布達佩斯",
+          "lat": 47.4979,
+          "lng": 19.0402
+        },
+        {
+          "name": "維也納",
+          "lat": 48.2082,
+          "lng": 16.3738
+        }
+      ],
+      "notionId": "134f279572a644fdb9a8de3b2ed7bb40"
+    },
+    {
+      "id": "2023-oxford",
+      "title": "英國牛津",
+      "dateStart": "2023-11-25",
+      "dateEnd": "2023-11-25",
+      "countries": [
+        "GB"
+      ],
+      "cities": [
+        {
+          "name": "牛津",
+          "lat": 51.752,
+          "lng": -1.2577
+        }
+      ],
+      "notionId": "59d8884cdcb54fda93289ce2f5dee066"
+    },
+    {
+      "id": "2023-rome",
+      "title": "義大利羅馬",
+      "dateStart": "2023-11-30",
+      "dateEnd": "2023-12-04",
+      "countries": [
+        "IT",
+        "VA"
+      ],
+      "cities": [
+        {
+          "name": "羅馬",
+          "lat": 41.9028,
+          "lng": 12.4964
+        }
+      ],
+      "notionId": "f50e187429224c3caf70414ed72a433f",
+      "expenses": {
+        "currency": "TWD",
+        "items": {
+          "住宿": 5000,
+          "交通": 1000,
+          "食物": 4000
+        }
+      }
+    },
+    {
+      "id": "2023-lisbon",
+      "title": "葡萄牙里斯本",
+      "dateStart": "2023-12-09",
+      "dateEnd": "2023-12-12",
+      "countries": [
+        "PT"
+      ],
+      "cities": [
+        {
+          "name": "里斯本",
+          "lat": 38.7223,
+          "lng": -9.1393
+        }
+      ],
+      "notionId": "5506527a24614884813c3a4bcd068804"
+    },
+    {
+      "id": "2023-france-ski",
+      "title": "法國滑雪",
+      "dateStart": "2023-12-15",
+      "dateEnd": "2023-12-22",
+      "countries": [
+        "FR"
+      ],
+      "cities": [
+        {
+          "name": "法國阿爾卑斯",
+          "lat": 45.9237,
+          "lng": 6.8694
+        }
+      ],
+      "notionId": "a78fc5fbe93746d9b0bb9ee538993de3"
+    },
+    {
+      "id": "2023-de-cz-fr-ch",
+      "title": "歐洲德捷法瑞斯",
+      "dateStart": "2023-12-24",
+      "dateEnd": "2024-01-08",
+      "countries": [
+        "DE",
+        "CZ",
+        "FR",
+        "CH",
+        "AT",
+        "SK"
+      ],
+      "cities": [
+        {
+          "name": "慕尼黑",
+          "lat": 48.1351,
+          "lng": 11.582
+        },
+        {
+          "name": "布拉格",
+          "lat": 50.0755,
+          "lng": 14.4378
+        },
+        {
+          "name": "柏林",
+          "lat": 52.52,
+          "lng": 13.405
+        },
+        {
+          "name": "巴黎",
+          "lat": 48.8566,
+          "lng": 2.3522
+        },
+        {
+          "name": "日內瓦",
+          "lat": 46.2044,
+          "lng": 6.1432
+        },
+        {
+          "name": "策馬特",
+          "lat": 46.0207,
+          "lng": 7.7491
+        },
+        {
+          "name": "因特拉肯",
+          "lat": 46.6863,
+          "lng": 7.8632
+        },
+        {
+          "name": "蘇黎世",
+          "lat": 47.3769,
+          "lng": 8.5417
+        },
+        {
+          "name": "維也納",
+          "lat": 48.2082,
+          "lng": 16.3738
+        },
+        {
+          "name": "布拉提斯拉瓦",
+          "lat": 48.1486,
+          "lng": 17.1077
+        }
+      ],
+      "notionId": "6688c3ba39314e9db196b75bba703a4d"
+    },
+    {
+      "id": "2024-italy",
+      "title": "義大利比薩五漁村佛羅倫斯",
+      "dateStart": "2024-01-19",
+      "dateEnd": "2024-01-23",
+      "countries": [
+        "IT"
+      ],
+      "cities": [
+        {
+          "name": "比薩",
+          "lat": 43.7228,
+          "lng": 10.4017
+        },
+        {
+          "name": "五漁村",
+          "lat": 44.1461,
+          "lng": 9.6439
+        },
+        {
+          "name": "佛羅倫斯",
+          "lat": 43.7696,
+          "lng": 11.2558
+        }
+      ],
+      "notionId": "e08533cde492427db87146a7d3d360aa",
+      "expenses": {
+        "currency": "TWD",
+        "items": {
+          "住宿": 2711,
+          "交通": 1602,
+          "食物": 3600,
+          "紀念品": 130
+        },
+        "note": "比薩+五漁村+佛羅倫斯合計"
+      }
+    },
+    {
+      "id": "2024-fi-no",
+      "title": "北歐芬蘭挪威",
+      "dateStart": "2024-01-25",
+      "dateEnd": "2024-02-03",
+      "countries": [
+        "FI",
+        "NO"
+      ],
+      "cities": [
+        {
+          "name": "赫爾辛基",
+          "lat": 60.1699,
+          "lng": 24.9384
+        },
+        {
+          "name": "特羅姆瑟",
+          "lat": 69.6492,
+          "lng": 18.9553
+        },
+        {
+          "name": "卑爾根",
+          "lat": 60.3913,
+          "lng": 5.3221
+        },
+        {
+          "name": "奧斯陸",
+          "lat": 59.9139,
+          "lng": 10.7522
+        }
+      ],
+      "notionId": "a1b12c09751749b3bc64bb94a230d38d",
+      "expenses": {
+        "currency": "TWD",
+        "items": {
+          "住宿": 11170,
+          "交通": 10105,
+          "食物": 6620,
+          "紀念品": 1670
+        },
+        "note": "含臥鋪火車約3,000；赫爾辛基+羅瓦涅米+挪威合計"
+      }
+    },
+    {
+      "id": "2024-london",
+      "title": "英國倫敦",
+      "dateStart": "2024-02-09",
+      "dateEnd": "2024-02-12",
+      "countries": [
+        "GB"
+      ],
+      "cities": [
+        {
+          "name": "倫敦",
+          "lat": 51.5074,
+          "lng": -0.1278
+        }
+      ],
+      "notionId": "7dd37b74fff6428c8d64e0b41fc21ac1"
+    },
+    {
+      "id": "2024-edinburgh",
+      "title": "英國愛丁堡",
+      "dateStart": "2024-02-15",
+      "dateEnd": "2024-02-16",
+      "countries": [
+        "GB"
+      ],
+      "cities": [
+        {
+          "name": "愛丁堡",
+          "lat": 55.9533,
+          "lng": -3.1883
+        }
+      ],
+      "notionId": "55913846270b4df6bf354820dca9dd46",
+      "expenses": {
+        "currency": "TWD",
+        "items": {
+          "住宿": 900,
+          "交通": 360,
+          "食物": 1520
+        }
+      }
+    },
+    {
+      "id": "2024-york",
+      "title": "英國約克",
+      "dateStart": "2024-02-18",
+      "dateEnd": "2024-02-18",
+      "countries": [
+        "GB"
+      ],
+      "cities": [
+        {
+          "name": "約克",
+          "lat": 53.96,
+          "lng": -1.0873
+        }
+      ],
+      "notionId": "525b434f5ac04abcbb584d0f7cc438ef"
+    },
+    {
+      "id": "2024-malta",
+      "title": "馬爾他",
+      "dateStart": "2024-02-23",
+      "dateEnd": "2024-02-26",
+      "countries": [
+        "MT"
+      ],
+      "cities": [
+        {
+          "name": "瓦萊塔",
+          "lat": 35.8989,
+          "lng": 14.5146
+        }
+      ],
+      "notionId": "792f471f22e14c159688c46704249ff1",
+      "expenses": {
+        "currency": "TWD",
+        "items": {
+          "住宿": 1100,
+          "交通": 2100,
+          "食物": 1700
+        },
+        "note": "交通含船票與四趟Taxi"
+      }
+    },
+    {
+      "id": "2024-iceland",
+      "title": "冰島",
+      "dateStart": "2024-03-01",
+      "dateEnd": "2024-03-08",
+      "countries": [
+        "IS"
+      ],
+      "cities": [
+        {
+          "name": "雷克雅維克",
+          "lat": 64.1466,
+          "lng": -21.9426
+        }
+      ],
+      "notionId": "2b332176a0c34782bea067d37606a691"
+    },
+    {
+      "id": "2024-ireland",
+      "title": "愛爾蘭都柏林",
+      "dateStart": "2024-03-17",
+      "dateEnd": "2024-03-20",
+      "countries": [
+        "IE",
+        "GB"
+      ],
+      "cities": [
+        {
+          "name": "都柏林",
+          "lat": 53.3498,
+          "lng": -6.2603
+        },
+        {
+          "name": "貝爾法斯特",
+          "lat": 54.5973,
+          "lng": -5.9301
+        }
+      ],
+      "notionId": "f67719ec799c40f2a1646011de3c0b80"
+    },
+    {
+      "id": "2024-baltics",
+      "title": "瑞典波羅的海三小國波蘭",
+      "dateStart": "2024-03-22",
+      "dateEnd": "2024-03-30",
+      "countries": [
+        "SE",
+        "EE",
+        "LV",
+        "LT",
+        "PL"
+      ],
+      "cities": [
+        {
+          "name": "斯德哥爾摩",
+          "lat": 59.3293,
+          "lng": 18.0686
+        },
+        {
+          "name": "塔林",
+          "lat": 59.437,
+          "lng": 24.7536
+        },
+        {
+          "name": "里加",
+          "lat": 56.9496,
+          "lng": 24.1052
+        },
+        {
+          "name": "維爾紐斯",
+          "lat": 54.6872,
+          "lng": 25.2797
+        },
+        {
+          "name": "華沙",
+          "lat": 52.2297,
+          "lng": 21.0122
+        },
+        {
+          "name": "克拉科夫",
+          "lat": 50.0647,
+          "lng": 19.945
+        }
+      ],
+      "notionId": "e0c4a723a3fa474d92ffa4a2eafeb6a0"
+    },
+    {
+      "id": "2024-croatia",
+      "title": "克羅埃西亞",
+      "dateStart": "2024-04-02",
+      "dateEnd": "2024-04-08",
+      "countries": [
+        "HR"
+      ],
+      "cities": [
+        {
+          "name": "札格瑞布",
+          "lat": 45.815,
+          "lng": 15.9819
+        },
+        {
+          "name": "十六湖國家公園",
+          "lat": 44.8654,
+          "lng": 15.582
+        },
+        {
+          "name": "扎達爾",
+          "lat": 44.1194,
+          "lng": 15.2314
+        },
+        {
+          "name": "斯普利特",
+          "lat": 43.5081,
+          "lng": 16.4402
+        },
+        {
+          "name": "杜布羅夫尼克",
+          "lat": 42.6507,
+          "lng": 18.0944
+        }
+      ],
+      "notionId": "3319eeaa8c33420f8f8a380e10e3020d"
+    },
+    {
+      "id": "2024-greece",
+      "title": "希臘雅典聖托里尼",
+      "dateStart": "2024-04-13",
+      "dateEnd": "2024-04-17",
+      "countries": [
+        "GR"
+      ],
+      "cities": [
+        {
+          "name": "雅典",
+          "lat": 37.9838,
+          "lng": 23.7275
+        },
+        {
+          "name": "聖托里尼",
+          "lat": 36.3932,
+          "lng": 25.4615
+        }
+      ],
+      "notionId": "fccb6ca2af72416a997ed5cf8bb3d1ad"
+    },
+    {
+      "id": "2024-nice-monaco",
+      "title": "法國尼斯摩納哥",
+      "dateStart": "2024-04-27",
+      "dateEnd": "2024-04-30",
+      "countries": [
+        "FR",
+        "MC"
+      ],
+      "cities": [
+        {
+          "name": "尼斯",
+          "lat": 43.7102,
+          "lng": 7.262
+        },
+        {
+          "name": "摩納哥",
+          "lat": 43.7384,
+          "lng": 7.4246
+        },
+        {
+          "name": "坎城",
+          "lat": 43.5528,
+          "lng": 7.0174
+        },
+        {
+          "name": "芒通",
+          "lat": 43.7745,
+          "lng": 7.4972
+        }
+      ],
+      "notionId": "0f8c816270cc4269aec505e096a17e10"
+    },
+    {
+      "id": "2024-llandudno",
+      "title": "威爾斯藍迪德諾",
+      "dateStart": "2024-05-17",
+      "dateEnd": "2024-05-18",
+      "countries": [
+        "GB"
+      ],
+      "cities": [
+        {
+          "name": "Llandudno",
+          "lat": 53.3241,
+          "lng": -3.8276
+        }
+      ],
+      "notionId": "001b3d6844f54a9c9b5430339ba9787d"
+    },
+    {
+      "id": "2024-egypt",
+      "title": "埃及",
+      "dateStart": "2024-05-20",
+      "dateEnd": "2024-05-29",
+      "countries": [
+        "EG"
+      ],
+      "cities": [
+        {
+          "name": "開羅",
+          "lat": 30.0444,
+          "lng": 31.2357
+        }
+      ],
+      "notionId": "7d45bdbd7a87435b9b1abe9db74ad1ff",
+      "expenses": {
+        "currency": "TWD",
+        "items": {
+          "機票": 10462,
+          "套裝行程": 8200,
+          "交通": 4020,
+          "住宿": 1800,
+          "食物": 1700,
+          "門票": 1100,
+          "紀念品": 1000,
+          "小費與其他": 660
+        },
+        "note": "10天9夜總計28,942台幣"
+      }
+    },
+    {
+      "id": "2024-turkey",
+      "title": "土耳其",
+      "dateStart": "2024-06-09",
+      "dateEnd": "2024-06-15",
+      "countries": [
+        "TR"
+      ],
+      "cities": [
+        {
+          "name": "伊斯坦堡",
+          "lat": 41.0082,
+          "lng": 28.9784
+        },
+        {
+          "name": "卡帕多奇亞",
+          "lat": 38.6431,
+          "lng": 34.8289
+        }
+      ],
+      "notionId": "f0d430535a4d41eaab269051c6e24f5f"
+    },
+    {
+      "id": "2024-hongkong",
+      "title": "香港",
+      "dateStart": "2024-08-02",
+      "dateEnd": "2024-08-05",
+      "countries": [
+        "HK"
+      ],
+      "cities": [
+        {
+          "name": "香港",
+          "lat": 22.3193,
+          "lng": 114.1694
+        }
+      ],
+      "notionId": "7d45cbaab1164b82a01c4a7f21fc5946"
+    },
+    {
+      "id": "2024-us-west",
+      "title": "美國西部遊",
+      "dateStart": "2024-12-23",
+      "dateEnd": "2025-01-12",
+      "countries": [
+        "US"
+      ],
+      "cities": [
+        {
+          "name": "洛杉磯",
+          "lat": 34.0522,
+          "lng": -118.2437
+        },
+        {
+          "name": "拉斯維加斯",
+          "lat": 36.1699,
+          "lng": -115.1398
+        },
+        {
+          "name": "大峽谷",
+          "lat": 36.1069,
+          "lng": -112.1129
+        },
+        {
+          "name": "馬蹄灣",
+          "lat": 36.8791,
+          "lng": -111.5104
+        }
+      ],
+      "notionId": "145ee7c056988097932cd319494dbd2c"
+    },
+    {
+      "id": "2025-hokkaido",
+      "title": "日本北海道",
+      "dateStart": "2025-02-22",
+      "dateEnd": "2025-03-01",
+      "countries": [
+        "JP"
+      ],
+      "cities": [
+        {
+          "name": "札幌",
+          "lat": 43.0618,
+          "lng": 141.3545
+        },
+        {
+          "name": "小樽",
+          "lat": 43.1907,
+          "lng": 140.9947
+        },
+        {
+          "name": "函館",
+          "lat": 41.7687,
+          "lng": 140.7291
+        }
+      ],
+      "notionId": "145ee7c0569880caa55cd84668443f3a"
+    },
+    {
+      "id": "2025-shanghai",
+      "title": "中國上海",
+      "dateStart": "2025-04-10",
+      "dateEnd": "2025-04-14",
+      "countries": [
+        "CN"
+      ],
+      "cities": [
+        {
+          "name": "上海",
+          "lat": 31.2304,
+          "lng": 121.4737
+        }
+      ],
+      "notionId": "1c9ee7c0569880a98998f747902f35e9"
+    },
+    {
+      "id": "2025-busan",
+      "title": "韓國釜山",
+      "dateStart": "2025-05-11",
+      "dateEnd": "2025-05-16",
+      "countries": [
+        "KR"
+      ],
+      "cities": [
+        {
+          "name": "釜山",
+          "lat": 35.1796,
+          "lng": 129.0756
+        }
+      ],
+      "notionId": "1ebee7c056988085a9fadc99e21ed94f"
+    },
+    {
+      "id": "2025-okinawa",
+      "title": "日本沖繩",
+      "dateStart": "2025-07-06",
+      "dateEnd": "2025-07-11",
+      "countries": [
+        "JP"
+      ],
+      "cities": [
+        {
+          "name": "那霸",
+          "lat": 26.2124,
+          "lng": 127.6809
+        }
+      ],
+      "notionId": "227ee7c05698805f9b59ff5c07c0e5e7"
+    },
+    {
+      "id": "2025-chicago",
+      "title": "美國芝加哥",
+      "dateStart": "2025-11-24",
+      "dateEnd": "2025-11-28",
+      "countries": [
+        "US"
+      ],
+      "cities": [
+        {
+          "name": "芝加哥",
+          "lat": 41.8781,
+          "lng": -87.6298
+        }
+      ],
+      "notionId": "2b5ee7c0569880a8af66f52d303b2643"
+    },
+    {
+      "id": "2025-us-east",
+      "title": "美國洛杉磯奧蘭多紐約波士頓",
+      "dateStart": "2025-12-18",
+      "dateEnd": "2026-01-02",
+      "countries": [
+        "US"
+      ],
+      "cities": [
+        {
+          "name": "奧蘭多",
+          "lat": 28.5383,
+          "lng": -81.3792
+        },
+        {
+          "name": "紐約",
+          "lat": 40.7128,
+          "lng": -74.006
+        },
+        {
+          "name": "波士頓",
+          "lat": 42.3601,
+          "lng": -71.0589
+        }
+      ],
+      "notionId": "283ee7c0569880db8cd3ef453a85dfde"
+    },
+    {
+      "id": "2026-sequoia",
+      "title": "Sequoia National Park",
+      "dateStart": "2026-02-01",
+      "dateEnd": "2026-02-28",
+      "datePending": true,
+      "countries": [
+        "US"
+      ],
+      "cities": [
+        {
+          "name": "Sequoia NP",
+          "lat": 36.4864,
+          "lng": -118.5658
+        }
+      ],
+      "notionId": "304ee7c05698805d8202d72ebe3417ae"
+    },
+    {
+      "id": "2026-hawaii",
+      "title": "Hawaii",
+      "dateStart": "2026-03-13",
+      "dateEnd": "2026-03-17",
+      "countries": [
+        "US"
+      ],
+      "cities": [
+        {
+          "name": "檀香山",
+          "lat": 21.3069,
+          "lng": -157.8583
+        }
+      ],
+      "notionId": "322ee7c056988089a716fb4093e55965"
+    },
+    {
+      "id": "2026-disney-wonder",
+      "title": "Disney Wonder 郵輪",
+      "dateStart": "2026-03-20",
+      "dateEnd": "2026-03-23",
+      "countries": [
+        "US",
+        "MX"
+      ],
+      "cities": [
+        {
+          "name": "聖地牙哥出發",
+          "lat": 32.7157,
+          "lng": -117.1611
+        }
+      ],
+      "notionId": "db4fc3b7927544b8a4df2a5fdb2f0930"
+    },
+    {
+      "id": "2026-sedona",
+      "title": "Sedona",
+      "dateStart": "2026-03-27",
+      "dateEnd": "2026-03-31",
+      "countries": [
+        "US"
+      ],
+      "cities": [
+        {
+          "name": "Sedona",
+          "lat": 34.8697,
+          "lng": -111.761
+        }
+      ],
+      "notionId": "351ee7c056988067855ef3a086195482"
+    },
+    {
+      "id": "2026-bay-area",
+      "title": "Bay Area",
+      "dateStart": "2026-04-09",
+      "dateEnd": "2026-04-13",
+      "countries": [
+        "US"
+      ],
+      "cities": [
+        {
+          "name": "舊金山",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "notionId": "351ee7c0569880c4983dc565e319f9ec"
+    },
+    {
+      "id": "2026-east-cal",
+      "title": "East California",
+      "dateStart": "2026-04-16",
+      "dateEnd": "2026-04-22",
+      "countries": [
+        "US"
+      ],
+      "cities": [
+        {
+          "name": "Death Valley",
+          "lat": 36.5323,
+          "lng": -116.9325
+        },
+        {
+          "name": "Mammoth Lakes",
+          "lat": 37.6485,
+          "lng": -118.9721
+        }
+      ],
+      "notionId": "351ee7c05698806aa857ea1107ff9044"
+    },
+    {
+      "id": "2026-fukuoka-kansai",
+      "title": "日本福岡關西",
+      "dateStart": "2026-06-04",
+      "dateEnd": "2026-06-08",
+      "countries": [
+        "JP"
+      ],
+      "cities": [
+        {
+          "name": "福岡",
+          "lat": 33.5902,
+          "lng": 130.4017
+        },
+        {
+          "name": "京都",
+          "lat": 35.0116,
+          "lng": 135.7681
+        }
+      ],
+      "notionId": "378ee7c05698802fb7f2c2d8bcf06c4f"
+    }
   ]
 }

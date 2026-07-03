@@ -36,36 +36,50 @@ document.getElementById('header').outerHTML = headerHTML('');
     .filter(t => t.countries.includes(code))
     .sort((a, b) => a.dateStart.localeCompare(b.dateStart));
 
-  let html = `
+  el.innerHTML = `
     <div class="country-head">
       <span class="country-flag">${flagEmoji(code)}</span>
       <div><div class="page-title">${info.name}</div>
       <div class="page-sub" style="margin:0">${myTrips.length} 趟旅程</div></div>
     </div>
-    <div class="country-trips">
-      ${myTrips.map(t => `<div class="trip-row">
-        <span class="trip-date">${fmtRange(t)}</span>
-        <span class="trip-title">${t.title}</span></div>`).join('')}
-    </div>`;
+    <div id="trip-blocks"></div>
+    <div id="map-photo"></div>
+    <div id="articles"></div>`;
 
-  // 該國城市小地圖
+  // ── 1. 行程（Day 卡片）+ 花費圓餅圖，置頂 ──
+  const blocks = document.getElementById('trip-blocks');
+  for (const t of myTrips) {
+    const sec = document.createElement('section');
+    sec.className = 'trip-block';
+    let inner = `<div class="trip-head">
+      <h2 class="trip-name">${t.title}</h2>
+      <span class="trip-dates">${fmtRange(t)}</span>
+    </div>`;
+    const md = await loadText('data/trips/' + t.id + '.md');
+    if (md) inner += '<div class="trip-md">' + renderTripMD(md) + '</div>';
+    if (t.expenses) inner += pieChartHTML(t.expenses);
+    sec.innerHTML = inner;
+    blocks.appendChild(sec);
+  }
+
+  // ── 2. 該國城市小地圖 + 照片 ──
+  const mp = document.getElementById('map-photo');
   const pins = [];
   for (const t of myTrips) for (const c of (t.cities || [])) pins.push(c);
-  if (pins.length) html += '<div id="country-map"></div>';
-
+  let mpHTML = '';
+  if (pins.length) mpHTML += '<h2 class="sec-title">🗺️ 造訪地點</h2><div id="country-map"></div>';
   if (info.images?.length) {
-    html += '<div class="img-grid">' +
+    mpHTML += '<h2 class="sec-title">📷 照片</h2><div class="img-grid">' +
       info.images.map(u => `<img src="${u}" loading="lazy" alt="${info.name}">`).join('') + '</div>';
   }
-  el.innerHTML = html;
+  mp.innerHTML = mpHTML;
 
   if (pins.length) {
     const cmap = L.map('country-map', { scrollWheelZoom: false });
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 14
     }).addTo(cmap);
-    const group = [];
-    const seen = new Set();
+    const group = [], seen = new Set();
     for (const p of pins) {
       const key = p.lat + ',' + p.lng;
       if (seen.has(key)) continue; seen.add(key);
@@ -73,28 +87,24 @@ document.getElementById('header').outerHTML = headerHTML('');
         radius: 6, color: '#4a6c8c', weight: 1.5, fillColor: '#4a6c8c', fillOpacity: .55
       }).addTo(cmap).bindPopup('📍 ' + p.name));
     }
-    if (group.length === 1) {
-      cmap.setView(group[0].getLatLng(), 6);
-    } else {
-      cmap.fitBounds(L.featureGroup(group).getBounds().pad(0.4));
-    }
+    if (group.length === 1) cmap.setView(group[0].getLatLng(), 6);
+    else cmap.fitBounds(L.featureGroup(group).getBounds().pad(0.4));
   }
 
-  // 遊記內容（Markdown）
+  // ── 3. 完整遊記 ──
+  const art = document.getElementById('articles');
   if (info.content?.length) {
+    art.innerHTML = '<h2 class="sec-title">✍️ 遊記</h2>';
     for (const path of info.content) {
       const md = await loadText(path);
       if (!md) continue;
       const sec = document.createElement('div');
       sec.className = 'md-section';
       sec.innerHTML = '<div class="md-body">' + renderMD(md) + '</div>';
-      el.appendChild(sec);
+      art.appendChild(sec);
     }
-  } else {
-    const div = document.createElement('div');
-    div.className = 'empty-note';
-    div.innerHTML = '詳細遊記整理中 ✈️<br>先看看上面的旅程紀錄吧';
-    el.appendChild(div);
+  } else if (!myTrips.some(t => true)) {
+    art.innerHTML = '<div class="empty-note">詳細遊記整理中 ✈️</div>';
   }
 })();
 </script>

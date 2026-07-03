@@ -56,6 +56,94 @@ function renderMD(md) {
   return html;
 }
 
+/* 旅程 Markdown → Day 卡片 + 其餘內容 */
+function renderTripMD(md) {
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const inline = s => esc(s)
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\[([^\]]+)\]\((https?:[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+
+  const lines = md.split('\n');
+  let html = '', cards = [], card = null, dayN = 0, inExpense = false;
+
+  const flushCards = () => {
+    if (!cards.length) return;
+    html += '<div class="day-grid">' + cards.map(c =>
+      `<div class="day-card"><div class="day-badge">Day ${c.n}</div>
+       <div class="day-date">${c.label}</div>
+       <div class="day-body">${c.body.join('')}</div></div>`).join('') + '</div>';
+    cards = []; card = null;
+  };
+
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (!line) continue;
+    if (line.startsWith('# ') || /^(notion|trip|source|date|published|note):/i.test(line)) continue;
+    if (line.startsWith('## ')) {
+      flushCards();
+      const h = line.slice(3).trim();
+      inExpense = /花費/.test(h);
+      if (h !== '行程') html += '<h2>' + inline(h) + '</h2>';
+      continue;
+    }
+    const dm = line.match(/^- \*\*(.+?)\*\*\s*(.*)$/);
+    if (dm && !inExpense) {
+      dayN++;
+      card = { n: dayN, label: inline(dm[1]), body: dm[2] ? ['<p>' + inline(dm[2]) + '</p>'] : [] };
+      cards.push(card);
+      continue;
+    }
+    const bm = line.match(/^\*\*(.+)\*\*$/);
+    if (bm) { flushCards(); html += '<h3 class="seg-head">' + inline(bm[1]) + '</h3>'; continue; }
+    if (line.startsWith('- ')) {
+      const li = '<p class="day-sub">· ' + inline(line.slice(2)) + '</p>';
+      if (card) card.body.push(li); else html += li.replace('day-sub', 'md-p');
+      continue;
+    }
+    const p = '<p>' + inline(line) + '</p>';
+    if (card && !inExpense) card.body.push(p); else html += p;
+  }
+  flushCards();
+  return html;
+}
+
+/* SVG 圓餅圖（記帳） */
+const PIE_COLORS = ['#4a6c8c', '#8fb0c9', '#c9a86a', '#7ca982', '#b98b82', '#9b8fb8', '#d3c0a3', '#88a0a8'];
+function pieChartHTML(expenses) {
+  const entries = Object.entries(expenses.items).sort((a, b) => b[1] - a[1]);
+  const total = entries.reduce((s, [, v]) => s + v, 0);
+  if (!total) return '';
+  const cx = 80, cy = 80, r = 62;
+  let angle = -Math.PI / 2, paths = '';
+  entries.forEach(([name, v], i) => {
+    const a2 = angle + (v / total) * Math.PI * 2;
+    const large = (a2 - angle) > Math.PI ? 1 : 0;
+    const x1 = cx + r * Math.cos(angle), y1 = cy + r * Math.sin(angle);
+    const x2 = cx + r * Math.cos(a2), y2 = cy + r * Math.sin(a2);
+    if (entries.length === 1) {
+      paths += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${PIE_COLORS[0]}"/>`;
+    } else {
+      paths += `<path d="M${cx},${cy} L${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 ${large} 1 ${x2.toFixed(1)},${y2.toFixed(1)} Z" fill="${PIE_COLORS[i % PIE_COLORS.length]}" stroke="#fff" stroke-width="1.5"/>`;
+    }
+    angle = a2;
+  });
+  const legend = entries.map(([name, v], i) =>
+    `<div class="legend-row"><span class="legend-dot" style="background:${PIE_COLORS[i % PIE_COLORS.length]}"></span>
+     ${name}<span class="legend-val">${v.toLocaleString()}（${Math.round(v / total * 100)}%）</span></div>`).join('');
+  return `<div class="pie-wrap">
+    <svg viewBox="0 0 160 160" width="160" height="160">${paths}
+      <circle cx="${cx}" cy="${cy}" r="30" fill="#fff"/>
+      <text x="${cx}" y="${cy - 4}" text-anchor="middle" font-size="10" fill="#6a737d">總計</text>
+      <text x="${cx}" y="${cy + 12}" text-anchor="middle" font-size="12" font-weight="600" fill="#1f2328">${(total >= 10000 ? (total / 1000).toFixed(0) + 'K' : total.toLocaleString())}</text>
+    </svg>
+    <div class="pie-legend">
+      <div class="legend-title">💰 花費紀錄（${expenses.currency === 'TWD' ? '台幣' : expenses.currency}）</div>
+      ${legend}
+      ${expenses.note ? `<div class="legend-note">${expenses.note}</div>` : ''}
+    </div>
+  </div>`;
+}
+
 function headerHTML(active) {
   return `
   <header class="site-header">
