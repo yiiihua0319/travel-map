@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>旅程列表｜Eva's Travel Map</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="header"></div>
+<main>
+  <div class="container">
+    <div class="page-title">旅程列表</div>
+    <div class="page-sub" id="sub">載入中…</div>
+    <div class="sort-toggle">
+      <button id="btn-date" class="active">依日期</button>
+      <button id="btn-country">依國家</button>
+    </div>
+    <div id="list"></div>
+  </div>
+</main>
+
+<script src="js/common.js"></script>
+<script>
+document.getElementById('header').outerHTML = headerHTML('list');
+
+let trips = [], countries = {};
+
+function flagLinks(t) {
+  return t.countries.map(cc =>
+    `<a href="country.html?c=${cc}" title="${countries[cc]?.name || cc}">${flagEmoji(cc)}</a>`).join('');
+}
+
+function rowHTML(t) {
+  return `<div class="trip-row">
+    <span class="trip-date">${fmtRange(t)}</span>
+    <span class="trip-flags">${flagLinks(t)}</span>
+    <span class="trip-title">${t.title}</span>
+  </div>`;
+}
+
+function renderByDate() {
+  const sorted = [...trips].sort((a, b) => b.dateStart.localeCompare(a.dateStart));
+  let html = '', year = '';
+  for (const t of sorted) {
+    const y = t.dateStart.slice(0, 4);
+    if (y !== year) { year = y; html += `<div class="group-label">${y}</div>`; }
+    html += rowHTML(t);
+  }
+  document.getElementById('list').innerHTML = html;
+}
+
+function renderByCountry() {
+  const byC = new Map();
+  for (const t of trips) for (const cc of t.countries) {
+    if (!byC.has(cc)) byC.set(cc, []);
+    byC.get(cc).push(t);
+  }
+  const order = [...byC.keys()].sort((a, b) =>
+    (countries[a]?.name || a).localeCompare(countries[b]?.name || b, 'zh-Hant'));
+  let html = '';
+  for (const cc of order) {
+    const list = byC.get(cc).sort((a, b) => b.dateStart.localeCompare(a.dateStart));
+    html += `<div class="group-label"><a href="country.html?c=${cc}">${flagEmoji(cc)} ${countries[cc]?.name || cc}（${list.length}）→</a></div>`;
+    html += list.map(rowHTML).join('');
+  }
+  document.getElementById('list').innerHTML = html;
+}
+
+(async () => {
+  const [tripsData, cData] = await Promise.all([
+    loadJSON('data/trips.json'), loadJSON('data/countries.json')
+  ]);
+  trips = tripsData.trips; countries = cData;
+  const nC = new Set(trips.flatMap(t => t.countries)).size;
+  document.getElementById('sub').textContent = `${trips.length} 趟旅程 · ${nC} 個國家`;
+  renderByDate();
+
+  const bd = document.getElementById('btn-date'), bc = document.getElementById('btn-country');
+  bd.onclick = () => { bd.classList.add('active'); bc.classList.remove('active'); renderByDate(); };
+  bc.onclick = () => { bc.classList.add('active'); bd.classList.remove('active'); renderByCountry(); };
+})();
+</script>
+</body>
+</html>

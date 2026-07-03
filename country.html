@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>國家遊記｜Eva's Travel Map</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="header"></div>
+<main>
+  <div class="container">
+    <a class="back-link" href="list.html">← 回旅程列表</a>
+    <div id="content">載入中…</div>
+  </div>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/common.js"></script>
+<script>
+document.getElementById('header').outerHTML = headerHTML('');
+
+(async () => {
+  const code = (new URLSearchParams(location.search).get('c') || '').toUpperCase();
+  const [tripsData, countries] = await Promise.all([
+    loadJSON('data/trips.json'), loadJSON('data/countries.json')
+  ]);
+  const info = countries[code];
+  const el = document.getElementById('content');
+  if (!info) { el.innerHTML = '<div class="empty-note">找不到這個國家 🥲</div>'; return; }
+
+  document.title = info.name + '｜Eva\'s Travel Map';
+  const myTrips = tripsData.trips
+    .filter(t => t.countries.includes(code))
+    .sort((a, b) => a.dateStart.localeCompare(b.dateStart));
+
+  let html = `
+    <div class="country-head">
+      <span class="country-flag">${flagEmoji(code)}</span>
+      <div><div class="page-title">${info.name}</div>
+      <div class="page-sub" style="margin:0">${myTrips.length} 趟旅程</div></div>
+    </div>
+    <div class="country-trips">
+      ${myTrips.map(t => `<div class="trip-row">
+        <span class="trip-date">${fmtRange(t)}</span>
+        <span class="trip-title">${t.title}</span></div>`).join('')}
+    </div>`;
+
+  // 該國城市小地圖
+  const pins = [];
+  for (const t of myTrips) for (const c of (t.cities || [])) pins.push(c);
+  if (pins.length) html += '<div id="country-map"></div>';
+
+  if (info.images?.length) {
+    html += '<div class="img-grid">' +
+      info.images.map(u => `<img src="${u}" loading="lazy" alt="${info.name}">`).join('') + '</div>';
+  }
+  el.innerHTML = html;
+
+  if (pins.length) {
+    const cmap = L.map('country-map', { scrollWheelZoom: false });
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 14
+    }).addTo(cmap);
+    const group = [];
+    const seen = new Set();
+    for (const p of pins) {
+      const key = p.lat + ',' + p.lng;
+      if (seen.has(key)) continue; seen.add(key);
+      group.push(L.circleMarker([p.lat, p.lng], {
+        radius: 6, color: '#4a6c8c', weight: 1.5, fillColor: '#4a6c8c', fillOpacity: .55
+      }).addTo(cmap).bindPopup('📍 ' + p.name));
+    }
+    if (group.length === 1) {
+      cmap.setView(group[0].getLatLng(), 6);
+    } else {
+      cmap.fitBounds(L.featureGroup(group).getBounds().pad(0.4));
+    }
+  }
+
+  // 遊記內容（Markdown）
+  if (info.content?.length) {
+    for (const path of info.content) {
+      const md = await loadText(path);
+      if (!md) continue;
+      const sec = document.createElement('div');
+      sec.className = 'md-section';
+      sec.innerHTML = '<div class="md-body">' + renderMD(md) + '</div>';
+      el.appendChild(sec);
+    }
+  } else {
+    const div = document.createElement('div');
+    div.className = 'empty-note';
+    div.innerHTML = '詳細遊記整理中 ✈️<br>先看看上面的旅程紀錄吧';
+    el.appendChild(div);
+  }
+})();
+</script>
+</body>
+</html>

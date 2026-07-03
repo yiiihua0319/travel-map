@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eva's Travel Map ✈️</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="header"></div>
+<div id="map"></div>
+<div class="map-stats" id="stats">載入中…</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/common.js"></script>
+<script>
+document.getElementById('header').outerHTML = headerHTML('map');
+
+(async () => {
+  const [tripsData, countries] = await Promise.all([
+    loadJSON('data/trips.json'),
+    loadJSON('data/countries.json')
+  ]);
+  const trips = tripsData.trips;
+
+  const map = L.map('map', { worldCopyJump: true, zoomControl: true })
+    .setView([30, 40], 2.4);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap &copy; CARTO',
+    maxZoom: 12
+  }).addTo(map);
+
+  // 依城市合併圖釘
+  const cityMap = new Map();
+  for (const t of trips) {
+    for (const c of (t.cities || [])) {
+      const key = c.lat.toFixed(2) + ',' + c.lng.toFixed(2);
+      if (!cityMap.has(key)) cityMap.set(key, { ...c, trips: [] });
+      cityMap.get(key).trips.push(t);
+    }
+  }
+
+  for (const city of cityMap.values()) {
+    const marker = L.circleMarker([city.lat, city.lng], {
+      radius: 6, color: '#4a6c8c', weight: 1.5,
+      fillColor: '#4a6c8c', fillOpacity: .55
+    }).addTo(map);
+    const rows = city.trips.map(t => {
+      const links = t.countries.map(cc =>
+        `<a href="country.html?c=${cc}">${flagEmoji(cc)} ${countries[cc]?.name || cc}</a>`).join(' ');
+      return `<div class="pin-trip">${fmtRange(t)}｜${t.title}<br>${links}</div>`;
+    }).join('<hr style="border:none;border-top:1px solid #eee;margin:6px 0">');
+    marker.bindPopup(`<div class="pin-city">📍 ${city.name}</div>${rows}`);
+  }
+
+  const countrySet = new Set(trips.flatMap(t => t.countries));
+  document.getElementById('stats').innerHTML =
+    `<strong>${countrySet.size}</strong> 個國家 · <strong>${trips.length}</strong> 趟旅程<br>點擊圖釘看旅程 → 點國家進入遊記`;
+})();
+</script>
+</body>
+</html>
