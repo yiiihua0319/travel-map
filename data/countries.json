@@ -1,49 +1,462 @@
 {
-  "JP": {"name": "日本"},
-  "KR": {"name": "韓國"},
-  "CN": {"name": "中國"},
-  "HK": {"name": "香港"},
-  "GB": {"name": "英國", "content": ["data/medium/york.md", "data/medium/edinburgh.md"], "images": [
-    "https://miro.medium.com/v2/resize:fit:1400/1*W8WEH41EauOgggzYAJcEJg.jpeg",
-    "https://miro.medium.com/v2/resize:fit:1400/1*YU-JJkQwwzT5ACcO6stzMg.jpeg",
-    "https://miro.medium.com/v2/resize:fit:1400/1*3gKhkqsOH1MzsUja0Ty8ig.jpeg",
-    "https://miro.medium.com/v2/resize:fit:1400/1*6x9Ezt90cqh1kZ81kUiM7w.jpeg"
-  ]},
-  "FR": {"name": "法國"},
-  "AT": {"name": "奧地利"},
-  "DE": {"name": "德國"},
-  "ES": {"name": "西班牙", "content": ["data/notion/spain.md"]},
-  "DK": {"name": "丹麥"},
-  "BE": {"name": "比利時"},
-  "LU": {"name": "盧森堡"},
-  "HU": {"name": "匈牙利"},
-  "IT": {"name": "義大利", "content": ["data/notion/italy.md"]},
-  "VA": {"name": "梵蒂岡", "content": ["data/notion/italy.md"]},
-  "PT": {"name": "葡萄牙"},
-  "CZ": {"name": "捷克", "content": ["data/medium/prague.md"]},
-  "CH": {"name": "瑞士"},
-  "SK": {"name": "斯洛伐克"},
-  "FI": {"name": "芬蘭", "content": ["data/medium/helsinki.md", "data/medium/rovaniemi.md"]},
-  "NO": {"name": "挪威", "content": ["data/notion/norway.md"]},
-  "MT": {"name": "馬爾他", "content": ["data/notion/malta.md"]},
-  "IS": {"name": "冰島", "content": ["data/medium/iceland.md"], "images": [
-    "https://miro.medium.com/v2/resize:fit:1400/1*mpvXKFkR3rAZktdWbZe1DQ.jpeg",
-    "https://miro.medium.com/v2/resize:fit:1400/1*FftrT8yR7veXcCIdUO-lsA.jpeg",
-    "https://miro.medium.com/v2/resize:fit:1400/1*vElu-fc5YjAc3UddPll0JA.jpeg",
-    "https://miro.medium.com/v2/resize:fit:1400/1*yFuPzJP2lJwLMDr5CMnn3A.jpeg"
-  ]},
-  "IE": {"name": "愛爾蘭", "content": ["data/medium/ireland.md"]},
-  "EE": {"name": "愛沙尼亞", "content": ["data/medium/baltics.md"]},
-  "LV": {"name": "拉脫維亞", "content": ["data/medium/baltics.md"]},
-  "LT": {"name": "立陶宛", "content": ["data/medium/baltics.md"]},
-  "PL": {"name": "波蘭"},
-  "SE": {"name": "瑞典", "content": ["data/medium/stockholm.md"]},
-  "HR": {"name": "克羅埃西亞"},
-  "GR": {"name": "希臘", "content": ["data/medium/greece.md"]},
-  "MC": {"name": "摩納哥"},
-  "EG": {"name": "埃及", "content": ["data/medium/egypt-1.md", "data/medium/egypt-2.md"]},
-  "TR": {"name": "土耳其"},
-  "NL": {"name": "荷蘭"},
-  "US": {"name": "美國"},
-  "MX": {"name": "墨西哥"}
+  "JP": {
+    "name": "日本",
+    "ig": [
+      {
+        "name": "🇯🇵",
+        "id": "18058390841082620"
+      },
+      {
+        "name": "🇯🇵 II",
+        "id": "18001176304885498"
+      }
+    ]
+  },
+  "KR": {
+    "name": "韓國",
+    "ig": [
+      {
+        "name": "🇰🇷",
+        "id": "18223455025295788"
+      },
+      {
+        "name": "🇰🇷 II",
+        "id": "17997247630612862"
+      }
+    ]
+  },
+  "CN": {
+    "name": "中國"
+  },
+  "HK": {
+    "name": "香港",
+    "ig": [
+      {
+        "name": "🇭🇰",
+        "id": "18043906154428749"
+      }
+    ]
+  },
+  "GB": {
+    "name": "英國",
+    "content": [
+      "data/medium/york.md",
+      "data/medium/edinburgh.md"
+    ],
+    "images": [
+      "https://miro.medium.com/v2/resize:fit:1400/1*W8WEH41EauOgggzYAJcEJg.jpeg",
+      "https://miro.medium.com/v2/resize:fit:1400/1*YU-JJkQwwzT5ACcO6stzMg.jpeg",
+      "https://miro.medium.com/v2/resize:fit:1400/1*3gKhkqsOH1MzsUja0Ty8ig.jpeg",
+      "https://miro.medium.com/v2/resize:fit:1400/1*6x9Ezt90cqh1kZ81kUiM7w.jpeg"
+    ],
+    "ig": [
+      {
+        "name": "🇬🇧",
+        "id": "18281161486145824"
+      },
+      {
+        "name": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 England",
+        "id": "18000434375434985"
+      },
+      {
+        "name": "🏴󠁧󠁢󠁷󠁬󠁳󠁿 Wales",
+        "id": "18035126008921185"
+      },
+      {
+        "name": "🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scotland",
+        "id": "18019310732090900"
+      }
+    ]
+  },
+  "FR": {
+    "name": "法國",
+    "ig": [
+      {
+        "name": "🇫🇷",
+        "id": "18000731977963951"
+      },
+      {
+        "name": "🏂⛷️ 滑雪",
+        "id": "18041028013534617"
+      }
+    ]
+  },
+  "AT": {
+    "name": "奧地利",
+    "ig": [
+      {
+        "name": "🇦🇹",
+        "id": "18394447429047265"
+      }
+    ]
+  },
+  "DE": {
+    "name": "德國",
+    "ig": [
+      {
+        "name": "🇩🇪",
+        "id": "18014762446728926"
+      }
+    ]
+  },
+  "ES": {
+    "name": "西班牙",
+    "content": [
+      "data/notion/spain.md"
+    ],
+    "ig": [
+      {
+        "name": "🇪🇸",
+        "id": "18007334219061343"
+      }
+    ]
+  },
+  "DK": {
+    "name": "丹麥",
+    "ig": [
+      {
+        "name": "🇩🇰",
+        "id": "17889104147946605"
+      }
+    ]
+  },
+  "BE": {
+    "name": "比利時",
+    "ig": [
+      {
+        "name": "🇧🇪",
+        "id": "17981382845594365"
+      }
+    ]
+  },
+  "LU": {
+    "name": "盧森堡",
+    "ig": [
+      {
+        "name": "🇱🇺",
+        "id": "18067650382445661"
+      }
+    ]
+  },
+  "HU": {
+    "name": "匈牙利",
+    "ig": [
+      {
+        "name": "🇭🇺",
+        "id": "17978322377418462"
+      }
+    ]
+  },
+  "IT": {
+    "name": "義大利",
+    "content": [
+      "data/notion/italy.md"
+    ],
+    "ig": [
+      {
+        "name": "🇮🇹",
+        "id": "18326484133098127"
+      }
+    ]
+  },
+  "VA": {
+    "name": "梵蒂岡",
+    "content": [
+      "data/notion/italy.md"
+    ],
+    "ig": [
+      {
+        "name": "🇻🇦",
+        "id": "17852844123088432"
+      }
+    ]
+  },
+  "PT": {
+    "name": "葡萄牙",
+    "ig": [
+      {
+        "name": "🇵🇹",
+        "id": "18092540089376188"
+      }
+    ]
+  },
+  "CZ": {
+    "name": "捷克",
+    "content": [
+      "data/medium/prague.md"
+    ],
+    "ig": [
+      {
+        "name": "🇨🇿",
+        "id": "17918448260763195"
+      }
+    ]
+  },
+  "CH": {
+    "name": "瑞士",
+    "ig": [
+      {
+        "name": "🇨🇭",
+        "id": "18243371773144614"
+      }
+    ]
+  },
+  "SK": {
+    "name": "斯洛伐克",
+    "ig": [
+      {
+        "name": "🇸🇰",
+        "id": "17847432102132072"
+      }
+    ]
+  },
+  "FI": {
+    "name": "芬蘭",
+    "content": [
+      "data/medium/helsinki.md",
+      "data/medium/rovaniemi.md"
+    ],
+    "ig": [
+      {
+        "name": "🇫🇮",
+        "id": "17896509062881601"
+      }
+    ]
+  },
+  "NO": {
+    "name": "挪威",
+    "content": [
+      "data/notion/norway.md"
+    ],
+    "ig": [
+      {
+        "name": "🇳🇴",
+        "id": "18320537278190648"
+      }
+    ]
+  },
+  "MT": {
+    "name": "馬爾他",
+    "content": [
+      "data/notion/malta.md"
+    ],
+    "ig": [
+      {
+        "name": "🇲🇹",
+        "id": "17894002397908463"
+      }
+    ]
+  },
+  "IS": {
+    "name": "冰島",
+    "content": [
+      "data/medium/iceland.md"
+    ],
+    "images": [
+      "https://miro.medium.com/v2/resize:fit:1400/1*mpvXKFkR3rAZktdWbZe1DQ.jpeg",
+      "https://miro.medium.com/v2/resize:fit:1400/1*FftrT8yR7veXcCIdUO-lsA.jpeg",
+      "https://miro.medium.com/v2/resize:fit:1400/1*vElu-fc5YjAc3UddPll0JA.jpeg",
+      "https://miro.medium.com/v2/resize:fit:1400/1*yFuPzJP2lJwLMDr5CMnn3A.jpeg"
+    ],
+    "ig": [
+      {
+        "name": "🇮🇸",
+        "id": "17914528424902580"
+      }
+    ]
+  },
+  "IE": {
+    "name": "愛爾蘭",
+    "content": [
+      "data/medium/ireland.md"
+    ],
+    "ig": [
+      {
+        "name": "🇮🇪",
+        "id": "18017305472482585"
+      }
+    ]
+  },
+  "EE": {
+    "name": "愛沙尼亞",
+    "content": [
+      "data/medium/baltics.md"
+    ],
+    "ig": [
+      {
+        "name": "🇪🇪",
+        "id": "18038870554783611"
+      }
+    ]
+  },
+  "LV": {
+    "name": "拉脫維亞",
+    "content": [
+      "data/medium/baltics.md"
+    ],
+    "ig": [
+      {
+        "name": "🇱🇻",
+        "id": "17924121893855691"
+      }
+    ]
+  },
+  "LT": {
+    "name": "立陶宛",
+    "content": [
+      "data/medium/baltics.md"
+    ],
+    "ig": [
+      {
+        "name": "🇱🇹",
+        "id": "17979486239654811"
+      }
+    ]
+  },
+  "PL": {
+    "name": "波蘭",
+    "ig": [
+      {
+        "name": "🇵🇱",
+        "id": "17949786638784503"
+      }
+    ]
+  },
+  "SE": {
+    "name": "瑞典",
+    "content": [
+      "data/medium/stockholm.md"
+    ],
+    "ig": [
+      {
+        "name": "🇸🇪",
+        "id": "18046336774630893"
+      }
+    ]
+  },
+  "HR": {
+    "name": "克羅埃西亞",
+    "ig": [
+      {
+        "name": "🇭🇷",
+        "id": "18019059557473645"
+      }
+    ]
+  },
+  "GR": {
+    "name": "希臘",
+    "content": [
+      "data/medium/greece.md"
+    ],
+    "ig": [
+      {
+        "name": "🇬🇷",
+        "id": "18053682808597261"
+      }
+    ]
+  },
+  "MC": {
+    "name": "摩納哥",
+    "ig": [
+      {
+        "name": "🇲🇨",
+        "id": "17963252528737499"
+      }
+    ]
+  },
+  "EG": {
+    "name": "埃及",
+    "content": [
+      "data/medium/egypt-1.md",
+      "data/medium/egypt-2.md"
+    ],
+    "ig": [
+      {
+        "name": "🇪🇬",
+        "id": "18011551592176655"
+      }
+    ]
+  },
+  "TR": {
+    "name": "土耳其",
+    "ig": [
+      {
+        "name": "🇹🇷",
+        "id": "18356193898098714"
+      }
+    ]
+  },
+  "NL": {
+    "name": "荷蘭",
+    "ig": [
+      {
+        "name": "🇳🇱",
+        "id": "18004546184025318"
+      }
+    ]
+  },
+  "US": {
+    "name": "美國",
+    "ig": [
+      {
+        "name": "🇺🇸",
+        "id": "18034268444433105"
+      },
+      {
+        "name": "🇺🇸 II",
+        "id": "17883107769197347"
+      },
+      {
+        "name": "CA🎡",
+        "id": "18348771829227508"
+      },
+      {
+        "name": "SFO🌁",
+        "id": "18404082007148223"
+      },
+      {
+        "name": "AZ🌵",
+        "id": "17887204257508011"
+      },
+      {
+        "name": "🌺 Hawaii",
+        "id": "18572293918010164"
+      },
+      {
+        "name": "🛳️ Disney Wonder",
+        "id": "17904645189395062"
+      },
+      {
+        "name": "ORD🏰",
+        "id": "18091695818309098"
+      },
+      {
+        "name": "LA🧧",
+        "id": "17912469399146413"
+      },
+      {
+        "name": "LA🏖️",
+        "id": "18081011935986913"
+      },
+      {
+        "name": "NYC🗽",
+        "id": "18090858718945076"
+      },
+      {
+        "name": "BOS🦞",
+        "id": "18069053744130559"
+      },
+      {
+        "name": "Chicago",
+        "id": "18076390283334874"
+      },
+      {
+        "name": "🧑‍🍳🇺🇸",
+        "id": "18135692446447888"
+      }
+    ]
+  },
+  "MX": {
+    "name": "墨西哥"
+  }
 }

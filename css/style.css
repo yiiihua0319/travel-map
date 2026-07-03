@@ -256,6 +256,18 @@ main { padding-top: 56px; }
 .legend-val { margin-left: auto; color: var(--text-soft); font-variant-numeric: tabular-nums; }
 .legend-note { font-size: 11.5px; color: var(--text-soft); margin-top: 8px; }
 
+.ig-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; }
+.ig-chip {
+  display: inline-block;
+  font-size: 13px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 14px;
+  color: var(--text);
+  background: var(--bg);
+}
+.ig-chip:hover { border-color: var(--accent); color: var(--accent); opacity: 1; }
+
 .sec-title {
   font-size: 17px;
   font-weight: 700;
