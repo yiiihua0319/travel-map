@@ -36,6 +36,12 @@ document.getElementById('header').outerHTML = headerHTML('');
     .filter(t => t.countries.includes(code))
     .sort((a, b) => a.dateStart.localeCompare(b.dateStart));
 
+  // 遊記（心得）依旅程分組
+  const contentList = (info.content || []).map(c => typeof c === 'string' ? { file: c } : c);
+  const byTrip = {};
+  const orphan = [];
+  for (const c of contentList) (c.trip ? (byTrip[c.trip] = byTrip[c.trip] || []).push(c.file) : orphan.push(c.file));
+
   el.innerHTML = `
     <div class="country-head">
       <span class="country-flag">${flagEmoji(code)}</span>
@@ -44,27 +50,68 @@ document.getElementById('header').outerHTML = headerHTML('');
     </div>
     ${info.ig?.length ? `<div class="ig-row">${info.ig.map(h =>
       `<a class="ig-chip" href="https://www.instagram.com/stories/highlights/${h.id}/" target="_blank" rel="noopener">📸 ${h.name}</a>`).join('')}</div>` : ''}
-    <div id="trip-blocks"></div>
+    <div id="trip-tabs"></div>
+    <div id="trip-panes"></div>
     <div id="map-photo"></div>
-    <div id="articles"></div>`;
+    <div id="orphan-articles"></div>`;
 
-  // ── 1. 行程（Day 卡片）+ 花費圓餅圖，置頂 ──
-  const blocks = document.getElementById('trip-blocks');
-  for (const t of myTrips) {
-    const sec = document.createElement('section');
-    sec.className = 'trip-block';
+  // ── 分頁籤（多趟旅程以城市/旅程為單位）──
+  const tabLabel = t => {
+    let s = t.title.startsWith(info.name) ? t.title.slice(info.name.length) : t.title;
+    if (!s) s = t.title;
+    return s + '（' + t.dateStart.slice(2, 7).replace('-', '/') + '）';
+  };
+  const tabsEl = document.getElementById('trip-tabs');
+  const panesEl = document.getElementById('trip-panes');
+  if (myTrips.length > 1) {
+    tabsEl.innerHTML = '<div class="tab-bar">' + myTrips.map((t, i) =>
+      `<button class="tab-chip${i === 0 ? ' active' : ''}" data-i="${i}">${tabLabel(t)}</button>`).join('') + '</div>';
+  }
+
+  // ── 每趟旅程：行程 → 費用 → 心得 ──
+  for (let i = 0; i < myTrips.length; i++) {
+    const t = myTrips[i];
+    const pane = document.createElement('section');
+    pane.className = 'trip-block trip-pane';
+    pane.dataset.i = i;
+    if (myTrips.length > 1 && i !== 0) pane.style.display = 'none';
+
     let inner = `<div class="trip-head">
       <h2 class="trip-name">${t.title}</h2>
       <span class="trip-dates">${fmtRange(t)}</span>
     </div>`;
+
+    // 1. 行程
     const md = await loadText('data/trips/' + t.id + '.md');
-    if (md) inner += '<div class="trip-md">' + renderTripMD(md) + '</div>';
-    if (t.expenses) inner += pieChartHTML(t.expenses);
-    sec.innerHTML = inner;
-    blocks.appendChild(sec);
+    if (md) inner += '<h3 class="part-title">🗓️ 行程</h3><div class="trip-md">' + renderTripMD(md) + '</div>';
+
+    // 2. 費用
+    if (t.expenses) inner += '<h3 class="part-title">💰 費用</h3>' + pieChartHTML(t.expenses);
+
+    // 3. 心得（遊記）
+    if (byTrip[t.id]?.length) {
+      inner += '<h3 class="part-title">✍️ 心得</h3>';
+      for (const f of [...new Set(byTrip[t.id])]) {
+        const amd = await loadText(f);
+        if (amd) inner += '<div class="md-section"><div class="md-body">' + renderMD(amd) + '</div></div>';
+      }
+    }
+    if (!md && !t.expenses && !byTrip[t.id]?.length) {
+      inner += '<div class="empty-note">這趟的紀錄整理中 ✈️</div>';
+    }
+    pane.innerHTML = inner;
+    panesEl.appendChild(pane);
   }
 
-  // ── 2. 該國城市小地圖 + 照片 ──
+  // 分頁切換
+  tabsEl.querySelectorAll('.tab-chip').forEach(btn => btn.onclick = () => {
+    tabsEl.querySelectorAll('.tab-chip').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    panesEl.querySelectorAll('.trip-pane').forEach(p =>
+      p.style.display = p.dataset.i === btn.dataset.i ? '' : 'none');
+  });
+
+  // ── 造訪地點小地圖 + 照片 ──
   const mp = document.getElementById('map-photo');
   const pins = [];
   for (const t of myTrips) for (const c of (t.cities || [])) pins.push(c);
@@ -93,20 +140,18 @@ document.getElementById('header').outerHTML = headerHTML('');
     else cmap.fitBounds(L.featureGroup(group).getBounds().pad(0.4));
   }
 
-  // ── 3. 完整遊記 ──
-  const art = document.getElementById('articles');
-  if (info.content?.length) {
-    art.innerHTML = '<h2 class="sec-title">✍️ 遊記</h2>';
-    for (const path of info.content) {
-      const md = await loadText(path);
-      if (!md) continue;
+  // ── 未對應到旅程的遊記 ──
+  const oa = document.getElementById('orphan-articles');
+  if (orphan.length) {
+    oa.innerHTML = '<h2 class="sec-title">✍️ 其他遊記</h2>';
+    for (const f of orphan) {
+      const amd = await loadText(f);
+      if (!amd) continue;
       const sec = document.createElement('div');
       sec.className = 'md-section';
-      sec.innerHTML = '<div class="md-body">' + renderMD(md) + '</div>';
-      art.appendChild(sec);
+      sec.innerHTML = '<div class="md-body">' + renderMD(amd) + '</div>';
+      oa.appendChild(sec);
     }
-  } else if (!myTrips.some(t => true)) {
-    art.innerHTML = '<div class="empty-note">詳細遊記整理中 ✈️</div>';
   }
 })();
 </script>

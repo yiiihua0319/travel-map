@@ -40,8 +40,14 @@
   "GB": {
     "name": "英國",
     "content": [
-      "data/medium/york.md",
-      "data/medium/edinburgh.md"
+      {
+        "file": "data/medium/york.md",
+        "trip": "2024-york"
+      },
+      {
+        "file": "data/medium/edinburgh.md",
+        "trip": "2024-edinburgh"
+      }
     ],
     "images": [
       "https://miro.medium.com/v2/resize:fit:1400/1*W8WEH41EauOgggzYAJcEJg.jpeg",
@@ -102,7 +108,10 @@
   "ES": {
     "name": "西班牙",
     "content": [
-      "data/notion/spain.md"
+      {
+        "file": "data/notion/spain.md",
+        "trip": "2023-barcelona"
+      }
     ],
     "ig": [
       {
@@ -150,7 +159,14 @@
   "IT": {
     "name": "義大利",
     "content": [
-      "data/notion/italy.md"
+      {
+        "file": "data/notion/italy-rome.md",
+        "trip": "2023-rome"
+      },
+      {
+        "file": "data/notion/italy-north.md",
+        "trip": "2024-italy"
+      }
     ],
     "ig": [
       {
@@ -162,7 +178,10 @@
   "VA": {
     "name": "梵蒂岡",
     "content": [
-      "data/notion/italy.md"
+      {
+        "file": "data/notion/italy-rome.md",
+        "trip": "2023-rome"
+      }
     ],
     "ig": [
       {
@@ -183,7 +202,10 @@
   "CZ": {
     "name": "捷克",
     "content": [
-      "data/medium/prague.md"
+      {
+        "file": "data/medium/prague.md",
+        "trip": "2023-de-cz-fr-ch"
+      }
     ],
     "ig": [
       {
@@ -213,8 +235,14 @@
   "FI": {
     "name": "芬蘭",
     "content": [
-      "data/medium/helsinki.md",
-      "data/medium/rovaniemi.md"
+      {
+        "file": "data/medium/helsinki.md",
+        "trip": "2024-fi-no"
+      },
+      {
+        "file": "data/medium/rovaniemi.md",
+        "trip": "2024-fi-no"
+      }
     ],
     "ig": [
       {
@@ -226,7 +254,10 @@
   "NO": {
     "name": "挪威",
     "content": [
-      "data/notion/norway.md"
+      {
+        "file": "data/notion/norway.md",
+        "trip": "2024-fi-no"
+      }
     ],
     "ig": [
       {
@@ -238,7 +269,10 @@
   "MT": {
     "name": "馬爾他",
     "content": [
-      "data/notion/malta.md"
+      {
+        "file": "data/notion/malta.md",
+        "trip": "2024-malta"
+      }
     ],
     "ig": [
       {
@@ -250,7 +284,10 @@
   "IS": {
     "name": "冰島",
     "content": [
-      "data/medium/iceland.md"
+      {
+        "file": "data/medium/iceland.md",
+        "trip": "2024-iceland"
+      }
     ],
     "images": [
       "https://miro.medium.com/v2/resize:fit:1400/1*mpvXKFkR3rAZktdWbZe1DQ.jpeg",
@@ -268,7 +305,10 @@
   "IE": {
     "name": "愛爾蘭",
     "content": [
-      "data/medium/ireland.md"
+      {
+        "file": "data/medium/ireland.md",
+        "trip": "2024-ireland"
+      }
     ],
     "ig": [
       {
@@ -280,7 +320,10 @@
   "EE": {
     "name": "愛沙尼亞",
     "content": [
-      "data/medium/baltics.md"
+      {
+        "file": "data/medium/baltics.md",
+        "trip": "2024-baltics"
+      }
     ],
     "ig": [
       {
@@ -292,7 +335,10 @@
   "LV": {
     "name": "拉脫維亞",
     "content": [
-      "data/medium/baltics.md"
+      {
+        "file": "data/medium/baltics.md",
+        "trip": "2024-baltics"
+      }
     ],
     "ig": [
       {
@@ -304,7 +350,10 @@
   "LT": {
     "name": "立陶宛",
     "content": [
-      "data/medium/baltics.md"
+      {
+        "file": "data/medium/baltics.md",
+        "trip": "2024-baltics"
+      }
     ],
     "ig": [
       {
@@ -325,7 +374,10 @@
   "SE": {
     "name": "瑞典",
     "content": [
-      "data/medium/stockholm.md"
+      {
+        "file": "data/medium/stockholm.md",
+        "trip": "2024-baltics"
+      }
     ],
     "ig": [
       {
@@ -346,7 +398,10 @@
   "GR": {
     "name": "希臘",
     "content": [
-      "data/medium/greece.md"
+      {
+        "file": "data/medium/greece.md",
+        "trip": "2024-greece"
+      }
     ],
     "ig": [
       {
@@ -367,8 +422,14 @@
   "EG": {
     "name": "埃及",
     "content": [
-      "data/medium/egypt-1.md",
-      "data/medium/egypt-2.md"
+      {
+        "file": "data/medium/egypt-1.md",
+        "trip": "2024-egypt"
+      },
+      {
+        "file": "data/medium/egypt-2.md",
+        "trip": "2024-egypt"
+      }
     ],
     "ig": [
       {
