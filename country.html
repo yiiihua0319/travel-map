@@ -24,8 +24,9 @@ document.getElementById('header').outerHTML = headerHTML('');
 
 (async () => {
   const code = (new URLSearchParams(location.search).get('c') || '').toUpperCase();
-  const [tripsData, countries] = await Promise.all([
-    loadJSON('data/trips.json'), loadJSON('data/countries.json')
+  const [tripsData, countries, placesData] = await Promise.all([
+    loadJSON('data/trips.json'), loadJSON('data/countries.json'),
+    loadJSON('data/places.json').catch(() => ({}))
   ]);
   const info = countries[code];
   const el = document.getElementById('content');
@@ -53,6 +54,7 @@ document.getElementById('header').outerHTML = headerHTML('');
     <div id="trip-tabs"></div>
     <div id="trip-panes"></div>
     <div id="map-photo"></div>
+    <div id="places"></div>
     <div id="orphan-articles"></div>`;
 
   // ── 分頁籤（多趟旅程以城市/旅程為單位）──
@@ -138,6 +140,24 @@ document.getElementById('header').outerHTML = headerHTML('');
     }
     if (group.length === 1) cmap.setView(group[0].getLatLng(), 6);
     else cmap.fitBounds(L.featureGroup(group).getBounds().pad(0.4));
+  }
+
+  // ── 口袋名單（Google Maps 已儲存地點）──
+  const pv = document.getElementById('places');
+  const groups = placesData[code] || [];
+  if (groups.length) {
+    const totalP = groups.reduce((s, g) => s + g.places.length, 0);
+    let ph = `<h2 class="sec-title">📍 我的口袋名單 <span class="pl-count">${totalP} 個地點</span></h2>`;
+    ph += '<div class="pl-groups">';
+    for (const g of groups) {
+      ph += `<details class="pl-group"${groups.length <= 2 ? ' open' : ''}>
+        <summary>${g.list}<span class="pl-n">${g.places.length}</span></summary>
+        <ul class="pl-list">` +
+        g.places.map(p => `<li><a href="${p.url}" target="_blank" rel="noopener">${p.name}</a>${p.note ? `<span class="pl-note">${p.note}</span>` : ''}</li>`).join('') +
+        '</ul></details>';
+    }
+    ph += '</div>';
+    pv.innerHTML = ph;
   }
 
   // ── 未對應到旅程的遊記 ──
