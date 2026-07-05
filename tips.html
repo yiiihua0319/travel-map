@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>旅行小知識｜Eva's Travel Map</title>
+<meta name="description" content="Eva 的歐洲旅行省錢技巧：ESN 卡、Eurail Pass 使用心得">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
+<link rel="stylesheet" href="css/style.css?v=20260705l">
+</head>
+<body>
+<div id="header"></div>
+<main>
+  <div class="container">
+    <a class="back-link" href="list.html">← 回旅程列表</a>
+    <div id="content">載入中…</div>
+  </div>
+</main>
+
+<script src="js/common.js"></script>
+<script>
+document.getElementById('header').outerHTML = headerHTML('');
+
+// 白名單：可顯示的小知識文章
+const TIPS = {
+  'esn-card': { file: 'data/medium/esn-card.md', title: 'ESN Card 辦卡教學 💳' },
+  'eurail':   { file: 'data/medium/eurail.md',   title: 'Eurail Pass 歐洲火車通票 🚄' },
+};
+
+(async () => {
+  const key = new URLSearchParams(location.search).get('f');
+  const el = document.getElementById('content');
+  const tip = TIPS[key];
+
+  if (!tip) {
+    // 沒指定就列出全部
+    el.innerHTML = '<div class="page-title">🧳 旅行小知識</div>' +
+      '<div class="page-sub">省錢技巧與實用心得</div>' +
+      Object.entries(TIPS).map(([k, v]) =>
+        `<div class="trip-row"><a href="tips.html?f=${k}">${v.title}</a></div>`).join('');
+    return;
+  }
+  document.title = tip.title + '｜Eva\'s Travel Map';
+  const md = await loadText(tip.file);
+  el.innerHTML = md
+    ? '<div class="md-section" style="margin-top:0"><div class="md-body">' + renderMD(md) + '</div></div>'
+    : '<div class="empty-note">文章載入失敗 🥲</div>';
+})();
+</script>
+</body>
+</html>
