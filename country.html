@@ -11,7 +11,7 @@
 <meta property="og:url" content="https://yiiihua0319.github.io/travel-map/country.html">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="css/style.css?v=20260705m">
+<link rel="stylesheet" href="css/style.css?v=20260705n">
 </head>
 <body>
 <div id="header"></div>
@@ -196,7 +196,7 @@ document.getElementById('header').outerHTML = headerHTML('');
       ph += `<div class="pl-city"${attr}>
         <div class="pl-city-h">${g.list}<span class="pl-n">${g.places.length}</span></div>
         <ul class="pl-list">` +
-        g.places.map(p => `<li data-cat="${p.cat || 'other'}"${p.ll ? ` data-ll="${p.ll[0]},${p.ll[1]}"` : ''}><span class="pl-emoji">${catOf(p.cat)[0]}</span><a href="${p.url}" target="_blank" rel="noopener">${p.name}</a>${p.note ? `<span class="pl-note">${p.note}</span>` : ''}</li>`).join('') +
+        g.places.map(p => `<li data-cat="${p.cat || 'other'}"${p.ll ? ` data-ll="${p.ll[0]},${p.ll[1]}"` : ''}>${isPriv() ? `<button class="pl-chk" data-k="${p.url}" title="去過了打勾">⬜</button>` : ''}<span class="pl-emoji">${catOf(p.cat)[0]}</span><a href="${p.url}" target="_blank" rel="noopener">${p.name}</a>${p.note ? `<span class="pl-note">${p.note}</span>` : ''}</li>`).join('') +
         '</ul></div>';
     }
     ph += '</div>';
@@ -259,6 +259,21 @@ document.getElementById('header').outerHTML = headerHTML('');
     };
     pv.querySelectorAll('.pl-cat').forEach(b => b.onclick = () => { curCat = b.dataset.cat; applyPlFilter(); });
     applyPlFilter();
+
+    // 私人模式：口袋名單「去過了」打卡（存瀏覽器 localStorage）
+    if (isPriv()) {
+      const visited = getVisited();
+      pv.querySelectorAll('.pl-chk').forEach(b => {
+        const k = b.dataset.k;
+        const sync = () => {
+          const on = visited.has(k);
+          b.textContent = on ? '✅' : '⬜';
+          b.closest('li').classList.toggle('done', on);
+        };
+        sync();
+        b.onclick = () => { visited.has(k) ? visited.delete(k) : visited.add(k); saveVisited(visited); sync(); };
+      });
+    }
   }
 
   // ── 未對應到旅程的遊記 ──

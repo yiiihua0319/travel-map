@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>旅遊統計｜Eva's Travel Map</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
-<link rel="stylesheet" href="css/style.css?v=20260705m">
+<link rel="stylesheet" href="css/style.css?v=20260705n">
 </head>
 <body>
 <div id="header"></div>
@@ -20,7 +20,17 @@
 
 <script src="js/common.js"></script>
 <script>
+// 這頁是私人模式的鑰匙：開過一次，這個瀏覽器就解鎖（統計連結＋口袋名單打卡勾勾）
+localStorage.setItem('tm_priv', '1');
 document.getElementById('header').outerHTML = headerHTML('stats');
+document.querySelector('.page-sub').insertAdjacentHTML('afterend',
+  `<div class="priv-note">🔓 私人模式已在此瀏覽器啟用——國家頁的口袋名單會出現「去過了」勾勾
+   <button id="priv-off">關閉私人模式</button></div>`);
+document.getElementById('priv-off').onclick = () => {
+  localStorage.removeItem('tm_priv');
+  alert('已關閉私人模式（打卡紀錄仍保留，再開這頁即可恢復）');
+  location.href = 'index.html';
+};
 
 (async () => {
   const [tripsData, countries] = await Promise.all([

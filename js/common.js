@@ -2,7 +2,7 @@
 
 const DATA_BASE = '';
 // 每次改資料就 bump 這個版本號，讓瀏覽器/CDN 一定抓到最新的 JSON/MD（避免部署後看到舊快取）
-const SITE_VER = '20260705m';
+const SITE_VER = '20260705n';
 
 function flagEmoji(code) {
   return [...code.toUpperCase()].map(c => String.fromCodePoint(0x1F1A5 + c.charCodeAt(0))).join('');
@@ -146,6 +146,12 @@ function pieChartHTML(expenses) {
   </div>`;
 }
 
+/* ── 私人模式：造訪私密統計頁後在該瀏覽器啟用，解鎖統計連結與口袋名單打卡 ── */
+const PRIV_PAGE = 'stats-5c5ad412de.html';
+function isPriv() { return localStorage.getItem('tm_priv') === '1'; }
+function getVisited() { try { return new Set(JSON.parse(localStorage.getItem('tm_visited') || '[]')); } catch { return new Set(); } }
+function saveVisited(set) { localStorage.setItem('tm_visited', JSON.stringify([...set])); }
+
 function headerHTML(active) {
   return `
   <header class="site-header">
@@ -153,6 +159,7 @@ function headerHTML(active) {
     <nav>
       <a href="index.html" class="${active === 'map' ? 'active' : ''}">地圖</a>
       <a href="list.html" class="${active === 'list' ? 'active' : ''}">旅程列表</a>
+      ${isPriv() ? `<a href="${PRIV_PAGE}" class="${active === 'stats' ? 'active' : ''}">統計 🔓</a>` : ''}
     </nav>
   </header>`;
 }
