@@ -4,11 +4,6 @@ notion: 283ee7c0-5698-80db-8cd3-ef453a85dfde
 
 ## 行程
 
-**Los Angeles（12/15–12/17）**
-- **12/15** LAX → 家 → 那個那個 → 剪頭髮
-- **12/16** 逛超市 → In-N-Out → 看電影
-- **12/17** 加州迪士尼兩園區+快速通關 $298（Animation Academy）
-
 **Orlando（12/18–12/23）** 住 Disney's All-Star Resort
 - **12/18** LAX 8:47✈️16:40 MCO → 入住
 - **12/19** Hollywood Studios：Star Wars 園區直衝 → Toy Story Land → Indiana Jones → Beauty and the Beast → Fantasmic! 夜秀；Slinky Dog Dash、Toy Story Mania、Mickey & Minnie's Runaway Railway、Millennium Falcon
