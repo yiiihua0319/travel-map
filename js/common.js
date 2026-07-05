@@ -1,19 +1,21 @@
 /* 共用工具：載入資料、國旗、日期格式、Markdown 渲染 */
 
 const DATA_BASE = '';
+// 每次改資料就 bump 這個版本號，讓瀏覽器/CDN 一定抓到最新的 JSON/MD（避免部署後看到舊快取）
+const SITE_VER = '20260705a';
 
 function flagEmoji(code) {
   return [...code.toUpperCase()].map(c => String.fromCodePoint(0x1F1A5 + c.charCodeAt(0))).join('');
 }
 
 async function loadJSON(path) {
-  const r = await fetch(DATA_BASE + path);
+  const r = await fetch(DATA_BASE + path + '?v=' + SITE_VER);
   if (!r.ok) throw new Error(path + ' ' + r.status);
   return r.json();
 }
 
 async function loadText(path) {
-  const r = await fetch(DATA_BASE + path);
+  const r = await fetch(DATA_BASE + path + '?v=' + SITE_VER);
   if (!r.ok) return null;
   return r.text();
 }
