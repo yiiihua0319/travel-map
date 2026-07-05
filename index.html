@@ -76,7 +76,7 @@ document.getElementById('header').outerHTML = headerHTML('map');
       // 只連到這個城市所屬的國家（多國旅程不再列出全部國家）
       const ccs = city.cc ? [city.cc] : t.countries;
       const links = ccs.map(cc =>
-        `<a href="country.html?c=${cc}">${flagEmoji(cc)} ${countries[cc]?.name || cc}</a>`).join(' ');
+        `<a href="country.html?c=${cc}&t=${t.id}">${flagEmoji(cc)} ${countries[cc]?.name || cc}</a>`).join(' ');
       return `<div class="pin-trip">${fmtRange(t)}｜${t.title}<br>${links}</div>`;
     }).join('<hr style="border:none;border-top:1px solid #eee;margin:6px 0">');
     marker.bindPopup(`<div class="pin-city">📍 ${city.name}</div>${rows}`);

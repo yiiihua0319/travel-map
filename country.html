@@ -23,7 +23,9 @@
 document.getElementById('header').outerHTML = headerHTML('');
 
 (async () => {
-  const code = (new URLSearchParams(location.search).get('c') || '').toUpperCase();
+  const qs = new URLSearchParams(location.search);
+  const code = (qs.get('c') || '').toUpperCase();
+  const wantTrip = qs.get('t'); // 從地圖/列表點特定旅程進來時，直接停在那趟的分頁
   const [tripsData, countries, placesData] = await Promise.all([
     loadJSON('data/trips.json'), loadJSON('data/countries.json'),
     loadJSON('data/places.json').catch(() => ({}))
@@ -65,12 +67,13 @@ document.getElementById('header').outerHTML = headerHTML('');
   };
   const tabsEl = document.getElementById('trip-tabs');
   const panesEl = document.getElementById('trip-panes');
-  let curTabIdx = myTrips.length > 1 ? '0' : null;   // 目前選中的城市分頁（null=單趟，不篩選）
+  const initIdx = Math.max(0, myTrips.findIndex(t => t.id === wantTrip)); // 預設分頁：網址指定的那趟，否則第一趟
+  let curTabIdx = myTrips.length > 1 ? String(initIdx) : null;  // 目前選中的城市分頁（null=單趟，不篩選）
   let curCat = 'all';                                 // 目前選中的分類
   let applyPlFilter = () => {};                        // 由口袋名單區塊指派
   if (myTrips.length > 1) {
     tabsEl.innerHTML = '<div class="tab-bar">' + myTrips.map((t, i) =>
-      `<button class="tab-chip${i === 0 ? ' active' : ''}" data-i="${i}">${tabLabel(t)}</button>`).join('') + '</div>';
+      `<button class="tab-chip${i === initIdx ? ' active' : ''}" data-i="${i}">${tabLabel(t)}</button>`).join('') + '</div>';
   }
 
   // ── 每趟旅程：行程 → 費用 → 心得 ──
@@ -79,7 +82,7 @@ document.getElementById('header').outerHTML = headerHTML('');
     const pane = document.createElement('section');
     pane.className = 'trip-block trip-pane';
     pane.dataset.i = i;
-    if (myTrips.length > 1 && i !== 0) pane.style.display = 'none';
+    if (myTrips.length > 1 && i !== initIdx) pane.style.display = 'none';
 
     let inner = `<div class="trip-head">
       <h2 class="trip-name">${t.title}</h2>

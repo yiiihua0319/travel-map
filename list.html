@@ -29,7 +29,7 @@ let trips = [], countries = {};
 
 function flagLinks(t) {
   return t.countries.map(cc =>
-    `<a href="country.html?c=${cc}" title="${countries[cc]?.name || cc}">${flagEmoji(cc)}</a>`).join('');
+    `<a href="country.html?c=${cc}&t=${t.id}" title="${countries[cc]?.name || cc}">${flagEmoji(cc)}</a>`).join('');
 }
 
 function rowHTML(t) {
