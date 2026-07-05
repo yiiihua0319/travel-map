@@ -508,6 +508,68 @@ main { padding-top: 56px; }
   border-bottom: 1px solid var(--line);
 }
 
+/* ---------- 統計頁 ---------- */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin-top: 8px;
+}
+.stat-card {
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px 14px 14px;
+  text-align: center;
+}
+.stat-n { display: block; font-size: 30px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
+.stat-n small { font-size: 16px; margin-left: 1px; }
+.stat-l { font-size: 13px; color: var(--text-soft); }
+.stat-note { font-size: 12px; color: var(--text-soft); margin-top: 8px; }
+
+.hilo { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; }
+.hilo-card {
+  display: flex; flex-direction: column; gap: 2px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 18px;
+  color: var(--text);
+}
+.hilo-card:hover { border-color: var(--accent); opacity: 1; box-shadow: 0 3px 14px rgba(0,0,0,.06); }
+.hilo-tag { font-size: 12px; font-weight: 700; letter-spacing: .12em; color: var(--accent); }
+.hilo-card b { font-size: 16px; margin-top: 2px; }
+.hilo-amt { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.hilo-days { font-size: 12.5px; color: var(--text-soft); }
+
+.hbars { display: flex; flex-direction: column; gap: 6px; }
+.hbar {
+  display: flex; align-items: center; gap: 10px;
+  color: var(--text); font-size: 13.5px;
+  padding: 3px 2px; border-radius: 8px;
+}
+.hbar:hover { background: var(--bg-soft); opacity: 1; }
+.hbar-rank { flex: none; width: 20px; text-align: right; font-size: 12px; color: var(--text-soft); font-variant-numeric: tabular-nums; }
+.hbar-label { flex: 0 0 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hbar-track { flex: 1; height: 12px; background: var(--bg-soft); border-radius: 999px; overflow: hidden; }
+.hbar-fill { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+.hbar-val { flex: none; width: 42px; font-size: 12.5px; color: var(--text-soft); font-variant-numeric: tabular-nums; text-align: right; }
+@media (max-width: 560px) { .hbar-label { flex-basis: 120px; font-size: 12.5px; } }
+
+.ybars { display: flex; align-items: flex-end; gap: 14px; padding: 6px 2px 0; }
+.ybar { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.ybar-track { width: 100%; max-width: 64px; height: 140px; background: var(--bg-soft); border-radius: 10px; display: flex; align-items: flex-end; overflow: hidden; }
+.ybar-fill { width: 100%; background: var(--accent); border-radius: 10px 10px 0 0; }
+.ybar-val { font-size: 12.5px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+.ybar-year { font-size: 13px; font-weight: 600; }
+.ybar-trips { font-size: 11.5px; color: var(--text-soft); }
+
+.tl { display: flex; flex-direction: column; gap: 10px; }
+.tl-row { display: flex; align-items: baseline; gap: 12px; }
+.tl-year { flex: none; font-size: 15px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
+.tl-n { flex: none; font-size: 11.5px; color: var(--text-soft); background: var(--bg-soft); border-radius: 999px; padding: 1px 9px; }
+.tl-flags { font-size: 19px; line-height: 1.8; letter-spacing: 2px; }
+
 @media (max-width: 560px) {
   .trip-date { flex-basis: 108px; font-size: 12px; }
   .trip-title { font-size: 14px; }

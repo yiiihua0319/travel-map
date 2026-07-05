@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>旅遊統計｜Eva's Travel Map</title>
+<meta name="description" content="Eva 的旅遊數據：總花費排行、每年旅行天數、造訪國家時間軸">
+<meta property="og:title" content="旅遊統計｜Eva's Travel Map">
+<meta property="og:description" content="38 國 48 趟旅程的數據總覽">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://yiiihua0319.github.io/travel-map/stats.html">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
+<link rel="stylesheet" href="css/style.css?v=20260705m">
+</head>
+<body>
+<div id="header"></div>
+<main>
+  <div class="container">
+    <div class="page-title">旅遊統計 📊</div>
+    <div class="page-sub">數字裡的旅行足跡</div>
+    <div id="content">載入中…</div>
+  </div>
+</main>
+
+<script src="js/common.js"></script>
+<script>
+document.getElementById('header').outerHTML = headerHTML('stats');
+
+(async () => {
+  const [tripsData, countries] = await Promise.all([
+    loadJSON('data/trips.json'), loadJSON('data/countries.json')
+  ]);
+  const trips = tripsData.trips;
+  const el = document.getElementById('content');
+
+  const days = t => Math.round((new Date(t.dateEnd) - new Date(t.dateStart)) / 86400000) + 1;
+  const total = t => t.expenses ? Object.values(t.expenses.items).reduce((a, b) => a + b, 0) : null;
+  const nt = v => 'NT$' + Math.round(v).toLocaleString();
+
+  // ── 總覽 ──
+  const nC = new Set(trips.flatMap(t => t.countries)).size;
+  const totalDays = trips.reduce((s, t) => s + days(t), 0);
+  const withE = trips.filter(t => t.expenses);
+  const grand = withE.reduce((s, t) => s + total(t), 0);
+
+  let html = `<div class="stat-grid">
+    <div class="stat-card"><span class="stat-n">${nC}</span><span class="stat-l">🌍 個國家</span></div>
+    <div class="stat-card"><span class="stat-n">${trips.length}</span><span class="stat-l">✈️ 趟旅程</span></div>
+    <div class="stat-card"><span class="stat-n">${totalDays}</span><span class="stat-l">📅 天在路上</span></div>
+    <div class="stat-card"><span class="stat-n">${Math.round(grand / 10000)}<small>萬</small></span><span class="stat-l">💰 記錄到的花費</span></div>
+  </div>`;
+
+  // ── 最貴/最省 ──
+  const ranked = [...withE].sort((a, b) => total(b) - total(a));
+  const hi = ranked[0], lo = ranked[ranked.length - 1];
+  const tripLink = t => `country.html?c=${t.countries[0]}&t=${t.id}`;
+  html += `<h2 class="sec-title">🏆 最貴 vs 最省</h2>
+  <div class="hilo">
+    <a class="hilo-card" href="${tripLink(hi)}">
+      <span class="hilo-tag">💸 最貴的一趟</span>
+      <b>${hi.title}</b>
+      <span class="hilo-amt">${nt(total(hi))}</span>
+      <span class="hilo-days">${fmtRange(hi)} · ${days(hi)} 天</span>
+    </a>
+    <a class="hilo-card" href="${tripLink(lo)}">
+      <span class="hilo-tag">🪙 最省的一趟</span>
+      <b>${lo.title}</b>
+      <span class="hilo-amt">${nt(total(lo))}</span>
+      <span class="hilo-days">${fmtRange(lo)} · ${days(lo)} 天</span>
+    </a>
+  </div>`;
+
+  // ── 花費排行 Top 10 ──
+  const top = ranked.slice(0, 10);
+  const maxT = total(top[0]);
+  html += `<h2 class="sec-title">💰 花費排行 Top 10</h2><div class="hbars">` +
+    top.map((t, i) => `<a class="hbar" href="${tripLink(t)}">
+      <span class="hbar-rank">${i + 1}</span>
+      <span class="hbar-label">${flagEmoji(t.countries[0])} ${t.title}</span>
+      <span class="hbar-track"><span class="hbar-fill" style="width:${(total(t) / maxT * 100).toFixed(1)}%"></span></span>
+      <span class="hbar-val">${Math.round(total(t) / 1000)}K</span>
+    </a>`).join('') + `</div>
+    <p class="stat-note">僅計有記帳的 ${withE.length} 趟；部分旅程只記錄部分幣別</p>`;
+
+  // ── 每年旅行天數 ──
+  const byY = {};
+  for (const t of trips) { const y = t.dateStart.slice(0, 4); byY[y] = byY[y] || { d: 0, n: 0 }; byY[y].d += days(t); byY[y].n++; }
+  const years = Object.keys(byY).sort();
+  const maxD = Math.max(...years.map(y => byY[y].d));
+  html += `<h2 class="sec-title">📅 每年旅行天數</h2><div class="ybars">` +
+    years.map(y => `<div class="ybar">
+      <span class="ybar-val">${byY[y].d}天</span>
+      <span class="ybar-track"><span class="ybar-fill" style="height:${(byY[y].d / maxD * 100).toFixed(1)}%"></span></span>
+      <span class="ybar-year">${y}</span>
+      <span class="ybar-trips">${byY[y].n} 趟</span>
+    </div>`).join('') + '</div>';
+
+  // ── 錢都花去哪（類別總覽圓餅圖）──
+  const cat = {};
+  for (const t of withE) for (const [k, v] of Object.entries(t.expenses.items)) cat[k] = (cat[k] || 0) + v;
+  const sorted = Object.entries(cat).sort((a, b) => b[1] - a[1]);
+  const items = {};
+  sorted.slice(0, 7).forEach(([k, v]) => items[k] = (items[k] || 0) + Math.round(v));
+  const rest = sorted.slice(7).reduce((s, [, v]) => s + v, 0);
+  if (rest) items['其他'] = (items['其他'] || 0) + Math.round(rest);
+  html += '<h2 class="sec-title">🧾 錢都花去哪</h2>' +
+    pieChartHTML({ currency: 'TWD', items, note: '全部有記帳旅程加總（已換算台幣）' });
+
+  // ── 造訪國家時間軸（首次踩點）──
+  const first = {};
+  for (const t of [...trips].sort((a, b) => a.dateStart.localeCompare(b.dateStart)))
+    for (const cc of t.countries) if (!first[cc]) first[cc] = t.dateStart.slice(0, 4);
+  const byYear = {};
+  for (const [cc, y] of Object.entries(first)) (byYear[y] = byYear[y] || []).push(cc);
+  html += '<h2 class="sec-title">🗓️ 解鎖國家時間軸</h2><div class="tl">' +
+    Object.keys(byYear).sort().map(y => `<div class="tl-row">
+      <span class="tl-year">${y}</span>
+      <span class="tl-n">+${byYear[y].length} 國</span>
+      <span class="tl-flags">${byYear[y].map(cc =>
+        `<a href="country.html?c=${cc}" title="${countries[cc]?.name || cc}">${flagEmoji(cc)}</a>`).join(' ')}</span>
+    </div>`).join('') + '</div>';
+
+  el.innerHTML = html;
+})();
+</script>
+</body>
+</html>
