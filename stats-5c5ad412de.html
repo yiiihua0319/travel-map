@@ -4,16 +4,80 @@
 <meta charset="UTF-8">
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>旅遊統計｜Eva's Travel Map</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
+<title>私人基地｜Eva's Travel Map</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔓</text></svg>">
 <link rel="stylesheet" href="css/style.css?v=20260705n">
+<style>
+  /* 私人基地限定風格（跟可愛說明書同款：暖白＋淡藍＋杏色螢光筆） */
+  .base-hero {
+    text-align: center;
+    background: #fdfcfa;
+    border: 1.5px solid #e3e0da;
+    border-radius: 24px;
+    padding: 34px 24px 28px;
+    margin-bottom: 26px;
+    box-shadow: 0 2px 14px rgba(74,108,140,.08);
+  }
+  .base-hero .stk {
+    width: 62px; height: 62px;
+    margin: 0 auto 12px;
+    display: grid; place-items: center;
+    background: #eef3f8;
+    border-radius: 18px;
+    font-size: 32px;
+    transform: rotate(-4deg);
+  }
+  .base-hero h1 { font-size: 23px; font-weight: 800; letter-spacing: .02em; }
+  .base-hero h1 em {
+    font-style: normal;
+    background: linear-gradient(transparent 62%, #f2c17d 62%, #f2c17d 92%, transparent 92%);
+    padding: 0 2px;
+  }
+  .base-hero .hi { margin-top: 8px; color: #6b7684; font-size: 14px; }
+  .base-menu { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 20px; }
+  .base-menu a {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    background: #eef3f8;
+    border: 1.5px dashed #b9c9d9;
+    border-radius: 15px;
+    padding: 14px 10px;
+    color: #2b3440; font-size: 13.5px; font-weight: 700;
+  }
+  .base-menu a:hover { border-color: #4a6c8c; opacity: 1; }
+  .base-menu a span { font-size: 24px; }
+  .base-menu a small { font-weight: 400; color: #6b7684; font-size: 11.5px; }
+  /* 打卡進度 */
+  .vp-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 4px; border-radius: 10px;
+    color: var(--text); font-size: 14px;
+  }
+  .vp-row:hover { background: var(--bg-soft); opacity: 1; }
+  .vp-flag { flex: none; font-size: 18px; }
+  .vp-name { flex: 0 0 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .vp-track { flex: 1; height: 11px; background: var(--bg-soft); border-radius: 999px; overflow: hidden; }
+  .vp-fill { display: block; height: 100%; background: #7ca982; border-radius: 999px; }
+  .vp-n { flex: none; width: 64px; text-align: right; font-size: 12.5px; color: var(--text-soft); font-variant-numeric: tabular-nums; }
+  .vp-empty { font-size: 13.5px; color: var(--text-soft); background: var(--bg-soft); border-radius: 12px; padding: 14px 18px; }
+  @media (max-width: 480px) { .vp-name { flex-basis: 84px; font-size: 13px; } }
+</style>
 </head>
 <body>
 <div id="header"></div>
 <main>
   <div class="container">
-    <div class="page-title">旅遊統計 📊</div>
-    <div class="page-sub">數字裡的旅行足跡</div>
+    <div class="base-hero">
+      <div class="stk">🔓</div>
+      <h1>歡迎回來，<em>Eva 的私人基地</em></h1>
+      <p class="hi" id="greet">這裡只有你看得到 🤫</p>
+      <div class="base-menu">
+        <a href="#checkin"><span>✅</span>打卡進度<small>吃過踩過的口袋名單</small></a>
+        <a href="#stats"><span>📊</span>旅遊統計<small>花費・天數・時間軸</small></a>
+        <a href="index.html"><span>🗺️</span>回地圖<small>公開版首頁</small></a>
+      </div>
+    </div>
+    <div id="checkin-sec"></div>
+    <div id="stats-anchor"></div>
     <div id="content">載入中…</div>
   </div>
 </main>
@@ -23,21 +87,58 @@
 // 這頁是私人模式的鑰匙：開過一次，這個瀏覽器就解鎖（統計連結＋口袋名單打卡勾勾）
 localStorage.setItem('tm_priv', '1');
 document.getElementById('header').outerHTML = headerHTML('stats');
-document.querySelector('.page-sub').insertAdjacentHTML('afterend',
-  `<div class="priv-note">🔓 私人模式已在此瀏覽器啟用——國家頁的口袋名單會出現「去過了」勾勾
-   <button id="priv-off">關閉私人模式</button></div>`);
-document.getElementById('priv-off').onclick = () => {
-  localStorage.removeItem('tm_priv');
-  alert('已關閉私人模式（打卡紀錄仍保留，再開這頁即可恢復）');
-  location.href = 'index.html';
-};
+
+// 依時間打招呼
+{
+  const h = new Date().getHours();
+  const g = h < 5 ? '夜貓子還不睡 🌙' : h < 11 ? '早安 ☀️' : h < 18 ? '午安 🌤️' : '晚安 🌙';
+  document.getElementById('greet').textContent = g + '　這裡只有你看得到 🤫';
+}
 
 (async () => {
-  const [tripsData, countries] = await Promise.all([
-    loadJSON('data/trips.json'), loadJSON('data/countries.json')
+  const [tripsData, countries, placesData] = await Promise.all([
+    loadJSON('data/trips.json'), loadJSON('data/countries.json'),
+    loadJSON('data/places.json').catch(() => ({}))
   ]);
   const trips = tripsData.trips;
   const el = document.getElementById('content');
+
+  // ── ✅ 打卡進度（各國口袋名單 去過/總數）──
+  {
+    const visited = getVisited();
+    const rows = [];
+    let gTot = 0, gDone = 0;
+    for (const cc in placesData) {
+      let tot = 0, done = 0;
+      for (const g of placesData[cc]) for (const p of g.places) { tot++; if (visited.has(p.url)) done++; }
+      gTot += tot; gDone += done;
+      if (tot) rows.push({ cc, tot, done });
+    }
+    rows.sort((a, b) => b.done - a.done || b.tot - a.tot);
+    const sec = document.getElementById('checkin-sec');
+    let h = `<h2 class="sec-title" id="checkin">✅ 打卡進度 <span class="pl-count">全部 ${gDone}／${gTot} 個地點</span></h2>`;
+    if (!gDone) {
+      h += `<div class="vp-empty">還沒開始打卡～去任何國家頁的「📍 我的口袋名單」，點地點前面的 ⬜ 就能記錄吃過踩過的地方！</div>`;
+    } else {
+      const shown = rows.filter(r => r.done);
+      h += shown.map(r => `<a class="vp-row" href="country.html?c=${r.cc}">
+        <span class="vp-flag">${flagEmoji(r.cc)}</span>
+        <span class="vp-name">${countries[r.cc]?.name || r.cc}</span>
+        <span class="vp-track"><span class="vp-fill" style="width:${(r.done / r.tot * 100).toFixed(1)}%"></span></span>
+        <span class="vp-n">${r.done}／${r.tot}</span>
+      </a>`).join('');
+      const rest = rows.length - shown.length;
+      if (rest > 0) h += `<p class="stat-note">還有 ${rest} 個國家沒開張，加油打卡 💪</p>`;
+    }
+    h += `<div class="priv-note" style="margin-top:20px">🔓 私人模式已在此瀏覽器啟用（每台裝置各開一次這頁）
+      <button id="priv-off">關閉私人模式</button></div>`;
+    sec.innerHTML = h;
+    document.getElementById('priv-off').onclick = () => {
+      localStorage.removeItem('tm_priv');
+      alert('已關閉私人模式（打卡紀錄仍保留，再開這頁即可恢復）');
+      location.href = 'index.html';
+    };
+  }
 
   const days = t => Math.round((new Date(t.dateEnd) - new Date(t.dateStart)) / 86400000) + 1;
   const total = t => t.expenses ? Object.values(t.expenses.items).reduce((a, b) => a + b, 0) : null;
@@ -49,7 +150,8 @@ document.getElementById('priv-off').onclick = () => {
   const withE = trips.filter(t => t.expenses);
   const grand = withE.reduce((s, t) => s + total(t), 0);
 
-  let html = `<div class="stat-grid">
+  let html = `<h2 class="sec-title" id="stats">📊 旅遊統計 <span class="pl-count">數字裡的旅行足跡</span></h2>
+  <div class="stat-grid">
     <div class="stat-card"><span class="stat-n">${nC}</span><span class="stat-l">🌍 個國家</span></div>
     <div class="stat-card"><span class="stat-n">${trips.length}</span><span class="stat-l">✈️ 趟旅程</span></div>
     <div class="stat-card"><span class="stat-n">${totalDays}</span><span class="stat-l">📅 天在路上</span></div>
