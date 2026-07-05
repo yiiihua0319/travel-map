@@ -12,7 +12,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
-<link rel="stylesheet" href="css/style.css?v=20260705o">
+<link rel="stylesheet" href="css/style.css?v=20260706a">
 </head>
 <body>
 <div id="header"></div>
@@ -121,6 +121,33 @@ document.getElementById('header').outerHTML = headerHTML('map');
     marker.bindPopup(`<div class="pin-city">📍 ${city.name}</div>${rows}`);
   }
   map.addLayer(cluster);
+
+  // ── 自製繁體中文地名層（底圖無字；縮小看洲/海洋，放大看造訪國家）──
+  const LBL_CONT = [['亞洲', 47, 95], ['歐洲', 57, 40], ['非洲', 9, 21], ['北美洲', 50, -100], ['南美洲', -14, -60], ['大洋洲', -26, 140]];
+  const LBL_OCEAN = [['太平洋', 3, -155], ['大西洋', 12, -38], ['印度洋', -22, 82]];
+  const CTR_OVERRIDE = { US: [39.5, -98], CN: [33, 103], NO: [61.5, 9], JP: [37.5, 138.5], GB: [53.8, -3.6] };
+  const ctrByCc = {};
+  for (const t of trips) for (const c of (t.cities || [])) if (c.cc) (ctrByCc[c.cc] = ctrByCc[c.cc] || []).push([c.lat, c.lng]);
+  const LBL_CTRY = Object.entries(ctrByCc).map(([cc, pts]) => {
+    const [lat, lng] = CTR_OVERRIDE[cc] ||
+      [pts.reduce((s, p) => s + p[0], 0) / pts.length, pts.reduce((s, p) => s + p[1], 0) / pts.length];
+    return [countries[cc]?.name || cc, lat, lng];
+  });
+  const mkLabel = (n, lat, lng, cls) => L.marker([lat, lng], {
+    icon: L.divIcon({ className: 'mlbl-wrap', html: `<span class="mlbl ${cls}">${n}</span>`, iconSize: [0, 0] }),
+    interactive: false, keyboard: false
+  });
+  const contLayer = L.layerGroup([
+    ...LBL_CONT.map(([n, a, b]) => mkLabel(n, a, b, 'mlbl-cont')),
+    ...LBL_OCEAN.map(([n, a, b]) => mkLabel(n, a, b, 'mlbl-ocean'))]);
+  const ctryLayer = L.layerGroup(LBL_CTRY.map(([n, a, b]) => mkLabel(n, a, b, 'mlbl-ctry')));
+  const syncLabels = () => {
+    const z = map.getZoom();
+    if (z < 4.5) { map.addLayer(contLayer); map.removeLayer(ctryLayer); }
+    else { map.removeLayer(contLayer); map.addLayer(ctryLayer); }
+  };
+  map.on('zoomend', syncLabels);
+  syncLabels();
 
   const countrySet = new Set(trips.flatMap(t => t.countries));
   document.getElementById('stats').innerHTML =
