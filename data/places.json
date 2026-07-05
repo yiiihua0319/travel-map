@@ -2220,7 +2220,7 @@
     {
      "name": "北谷日落步道",
      "url": "https://www.google.com/maps/place/%E5%8C%97%E8%B0%B7%E6%97%A5%E8%90%BD%E6%AD%A5%E9%81%93/data=!4m2!3m1!1s0x34e5130fc51bcc65:0xc0a025ce62c0c1b6",
-     "cat": "sight"
+     "cat": "other"
     },
     {
      "name": "Chatan Park Sunset Beach",
@@ -2313,7 +2313,7 @@
     {
      "name": "永旺 北谷店",
      "url": "https://www.google.com/maps/place/%E6%B0%B8%E6%97%BA+%E5%8C%97%E8%B0%B7%E5%BA%97/data=!4m2!3m1!1s0x34e5131acb45f3ad:0xb845a507478cc433",
-     "cat": "sight"
+     "cat": "other"
     },
     {
      "name": "牛排屋88 北谷店",
@@ -2363,7 +2363,7 @@
     {
      "name": "SAN-A浦添西海岸 PARCO CITY",
      "url": "https://www.google.com/maps/place/SAN-A%E6%B5%A6%E6%B7%BB%E8%A5%BF%E6%B5%B7%E5%B2%B8+PARCO+CITY/data=!4m2!3m1!1s0x34e56b0af61f94c5:0x78aac934fb2b5c0",
-     "cat": "other"
+     "cat": "shop"
     },
     {
      "name": "串焼 當り屋 アタリヤ",
@@ -2424,17 +2424,17 @@
     {
      "name": "GENTLE MONSTER 青山旗艦店",
      "url": "https://www.google.com/maps/place/GENTLE+MONSTER+%E9%9D%92%E5%B1%B1%E6%97%97%E8%89%A6%E5%BA%97/data=!4m2!3m1!1s0x60188b0cedaad37b:0xe3cc8f1e4116409b",
-     "cat": "sight"
+     "cat": "shop"
     },
     {
      "name": "バイレード 伊勢丹新宿店",
      "url": "https://www.google.com/maps/place/%E3%83%90%E3%82%A4%E3%83%AC%E3%83%BC%E3%83%89+%E4%BC%8A%E5%8B%A2%E4%B8%B9%E6%96%B0%E5%AE%BF%E5%BA%97/data=!4m2!3m1!1s0x60188d487393a983:0x28ef044e9cf33953",
-     "cat": "other"
+     "cat": "shop"
     },
     {
      "name": "澀谷LOFT 生活雜貨專門店",
      "url": "https://www.google.com/maps/place/%E6%BE%80%E8%B0%B7LOFT+%E7%94%9F%E6%B4%BB%E9%9B%9C%E8%B2%A8%E5%B0%88%E9%96%80%E5%BA%97/data=!4m2!3m1!1s0x60188ca85add52bf:0xc942f69271e3b8b4",
-     "cat": "sight"
+     "cat": "shop"
     },
     {
      "name": "Afternoon Tea • LOVE & TABLE Omotesando",
@@ -2495,7 +2495,7 @@
     {
      "name": "挽肉與米 (澀谷)",
      "url": "https://www.google.com/maps/place/%E6%8C%BD%E8%82%89%E8%88%87%E7%B1%B3+(%E6%BE%80%E8%B0%B7)/data=!4m2!3m1!1s0x60188df8d07c62b1:0xee7a49e1f085a4f1",
-     "cat": "sight"
+     "cat": "other"
     },
     {
      "name": "Ovo Nipporiten",
@@ -2510,7 +2510,7 @@
     {
      "name": "Patisserie PAROLA 日比谷店",
      "url": "https://www.google.com/maps/place/Patisserie+PAROLA+%E6%97%A5%E6%AF%94%E8%B0%B7%E5%BA%97/data=!4m2!3m1!1s0x60188b924e42b06d:0xcfb2dec8ff9c4e32",
-     "cat": "sight"
+     "cat": "other"
     },
     {
      "name": "YOKU MOKU",
@@ -2555,7 +2555,7 @@
     {
      "name": "橫濱LOFT",
      "url": "https://www.google.com/maps/place/%E6%A9%AB%E6%BF%B1LOFT/data=!4m2!3m1!1s0x60185c149c15555d:0xf4ae62881280cfda",
-     "cat": "other"
+     "cat": "shop"
     },
     {
      "name": "@cosme STORE ルミネ横浜店（アットコスメストア）",
@@ -2648,7 +2648,7 @@
     {
      "name": "銀座LOFT",
      "url": "https://www.google.com/maps/place/%E9%8A%80%E5%BA%A7LOFT/data=!4m2!3m1!1s0x60188be45c99d2a9:0x323ea1310dee9c4c",
-     "cat": "other"
+     "cat": "shop"
     },
     {
      "name": "唐吉訶德 銀座本店",
@@ -2672,13 +2672,13 @@
      "name": "東京迪士尼旗艦店",
      "url": "https://www.google.com/maps/place/%E6%9D%B1%E4%BA%AC%E8%BF%AA%E5%A3%AB%E5%B0%BC%E6%97%97%E8%89%A6%E5%BA%97/data=!4m2!3m1!1s0x60188d4ca91dcd4d:0x1690197cf0618eb2",
      "note": "迪士尼店",
-     "cat": "other"
+     "cat": "shop"
     },
     {
      "name": "迪士尼 新宿高島屋店",
      "url": "https://www.google.com/maps/place/%E8%BF%AA%E5%A3%AB%E5%B0%BC+%E6%96%B0%E5%AE%BF%E9%AB%98%E5%B3%B6%E5%B1%8B%E5%BA%97/data=!4m2!3m1!1s0x60188cc5738077fb:0xced9c6fd620b5b5",
      "note": "迪士尼店",
-     "cat": "sight"
+     "cat": "shop"
     },
     {
      "name": "橡子共和國 東京晴空塔店",
@@ -2787,7 +2787,7 @@
      "name": "極味屋 澀谷PARCO店",
      "url": "https://www.google.com/maps/place/%E6%A5%B5%E5%91%B3%E5%B1%8B+%E6%BE%80%E8%B0%B7PARCO%E5%BA%97/data=!4m2!3m1!1s0x60188ddddb728f6f:0x50c3d97c2a683698",
      "note": "牛肉排",
-     "cat": "sight"
+     "cat": "shop"
     },
     {
      "name": "AFURI 原宿",
@@ -2992,7 +2992,7 @@
      "name": "PARCO 心齋橋",
      "url": "https://www.google.com/maps/place/PARCO+%E5%BF%83%E9%BD%8B%E6%A9%8B/data=!4m2!3m1!1s0x6000e710c66a9f1d:0x3dbc1d54599d7b4b",
      "note": "逛街！",
-     "cat": "sight"
+     "cat": "shop"
     },
     {
      "name": "雲ノ茶KUMONOCHA嵐山店",
@@ -3490,7 +3490,7 @@
      "name": "PARCO 名古屋 西館",
      "url": "https://www.google.com/maps/place/PARCO+%E5%90%8D%E5%8F%A4%E5%B1%8B+%E8%A5%BF%E9%A4%A8/data=!4m2!3m1!1s0x600370cdd115dd11:0x9d044528cebe163d",
      "note": "B1",
-     "cat": "other"
+     "cat": "shop"
     },
     {
      "name": "@cosme STORE Nagoya Takashimaya Gate Tower Mall",
@@ -3510,7 +3510,7 @@
     {
      "name": "Sakae LOFT",
      "url": "https://www.google.com/maps/place/Sakae+LOFT/data=!4m2!3m1!1s0x60037bf99ba9f4fb:0xec5c645e136a0e0b",
-     "cat": "other"
+     "cat": "shop"
     },
     {
      "name": "Bic Camera 名古屋JR Gate Tower店",
@@ -4565,7 +4565,7 @@
     {
      "name": "帝王谷",
      "url": "https://www.google.com/maps/place/%E5%B8%9D%E7%8E%8B%E8%B0%B7/data=!4m2!3m1!1s0x14493d8ab5defed7:0x718fccf6a2e3a9da",
-     "cat": "sight"
+     "cat": "other"
     },
     {
      "name": "Elmodhesh Fish Restaurant",
@@ -6955,7 +6955,7 @@
     {
      "name": "W.H. Lung Supermarket",
      "url": "https://www.google.com/maps/place/W.H.+Lung+Supermarket/data=!4m2!3m1!1s0x487bb18e3c1ace6d:0x505b68c9e32c60eb",
-     "cat": "other"
+     "cat": "shop"
     },
     {
      "name": "The Robert Darbishire Practice",

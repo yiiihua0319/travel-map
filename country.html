@@ -133,16 +133,20 @@ document.getElementById('header').outerHTML = headerHTML('');
 
   if (pins.length) {
     const cmap = L.map('country-map', { scrollWheelZoom: false });
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 14
     }).addTo(cmap);
     const group = [], seen = new Set();
+    let pj = 0;
     for (const p of pins) {
       const key = p.lat + ',' + p.lng;
       if (seen.has(key)) continue; seen.add(key);
-      group.push(L.circleMarker([p.lat, p.lng], {
-        radius: 6, color: '#4a6c8c', weight: 1.5, fillColor: '#4a6c8c', fillOpacity: .55
-      }).addTo(cmap).bindPopup('📍 ' + p.name));
+      const icon = L.divIcon({
+        className: 'cpin',
+        html: `<span class="cpin-i" style="animation-delay:${pj++ * 60}ms">📍</span>`,
+        iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -13]
+      });
+      group.push(L.marker([p.lat, p.lng], { icon }).addTo(cmap).bindPopup('📍 ' + p.name));
     }
     if (group.length === 1) cmap.setView(group[0].getLatLng(), 6);
     else cmap.fitBounds(L.featureGroup(group).getBounds().pad(0.4));
@@ -155,9 +159,15 @@ document.getElementById('header').outerHTML = headerHTML('');
     const CATMETA = { food: ['🍜', '美食'], sight: ['🏞️', '景點'], shop: ['🛍️', '購物'], stay: ['🏨', '住宿'], other: ['📍', '其他'] };
     const catOf = c => CATMETA[c] || CATMETA.other;
 
-    // 每個清單對應到哪幾趟旅程（比對旅程標題是否含城市名；關西 = 京都/神戶/大阪）
+    // 每個清單對應到哪幾趟旅程（比對旅程標題是否含城市名，或別名對照）
+    const LIST_ALIAS = {
+      '京都': ['關西'], '神戶': ['關西'], '大阪': ['關西'],
+      '蘇格蘭': ['愛丁堡'], '夏威夷': ['Hawaii'],
+      'AZ': ['Sedona', '亞利桑那'], 'Chicago': ['芝加哥'],
+      'NYC ORD BOS': ['紐約', '波士頓', '芝加哥'],
+    };
     const matchTrip = (listName, t) =>
-      t.title.includes(listName) || (t.title.includes('關西') && ['京都', '神戶', '大阪'].includes(listName));
+      t.title.includes(listName) || (LIST_ALIAS[listName] || []).some(k => t.title.includes(k));
 
     // 分類統計（全國）
     const catCount = {};
@@ -190,7 +200,8 @@ document.getElementById('header').outerHTML = headerHTML('');
       const cityOKmap = new Map();
       const catN = { all: 0, food: 0, sight: 0, shop: 0, stay: 0, other: 0 };
       for (const ci of cities) {
-        const cityOK = curTabIdx === null || ci.hasAttribute('data-all') ||
+        // 選了城市分頁時只顯示對應清單；沒對到任何旅程的清單（data-all）也一併隱藏
+        const cityOK = curTabIdx === null ||
           (ci.dataset.trips || '').split(',').includes(curTabIdx);
         cityOKmap.set(ci, cityOK);
         if (cityOK) ci.querySelectorAll('li').forEach(li => { catN.all++; catN[li.dataset.cat] = (catN[li.dataset.cat] || 0) + 1; });
@@ -215,6 +226,8 @@ document.getElementById('header').outerHTML = headerHTML('');
         b.classList.toggle('active', k === curCat);
       });
       document.getElementById('pl-count').textContent = (curCat === 'all' ? catN.all : catN[curCat]) + ' 個地點';
+      // 這趟城市完全沒有口袋名單就整段隱藏（例如 Sequoia、郵輪）
+      pv.style.display = catN.all ? '' : 'none';
     };
     pv.querySelectorAll('.pl-cat').forEach(b => b.onclick = () => { curCat = b.dataset.cat; applyPlFilter(); });
     applyPlFilter();
