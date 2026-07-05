@@ -108,6 +108,9 @@ main { padding-top: 56px; }
   display: flex; align-items: center; justify-content: center;
   padding: 20px;
 }
+/* display:flex 會蓋過 hidden 屬性，必須明確關掉 */
+.welcome-backdrop[hidden] { display: none; }
+.about-chip[hidden] { display: none; }
 .welcome-card {
   position: relative;
   width: min(430px, 100%);
