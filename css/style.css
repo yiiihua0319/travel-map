@@ -99,6 +99,94 @@ main { padding-top: 56px; }
 .leaflet-popup-content .pin-trip { color: var(--text-soft); }
 .leaflet-popup-content a { font-weight: 500; }
 
+/* ---------- 歡迎卡（說明書風格） ---------- */
+.welcome-backdrop {
+  position: fixed; inset: 0;
+  z-index: 2000;
+  background: rgba(43,52,64,.35);
+  backdrop-filter: blur(3px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.welcome-card {
+  position: relative;
+  width: min(430px, 100%);
+  max-height: 88vh;
+  overflow-y: auto;
+  background: #fdfcfa;
+  border: 1.5px solid #e3e0da;
+  border-radius: 24px;
+  box-shadow: 0 12px 44px rgba(43,52,64,.22);
+  padding: 30px 28px 26px;
+  text-align: center;
+  animation: wc-pop .35s cubic-bezier(.34,1.4,.64,1) backwards;
+}
+@keyframes wc-pop { from { transform: scale(.92) translateY(10px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .welcome-card { animation: none; } }
+.wc-close {
+  position: absolute; top: 14px; right: 16px;
+  border: none; background: none;
+  font-size: 15px; color: #6b7684;
+  cursor: pointer; padding: 4px 6px;
+  font-family: inherit;
+}
+.wc-close:hover { color: #2b3440; }
+.wc-sticker {
+  width: 62px; height: 62px;
+  margin: 0 auto 12px;
+  display: grid; place-items: center;
+  background: #eef3f8;
+  border-radius: 18px;
+  font-size: 32px;
+  transform: rotate(-4deg);
+}
+.welcome-card h2 { font-size: 20px; font-weight: 800; letter-spacing: .02em; color: #2b3440; }
+.welcome-card h2 em {
+  font-style: normal;
+  background: linear-gradient(transparent 62%, #f2c17d 62%, #f2c17d 92%, transparent 92%);
+  padding: 0 2px;
+}
+.wc-lead { font-size: 14px; color: #2b3440; margin: 12px 0 14px; line-height: 1.8; }
+.wc-tips { display: flex; flex-direction: column; gap: 7px; text-align: left; margin-bottom: 14px; }
+.wc-tips div {
+  background: #eef3f8;
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-size: 13.5px;
+  color: #2b3440;
+}
+.wc-tips span { color: #6b7684; margin-left: 6px; }
+.wc-ask { font-size: 13px; color: #6b7684; margin-bottom: 14px; }
+.wc-actions { display: flex; gap: 9px; justify-content: center; flex-wrap: wrap; }
+.wc-btn {
+  font-family: inherit;
+  font-size: 14px; font-weight: 700;
+  border-radius: 999px;
+  padding: 9px 20px;
+  cursor: pointer;
+  text-decoration: none;
+  border: 1.5px solid transparent;
+}
+.wc-btn.primary { background: #4a6c8c; color: #fff; border-color: #4a6c8c; }
+.wc-btn.primary:hover { opacity: .88; }
+.wc-btn.ig { background: #fff; color: #4a6c8c; border: 1.5px dashed #b9c9d9; }
+.wc-btn.ig:hover { border-color: #4a6c8c; opacity: 1; }
+.about-chip {
+  position: fixed;
+  right: 18px; bottom: 22px;
+  z-index: 950;
+  font-family: inherit;
+  font-size: 13px; font-weight: 600;
+  color: #4a6c8c;
+  background: rgba(255,255,255,.95);
+  border: 1.5px dashed #b9c9d9;
+  border-radius: 999px;
+  padding: 8px 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+}
+.about-chip:hover { border-color: #4a6c8c; }
+
 /* ---------- shared page container ---------- */
 .container { max-width: 760px; margin: 0 auto; padding: 40px 20px 80px; }
 .page-title { font-size: 26px; font-weight: 700; letter-spacing: .02em; margin-bottom: 6px; }

@@ -14,11 +14,45 @@
 <div id="map"></div>
 <div class="map-stats" id="stats">載入中…</div>
 
+<!-- 歡迎卡（說明書風格）：首次來訪自動顯示，之後可用右下角 📖 再打開 -->
+<div class="welcome-backdrop" id="welcome" hidden>
+  <div class="welcome-card" role="dialog" aria-labelledby="wc-title">
+    <button class="wc-close" id="wc-close" aria-label="關閉">✕</button>
+    <div class="wc-sticker">🗺️</div>
+    <h2 id="wc-title">歡迎來到 <em>Eva's Travel Map</em> ✈️</h2>
+    <p class="wc-lead">這裡收藏了我 <b>38 個國家、48 趟旅程</b>的回憶——行程、花費、口袋名單、遊記，全部整理在這張地圖上。</p>
+    <div class="wc-tips">
+      <div>🌍 <b>點國旗圖釘</b><span>看那一趟的完整紀錄</span></div>
+      <div>📍 <b>口袋名單</b><span>我存過的美食、景點、購物清單</span></div>
+      <div>✍️ <b>遊記</b><span>各國的故事慢慢讀</span></div>
+    </div>
+    <p class="wc-ask">有建議或想看的內容嗎？來 IG 跟我說 💬</p>
+    <div class="wc-actions">
+      <button class="wc-btn primary" id="wc-go">開始探索 🧭</button>
+      <a class="wc-btn ig" href="https://www.instagram.com/yiiihua_0319/" target="_blank" rel="noopener">📸 @yiiihua_0319</a>
+    </div>
+  </div>
+</div>
+<button class="about-chip" id="about-chip" hidden>📖 關於這裡</button>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script src="js/common.js"></script>
 <script>
 document.getElementById('header').outerHTML = headerHTML('map');
+
+// ── 歡迎卡：第一次來訪自動打開，之後右下角 📖 隨時可再看 ──
+{
+  const wc = document.getElementById('welcome');
+  const chip = document.getElementById('about-chip');
+  const open = () => { wc.hidden = false; chip.hidden = true; };
+  const close = () => { wc.hidden = true; chip.hidden = false; localStorage.setItem('tm_welcome_seen', '1'); };
+  if (localStorage.getItem('tm_welcome_seen')) chip.hidden = false; else open();
+  document.getElementById('wc-go').onclick = close;
+  document.getElementById('wc-close').onclick = close;
+  wc.addEventListener('click', e => { if (e.target === wc) close(); });
+  chip.onclick = open;
+}
 
 (async () => {
   const [tripsData, countries] = await Promise.all([
