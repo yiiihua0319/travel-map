@@ -79,7 +79,22 @@
      "cc": "JP"
     }
    ],
-   "notionId": "322bcb733ca5473aa20dca699f5be731"
+   "notionId": "322bcb733ca5473aa20dca699f5be731",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "食物": 8514,
+     "日常所需": 3868,
+     "交通": 4717,
+     "娛樂": 9021,
+     "美妝": 1095,
+     "歐米呀給": 286,
+     "其他": 300,
+     "住宿": 5733,
+     "機票": 4870
+    },
+    "note": "含日幣支出，已換算台幣"
+   }
   },
   {
    "id": "2023-nagoya",
@@ -97,7 +112,20 @@
      "cc": "JP"
     }
    ],
-   "notionId": "2fbd32c3f1874fd59d0ac6abeb7c36df"
+   "notionId": "2fbd32c3f1874fd59d0ac6abeb7c36df",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "交通": 5036,
+     "食物": 5314,
+     "娛樂": 5705,
+     "美妝": 3884,
+     "其他": 1427,
+     "住宿": 6315,
+     "機票": 7307
+    },
+    "note": "含日幣支出，已換算台幣"
+   }
   },
   {
    "id": "2023-beijing-chengdu",
@@ -139,7 +167,18 @@
      "cc": "JP"
     }
    ],
-   "notionId": "e8b64b47a69243049e5ca0b5657e805e"
+   "notionId": "e8b64b47a69243049e5ca0b5657e805e",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "交通": 15516,
+     "食物": 7032,
+     "其他": 7446,
+     "娛樂": 3601,
+     "住宿": 11598
+    },
+    "note": "含日幣支出，已換算台幣"
+   }
   },
   {
    "id": "2023-munich",
@@ -157,7 +196,18 @@
      "cc": "DE"
     }
    ],
-   "notionId": "25ac0a3fce6941469d3eb1bdc50de2f3"
+   "notionId": "25ac0a3fce6941469d3eb1bdc50de2f3",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "交通": 6690,
+     "食物": 1659,
+     "娛樂": 1068,
+     "其他": 224,
+     "住宿": 129
+    },
+    "note": "含歐元支出，已換算台幣"
+   }
   },
   {
    "id": "2023-paris",
@@ -175,7 +225,18 @@
      "cc": "FR"
     }
    ],
-   "notionId": "500366efb5b2400e9de4d7dbf94a0eef"
+   "notionId": "500366efb5b2400e9de4d7dbf94a0eef",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "住宿": 2380,
+     "娛樂": 3349,
+     "購物": 306,
+     "交通": 5986,
+     "食物": 1971
+    },
+    "note": "含歐元/英鎊支出，已換算台幣"
+   }
   },
   {
    "id": "2023-uk-nl-de",
@@ -251,7 +312,17 @@
      "cc": "DE"
     }
    ],
-   "notionId": "f7f7bf6c615648febfa547fb514d3179"
+   "notionId": "f7f7bf6c615648febfa547fb514d3179",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "交通": 19676,
+     "食物": 5636,
+     "娛樂": 61,
+     "其他": 58
+    },
+    "note": "含歐元/英鎊支出，已換算台幣"
+   }
   },
   {
    "id": "2023-barcelona",
@@ -301,7 +372,18 @@
      "cc": "DE"
     }
    ],
-   "notionId": "449752807e7a4a43be2b52d0ae0006a2"
+   "notionId": "449752807e7a4a43be2b52d0ae0006a2",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "食物": 4799,
+     "娛樂": 947,
+     "其他": 2703,
+     "交通": 6931,
+     "住宿": 544
+    },
+    "note": "含歐元/英鎊支出，已換算台幣"
+   }
   },
   {
    "id": "2023-copenhagen",
@@ -319,7 +401,16 @@
      "cc": "DK"
     }
    ],
-   "notionId": "c4a68c2b03044bc2b83c3fb7721dc0d0"
+   "notionId": "c4a68c2b03044bc2b83c3fb7721dc0d0",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "交通": 4678,
+     "食物": 2426,
+     "娛樂": 359
+    },
+    "note": "含丹麥克朗/歐元/英鎊支出，已換算台幣"
+   }
   },
   {
    "id": "2023-be-lu-hu-at",
@@ -358,7 +449,17 @@
      "cc": "AT"
     }
    ],
-   "notionId": "134f279572a644fdb9a8de3b2ed7bb40"
+   "notionId": "134f279572a644fdb9a8de3b2ed7bb40",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "其他": 164,
+     "食物": 3714,
+     "交通": 7124,
+     "住宿": 774
+    },
+    "note": "含歐元/英鎊支出，已換算台幣"
+   }
   },
   {
    "id": "2023-oxford",
@@ -376,7 +477,15 @@
      "cc": "GB"
     }
    ],
-   "notionId": "59d8884cdcb54fda93289ce2f5dee066"
+   "notionId": "59d8884cdcb54fda93289ce2f5dee066",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "娛樂": 1042,
+     "食物": 416
+    },
+    "note": "含英鎊支出，已換算台幣"
+   }
   },
   {
    "id": "2023-rome",
@@ -421,7 +530,17 @@
      "cc": "PT"
     }
    ],
-   "notionId": "5506527a24614884813c3a4bcd068804"
+   "notionId": "5506527a24614884813c3a4bcd068804",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "交通": 3008,
+     "食物": 4182,
+     "娛樂": 595,
+     "住宿": 3149
+    },
+    "note": "含歐元/英鎊支出，已換算台幣"
+   }
   },
   {
    "id": "2023-france-ski",
@@ -439,7 +558,18 @@
      "cc": "FR"
     }
    ],
-   "notionId": "a78fc5fbe93746d9b0bb9ee538993de3"
+   "notionId": "a78fc5fbe93746d9b0bb9ee538993de3",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "交通": 33641,
+     "娛樂": 603,
+     "住宿": 1938,
+     "食物": 1720,
+     "其他": 524
+    },
+    "note": "含歐元/英鎊支出，已換算台幣"
+   }
   },
   {
    "id": "2023-de-cz-fr-ch",
@@ -516,7 +646,18 @@
      "cc": "SK"
     }
    ],
-   "notionId": "6688c3ba39314e9db196b75bba703a4d"
+   "notionId": "6688c3ba39314e9db196b75bba703a4d",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "交通": 10606,
+     "住宿": 14882,
+     "食物": 7481,
+     "娛樂": 3993,
+     "其他": 1078
+    },
+    "note": "含歐元/英鎊支出，已換算台幣"
+   }
   },
   {
    "id": "2024-italy",
@@ -621,7 +762,18 @@
      "cc": "GB"
     }
    ],
-   "notionId": "7dd37b74fff6428c8d64e0b41fc21ac1"
+   "notionId": "7dd37b74fff6428c8d64e0b41fc21ac1",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "住宿": 2400,
+     "娛樂": 5050,
+     "食物": 3489,
+     "其他": 760,
+     "交通": 828
+    },
+    "note": "含英鎊支出，已換算台幣"
+   }
   },
   {
    "id": "2024-edinburgh",
@@ -665,7 +817,16 @@
      "cc": "GB"
     }
    ],
-   "notionId": "525b434f5ac04abcbb584d0f7cc438ef"
+   "notionId": "525b434f5ac04abcbb584d0f7cc438ef",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "交通": 80,
+     "娛樂": 924,
+     "食物": 1020
+    },
+    "note": "含英鎊支出，已換算台幣"
+   }
   },
   {
    "id": "2024-malta",
@@ -710,7 +871,18 @@
      "cc": "IS"
     }
    ],
-   "notionId": "2b332176a0c34782bea067d37606a691"
+   "notionId": "2b332176a0c34782bea067d37606a691",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "住宿": 8933,
+     "娛樂": 9291,
+     "食物": 2438,
+     "交通": 53866,
+     "其他": 1104
+    },
+    "note": "含冰島克朗/歐元/英鎊支出，已換算台幣"
+   }
   },
   {
    "id": "2024-ireland",
@@ -735,7 +907,18 @@
      "cc": "GB"
     }
    ],
-   "notionId": "f67719ec799c40f2a1646011de3c0b80"
+   "notionId": "f67719ec799c40f2a1646011de3c0b80",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "交通": 3484,
+     "娛樂": 2907,
+     "食物": 2171,
+     "其他": 339,
+     "住宿": 5104
+    },
+    "note": "含歐元/英鎊支出，已換算台幣"
+   }
   },
   {
    "id": "2024-baltics",
@@ -787,7 +970,17 @@
      "cc": "PL"
     }
    ],
-   "notionId": "e0c4a723a3fa474d92ffa4a2eafeb6a0"
+   "notionId": "e0c4a723a3fa474d92ffa4a2eafeb6a0",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "交通": 5557,
+     "娛樂": 1478,
+     "食物": 2105,
+     "住宿": 2060
+    },
+    "note": "含歐元/英鎊支出，已換算台幣"
+   }
   },
   {
    "id": "2024-croatia",
@@ -829,7 +1022,18 @@
      "cc": "HR"
     }
    ],
-   "notionId": "3319eeaa8c33420f8f8a380e10e3020d"
+   "notionId": "3319eeaa8c33420f8f8a380e10e3020d",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "交通": 10476,
+     "娛樂": 5389,
+     "食物": 2489,
+     "住宿": 2875,
+     "其他": 126
+    },
+    "note": "含歐元/英鎊支出，已換算台幣"
+   }
   },
   {
    "id": "2024-greece",
@@ -853,7 +1057,17 @@
      "cc": "GR"
     }
    ],
-   "notionId": "fccb6ca2af72416a997ed5cf8bb3d1ad"
+   "notionId": "fccb6ca2af72416a997ed5cf8bb3d1ad",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "交通": 7679,
+     "食物": 3420,
+     "娛樂": 860,
+     "住宿": 3652
+    },
+    "note": "含歐元/英鎊支出，已換算台幣"
+   }
   },
   {
    "id": "2024-nice-monaco",
@@ -890,7 +1104,17 @@
      "cc": "FR"
     }
    ],
-   "notionId": "0f8c816270cc4269aec505e096a17e10"
+   "notionId": "0f8c816270cc4269aec505e096a17e10",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "交通": 2592,
+     "食物": 2159,
+     "娛樂": 1105,
+     "住宿": 3083
+    },
+    "note": "含歐元/英鎊支出，已換算台幣"
+   }
   },
   {
    "id": "2024-llandudno",
@@ -964,7 +1188,16 @@
      "cc": "TR"
     }
    ],
-   "notionId": "f0d430535a4d41eaab269051c6e24f5f"
+   "notionId": "f0d430535a4d41eaab269051c6e24f5f",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "交通": 6159,
+     "食物": 520,
+     "其他": 3345
+    },
+    "note": "含歐元/英鎊支出，已換算台幣"
+   }
   },
   {
    "id": "2024-hongkong",
@@ -982,7 +1215,14 @@
      "cc": "HK"
     }
    ],
-   "notionId": "7d45cbaab1164b82a01c4a7f21fc5946"
+   "notionId": "7d45cbaab1164b82a01c4a7f21fc5946",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "交通": 4261
+    },
+    "note": "台幣支出"
+   }
   },
   {
    "id": "2024-us-west",
@@ -1018,7 +1258,16 @@
      "cc": "US"
     }
    ],
-   "notionId": "145ee7c056988097932cd319494dbd2c"
+   "notionId": "145ee7c056988097932cd319494dbd2c",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "食物": 13911,
+     "機票": 31049,
+     "其他": 1348
+    },
+    "note": "含美元支出，已換算台幣"
+   }
   },
   {
    "id": "2025-hokkaido",
@@ -1066,7 +1315,19 @@
      "cc": "CN"
     }
    ],
-   "notionId": "1c9ee7c0569880a98998f747902f35e9"
+   "notionId": "1c9ee7c0569880a98998f747902f35e9",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "交通": 10388,
+     "食物": 3641,
+     "購物": 2884,
+     "娛樂": 3168,
+     "其他": 1029,
+     "住宿": 5591
+    },
+    "note": "含人民幣支出，已換算台幣"
+   }
   },
   {
    "id": "2025-busan",
@@ -1084,7 +1345,18 @@
      "cc": "KR"
     }
    ],
-   "notionId": "1ebee7c056988085a9fadc99e21ed94f"
+   "notionId": "1ebee7c056988085a9fadc99e21ed94f",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "娛樂": 16619,
+     "交通": 6065,
+     "食物": 7233,
+     "其他": 2094,
+     "住宿": 3346
+    },
+    "note": "含韓元支出，已換算台幣"
+   }
   },
   {
    "id": "2025-okinawa",

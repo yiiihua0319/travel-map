@@ -6,6 +6,7 @@
 <title>Eva's Travel Map ✈️</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -14,6 +15,7 @@
 <div class="map-stats" id="stats">載入中…</div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script src="js/common.js"></script>
 <script>
 document.getElementById('header').outerHTML = headerHTML('map');
@@ -43,6 +45,22 @@ document.getElementById('header').outerHTML = headerHTML('map');
     }
   }
 
+  // 擠在一起的圖釘聚成小球：同國→該國旗、全歐洲→🇪🇺、跨洲→🌏
+  const EU = new Set(['GB','FR','DE','IT','ES','PT','NL','BE','LU','AT','CH','CZ','SK','HU','PL','DK','SE','NO','FI','IS','IE','EE','LV','LT','HR','GR','MT','MC','VA','LI','TR']);
+  const cluster = L.markerClusterGroup({
+    maxClusterRadius: 42,
+    showCoverageOnHover: false,
+    iconCreateFunction: c => {
+      const ccs = [...new Set(c.getAllChildMarkers().map(m => m.options.cc).filter(Boolean))];
+      const emoji = ccs.length === 1 ? flagEmoji(ccs[0]) : (ccs.every(x => EU.has(x)) ? '🇪🇺' : '🌏');
+      return L.divIcon({
+        className: 'cpin',
+        html: `<span class="cpin-i cclu">${emoji}<b>${c.getChildCount()}</b></span>`,
+        iconSize: [38, 38], iconAnchor: [19, 19]
+      });
+    }
+  });
+
   let pi = 0;
   for (const city of cityMap.values()) {
     // 國旗小圓釘 + 錯落彈出動畫
@@ -51,7 +69,8 @@ document.getElementById('header').outerHTML = headerHTML('map');
       html: `<span class="cpin-i" style="animation-delay:${Math.min(pi++ * 12, 1200)}ms">${city.cc ? flagEmoji(city.cc) : '✈️'}</span>`,
       iconSize: [30, 30], iconAnchor: [15, 15], popupAnchor: [0, -14]
     });
-    const marker = L.marker([city.lat, city.lng], { icon }).addTo(map);
+    const marker = L.marker([city.lat, city.lng], { icon, cc: city.cc });
+    cluster.addLayer(marker);
     const rows = city.trips.map(t => {
       // 只連到這個城市所屬的國家（多國旅程不再列出全部國家）
       const ccs = city.cc ? [city.cc] : t.countries;
@@ -61,6 +80,7 @@ document.getElementById('header').outerHTML = headerHTML('map');
     }).join('<hr style="border:none;border-top:1px solid #eee;margin:6px 0">');
     marker.bindPopup(`<div class="pin-city">📍 ${city.name}</div>${rows}`);
   }
+  map.addLayer(cluster);
 
   const countrySet = new Set(trips.flatMap(t => t.countries));
   document.getElementById('stats').innerHTML =
