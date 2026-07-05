@@ -65,6 +65,9 @@ document.getElementById('header').outerHTML = headerHTML('');
   };
   const tabsEl = document.getElementById('trip-tabs');
   const panesEl = document.getElementById('trip-panes');
+  let curTabIdx = myTrips.length > 1 ? '0' : null;   // 目前選中的城市分頁（null=單趟，不篩選）
+  let curCat = 'all';                                 // 目前選中的分類
+  let applyPlFilter = () => {};                        // 由口袋名單區塊指派
   if (myTrips.length > 1) {
     tabsEl.innerHTML = '<div class="tab-bar">' + myTrips.map((t, i) =>
       `<button class="tab-chip${i === 0 ? ' active' : ''}" data-i="${i}">${tabLabel(t)}</button>`).join('') + '</div>';
@@ -111,6 +114,8 @@ document.getElementById('header').outerHTML = headerHTML('');
     btn.classList.add('active');
     panesEl.querySelectorAll('.trip-pane').forEach(p =>
       p.style.display = p.dataset.i === btn.dataset.i ? '' : 'none');
+    curTabIdx = btn.dataset.i;
+    applyPlFilter();   // 口袋名單同步只顯示這個城市
   });
 
   // ── 造訪地點小地圖 + 照片 ──
@@ -146,18 +151,61 @@ document.getElementById('header').outerHTML = headerHTML('');
   const pv = document.getElementById('places');
   const groups = placesData[code] || [];
   if (groups.length) {
+    const CATMETA = { food: ['🍜', '美食'], sight: ['🏞️', '景點'], shop: ['🛍️', '購物'], stay: ['🏨', '住宿'], other: ['📍', '其他'] };
+    const catOf = c => CATMETA[c] || CATMETA.other;
+
+    // 每個清單對應到哪幾趟旅程（比對旅程標題是否含城市名；關西 = 京都/神戶/大阪）
+    const matchTrip = (listName, t) =>
+      t.title.includes(listName) || (t.title.includes('關西') && ['京都', '神戶', '大阪'].includes(listName));
+
+    // 分類統計（全國）
+    const catCount = {};
+    for (const g of groups) for (const p of g.places) catCount[p.cat] = (catCount[p.cat] || 0) + 1;
     const totalP = groups.reduce((s, g) => s + g.places.length, 0);
-    let ph = `<h2 class="sec-title">📍 我的口袋名單 <span class="pl-count">${totalP} 個地點</span></h2>`;
-    ph += '<div class="pl-groups">';
+
+    let ph = `<h2 class="sec-title">📍 我的口袋名單 <span class="pl-count" id="pl-count">${totalP} 個地點</span></h2>`;
+    // 分類篩選列
+    ph += '<div class="pl-cat-bar"><button class="pl-cat active" data-cat="all">全部</button>';
+    for (const k of ['food', 'sight', 'shop', 'stay', 'other'])
+      if (catCount[k]) ph += `<button class="pl-cat" data-cat="${k}">${catOf(k)[0]} ${catOf(k)[1]} <span class="pl-catn">${catCount[k]}</span></button>`;
+    ph += '</div><div class="pl-groups">';
+
     for (const g of groups) {
-      ph += `<details class="pl-group"${groups.length <= 2 ? ' open' : ''}>
+      const idxs = myTrips.map((t, i) => matchTrip(g.list, t) ? i : -1).filter(i => i >= 0);
+      const attr = idxs.length ? ` data-trips="${idxs.join(',')}"` : ' data-all';
+      ph += `<details class="pl-group"${groups.length <= 2 ? ' open' : ''}${attr}>
         <summary>${g.list}<span class="pl-n">${g.places.length}</span></summary>
         <ul class="pl-list">` +
-        g.places.map(p => `<li><a href="${p.url}" target="_blank" rel="noopener">${p.name}</a>${p.note ? `<span class="pl-note">${p.note}</span>` : ''}</li>`).join('') +
+        g.places.map(p => `<li data-cat="${p.cat || 'other'}"><span class="pl-emoji">${catOf(p.cat)[0]}</span><a href="${p.url}" target="_blank" rel="noopener">${p.name}</a>${p.note ? `<span class="pl-note">${p.note}</span>` : ''}</li>`).join('') +
         '</ul></details>';
     }
     ph += '</div>';
     pv.innerHTML = ph;
+
+    // 篩選：城市（分頁）＋分類（篩選列）
+    applyPlFilter = () => {
+      let shown = 0;
+      pv.querySelectorAll('.pl-group').forEach(gr => {
+        const cityOK = curTabIdx === null || gr.hasAttribute('data-all') ||
+          (gr.dataset.trips || '').split(',').includes(curTabIdx);
+        let liShown = 0;
+        gr.querySelectorAll('li').forEach(li => {
+          const vis = cityOK && (curCat === 'all' || li.dataset.cat === curCat);
+          li.style.display = vis ? '' : 'none';
+          if (vis) { liShown++; shown++; }
+        });
+        gr.style.display = (cityOK && liShown) ? '' : 'none';
+        gr.querySelector('.pl-n').textContent = liShown;
+      });
+      document.getElementById('pl-count').textContent = shown + ' 個地點';
+    };
+    pv.querySelectorAll('.pl-cat').forEach(b => b.onclick = () => {
+      pv.querySelectorAll('.pl-cat').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      curCat = b.dataset.cat;
+      applyPlFilter();
+    });
+    applyPlFilter();
   }
 
   // ── 未對應到旅程的遊記 ──
