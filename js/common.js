@@ -153,7 +153,6 @@ function headerHTML(active) {
     <nav>
       <a href="index.html" class="${active === 'map' ? 'active' : ''}">地圖</a>
       <a href="list.html" class="${active === 'list' ? 'active' : ''}">旅程列表</a>
-      <a href="stats.html" class="${active === 'stats' ? 'active' : ''}">統計</a>
     </nav>
   </header>`;
 }
