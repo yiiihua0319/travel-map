@@ -121,7 +121,8 @@ document.getElementById('header').outerHTML = headerHTML('');
   // ── 造訪地點小地圖 + 照片 ──
   const mp = document.getElementById('map-photo');
   const pins = [];
-  for (const t of myTrips) for (const c of (t.cities || [])) pins.push(c);
+  // 多國旅程只取屬於這個國家的城市（沒標 cc 的舊資料照舊顯示）
+  for (const t of myTrips) for (const c of (t.cities || [])) if (!c.cc || c.cc === code) pins.push(c);
   let mpHTML = '';
   if (pins.length) mpHTML += '<h2 class="sec-title">🗺️ 造訪地點</h2><div id="country-map"></div>';
   if (info.images?.length) {
