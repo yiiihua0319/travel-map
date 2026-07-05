@@ -45,14 +45,15 @@ document.getElementById('header').outerHTML = headerHTML('map');
     }
   }
 
-  // 擠在一起的圖釘聚成小球：同國→該國旗、全歐洲→🇪🇺、跨洲→🌏
-  const EU = new Set(['GB','FR','DE','IT','ES','PT','NL','BE','LU','AT','CH','CZ','SK','HU','PL','DK','SE','NO','FI','IS','IE','EE','LV','LT','HR','GR','MT','MC','VA','LI','TR']);
+  // 擠在一起的圖釘聚成小球：顯示成員中最多城市的那國國旗 + 右下數字
   const cluster = L.markerClusterGroup({
     maxClusterRadius: 42,
     showCoverageOnHover: false,
     iconCreateFunction: c => {
-      const ccs = [...new Set(c.getAllChildMarkers().map(m => m.options.cc).filter(Boolean))];
-      const emoji = ccs.length === 1 ? flagEmoji(ccs[0]) : (ccs.every(x => EU.has(x)) ? '🇪🇺' : '🌏');
+      const freq = {};
+      for (const m of c.getAllChildMarkers()) if (m.options.cc) freq[m.options.cc] = (freq[m.options.cc] || 0) + 1;
+      const top = Object.keys(freq).sort((a, b) => freq[b] - freq[a])[0];
+      const emoji = top ? flagEmoji(top) : '✈️';
       return L.divIcon({
         className: 'cpin',
         html: `<span class="cpin-i cclu">${emoji}<b>${c.getChildCount()}</b></span>`,
