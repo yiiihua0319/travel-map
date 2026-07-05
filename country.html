@@ -164,47 +164,58 @@ document.getElementById('header').outerHTML = headerHTML('');
     const totalP = groups.reduce((s, g) => s + g.places.length, 0);
 
     let ph = `<h2 class="sec-title">📍 我的口袋名單 <span class="pl-count" id="pl-count">${totalP} 個地點</span></h2>`;
-    // 分類篩選列
-    ph += '<div class="pl-cat-bar"><button class="pl-cat active" data-cat="all">全部</button>';
+    // 分類分頁（美食 / 景點 / 購物…當作 tab），數量會依所選城市即時更新
+    ph += '<div class="pl-cat-bar"><button class="pl-cat active" data-cat="all">全部 <span class="pl-catn"></span></button>';
     for (const k of ['food', 'sight', 'shop', 'stay', 'other'])
-      if (catCount[k]) ph += `<button class="pl-cat" data-cat="${k}">${catOf(k)[0]} ${catOf(k)[1]} <span class="pl-catn">${catCount[k]}</span></button>`;
-    ph += '</div><div class="pl-groups">';
+      if (catCount[k]) ph += `<button class="pl-cat" data-cat="${k}">${catOf(k)[0]} ${catOf(k)[1]} <span class="pl-catn"></span></button>`;
+    ph += '</div><div class="pl-flat">';
 
+    // 每個城市清單直接攤平顯示（不需展開）；城市小標只在同時出現多個城市時才有意義
     for (const g of groups) {
       const idxs = myTrips.map((t, i) => matchTrip(g.list, t) ? i : -1).filter(i => i >= 0);
       const attr = idxs.length ? ` data-trips="${idxs.join(',')}"` : ' data-all';
-      ph += `<details class="pl-group"${groups.length <= 2 ? ' open' : ''}${attr}>
-        <summary>${g.list}<span class="pl-n">${g.places.length}</span></summary>
+      ph += `<div class="pl-city"${attr}>
+        <div class="pl-city-h">${g.list}<span class="pl-n">${g.places.length}</span></div>
         <ul class="pl-list">` +
         g.places.map(p => `<li data-cat="${p.cat || 'other'}"><span class="pl-emoji">${catOf(p.cat)[0]}</span><a href="${p.url}" target="_blank" rel="noopener">${p.name}</a>${p.note ? `<span class="pl-note">${p.note}</span>` : ''}</li>`).join('') +
-        '</ul></details>';
+        '</ul></div>';
     }
     ph += '</div>';
     pv.innerHTML = ph;
 
-    // 篩選：城市（分頁）＋分類（篩選列）
+    // 篩選：城市（上方旅程分頁）＋分類（分類分頁）。分類數量隨城市即時重算
     applyPlFilter = () => {
-      let shown = 0;
-      pv.querySelectorAll('.pl-group').forEach(gr => {
-        const cityOK = curTabIdx === null || gr.hasAttribute('data-all') ||
-          (gr.dataset.trips || '').split(',').includes(curTabIdx);
-        let liShown = 0;
-        gr.querySelectorAll('li').forEach(li => {
+      const cities = [...pv.querySelectorAll('.pl-city')];
+      const cityOKmap = new Map();
+      const catN = { all: 0, food: 0, sight: 0, shop: 0, stay: 0, other: 0 };
+      for (const ci of cities) {
+        const cityOK = curTabIdx === null || ci.hasAttribute('data-all') ||
+          (ci.dataset.trips || '').split(',').includes(curTabIdx);
+        cityOKmap.set(ci, cityOK);
+        if (cityOK) ci.querySelectorAll('li').forEach(li => { catN.all++; catN[li.dataset.cat] = (catN[li.dataset.cat] || 0) + 1; });
+      }
+      // 若目前分類在這個城市沒有資料，退回「全部」
+      if (curCat !== 'all' && !catN[curCat]) curCat = 'all';
+      for (const ci of cities) {
+        const cityOK = cityOKmap.get(ci);
+        let vc = 0;
+        ci.querySelectorAll('li').forEach(li => {
           const vis = cityOK && (curCat === 'all' || li.dataset.cat === curCat);
           li.style.display = vis ? '' : 'none';
-          if (vis) { liShown++; shown++; }
+          if (vis) vc++;
         });
-        gr.style.display = (cityOK && liShown) ? '' : 'none';
-        gr.querySelector('.pl-n').textContent = liShown;
+        ci.style.display = (cityOK && vc) ? '' : 'none';
+        ci.querySelector('.pl-n').textContent = vc;
+      }
+      pv.querySelectorAll('.pl-cat').forEach(b => {
+        const k = b.dataset.cat, n = k === 'all' ? catN.all : (catN[k] || 0);
+        b.querySelector('.pl-catn').textContent = n;
+        b.style.display = (k === 'all' || n) ? '' : 'none';
+        b.classList.toggle('active', k === curCat);
       });
-      document.getElementById('pl-count').textContent = shown + ' 個地點';
+      document.getElementById('pl-count').textContent = (curCat === 'all' ? catN.all : catN[curCat]) + ' 個地點';
     };
-    pv.querySelectorAll('.pl-cat').forEach(b => b.onclick = () => {
-      pv.querySelectorAll('.pl-cat').forEach(x => x.classList.remove('active'));
-      b.classList.add('active');
-      curCat = b.dataset.cat;
-      applyPlFilter();
-    });
+    pv.querySelectorAll('.pl-cat').forEach(b => b.onclick = () => { curCat = b.dataset.cat; applyPlFilter(); });
     applyPlFilter();
   }
 
