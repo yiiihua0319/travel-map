@@ -188,15 +188,32 @@ document.getElementById('header').outerHTML = headerHTML('');
       ph += `<div class="pl-city"${attr}>
         <div class="pl-city-h">${g.list}<span class="pl-n">${g.places.length}</span></div>
         <ul class="pl-list">` +
-        g.places.map(p => `<li data-cat="${p.cat || 'other'}"><span class="pl-emoji">${catOf(p.cat)[0]}</span><a href="${p.url}" target="_blank" rel="noopener">${p.name}</a>${p.note ? `<span class="pl-note">${p.note}</span>` : ''}</li>`).join('') +
+        g.places.map(p => `<li data-cat="${p.cat || 'other'}"${p.ll ? ` data-ll="${p.ll[0]},${p.ll[1]}"` : ''}><span class="pl-emoji">${catOf(p.cat)[0]}</span><a href="${p.url}" target="_blank" rel="noopener">${p.name}</a>${p.note ? `<span class="pl-note">${p.note}</span>` : ''}</li>`).join('') +
         '</ul></div>';
     }
     ph += '</div>';
     pv.innerHTML = ph;
 
-    // 篩選：城市（上方旅程分頁）＋分類（分類分頁）。分類數量隨城市即時重算
+    // 兩點距離（km，haversine 簡化版）
+    const distKm = (a, b) => {
+      const R = 6371, d2r = Math.PI / 180;
+      const dLat = (b[0] - a[0]) * d2r, dLng = (b[1] - a[1]) * d2r;
+      const h = Math.sin(dLat / 2) ** 2 + Math.cos(a[0] * d2r) * Math.cos(b[0] * d2r) * Math.sin(dLng / 2) ** 2;
+      return 2 * R * Math.asin(Math.sqrt(h));
+    };
+    const NEAR_KM = 150; // 地點距離該趟任一城市 150km 內才算「這趟的」
+
+    // 篩選：城市（上方旅程分頁）＋地理距離＋分類。分類數量隨城市即時重算
     applyPlFilter = () => {
       const cities = [...pv.querySelectorAll('.pl-city')];
+      // 選中旅程的城市座標（單趟國家不做距離過濾）
+      const tripCities = curTabIdx === null ? null :
+        (myTrips[+curTabIdx].cities || []).filter(c => c.lat != null).map(c => [c.lat, c.lng]);
+      const nearOK = li => {
+        if (!tripCities || !tripCities.length || !li.dataset.ll) return true; // 沒座標的地點放行
+        const ll = li.dataset.ll.split(',').map(Number);
+        return tripCities.some(c => distKm(c, ll) <= NEAR_KM);
+      };
       const cityOKmap = new Map();
       const catN = { all: 0, food: 0, sight: 0, shop: 0, stay: 0, other: 0 };
       for (const ci of cities) {
@@ -204,7 +221,10 @@ document.getElementById('header').outerHTML = headerHTML('');
         const cityOK = curTabIdx === null ||
           (ci.dataset.trips || '').split(',').includes(curTabIdx);
         cityOKmap.set(ci, cityOK);
-        if (cityOK) ci.querySelectorAll('li').forEach(li => { catN.all++; catN[li.dataset.cat] = (catN[li.dataset.cat] || 0) + 1; });
+        if (cityOK) ci.querySelectorAll('li').forEach(li => {
+          if (!nearOK(li)) return;
+          catN.all++; catN[li.dataset.cat] = (catN[li.dataset.cat] || 0) + 1;
+        });
       }
       // 若目前分類在這個城市沒有資料，退回「全部」
       if (curCat !== 'all' && !catN[curCat]) curCat = 'all';
@@ -212,7 +232,7 @@ document.getElementById('header').outerHTML = headerHTML('');
         const cityOK = cityOKmap.get(ci);
         let vc = 0;
         ci.querySelectorAll('li').forEach(li => {
-          const vis = cityOK && (curCat === 'all' || li.dataset.cat === curCat);
+          const vis = cityOK && nearOK(li) && (curCat === 'all' || li.dataset.cat === curCat);
           li.style.display = vis ? '' : 'none';
           if (vis) vc++;
         });
