@@ -68,10 +68,13 @@ document.getElementById('header').outerHTML = headerHTML('map');
 
   const map = L.map('map', { worldCopyJump: true, zoomControl: true })
     .setView([30, 40], 2.4);
-  // voyager 底圖比 light 多一點顏色，更活潑
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; OpenStreetMap &copy; CARTO',
+  // voyager 無標籤底圖 + Esri 英文地名（CARTO 原版標籤混簡體中文）
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap &copy; CARTO &copy; Esri',
     maxZoom: 12
+  }).addTo(map);
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: 12, opacity: .85
   }).addTo(map);
 
   // 依城市合併圖釘
