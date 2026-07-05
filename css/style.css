@@ -176,7 +176,9 @@ main { padding-top: 56px; }
 .wc-btn.ig:hover { border-color: #4a6c8c; opacity: 1; }
 .about-chip {
   position: fixed;
-  right: 18px; bottom: 22px;
+  right: 16px;
+  /* 手機瀏覽器底部工具列會蓋住頁面下緣，墊高＋安全區域 */
+  bottom: calc(30px + env(safe-area-inset-bottom, 0px));
   z-index: 950;
   font-family: inherit;
   font-size: 13px; font-weight: 600;
