@@ -81,6 +81,13 @@ document.getElementById('header').outerHTML = headerHTML('');
       `<button class="tab-chip${i === initIdx ? ' active' : ''}" data-i="${i}">${tabLabel(t)}</button>`).join('') + '</div>';
   }
 
+  // 亞洲行程在公開網站不顯示費用（圓餅圖＋行程內記帳段落）；私人模式照常
+  const ASIA = new Set(['JP', 'KR', 'CN', 'HK']);
+  const hideMoney = ASIA.has(code) && !isPriv();
+  // 標題去掉重複的國名前綴（頁面上方已有國名）：日本關西 → 關西
+  const dispTitle = t => (t.title.startsWith(info.name) && t.title.length > info.name.length)
+    ? t.title.slice(info.name.length) : t.title;
+
   // ── 每趟旅程：行程 → 費用 → 心得 ──
   for (let i = 0; i < myTrips.length; i++) {
     const t = myTrips[i];
@@ -90,16 +97,17 @@ document.getElementById('header').outerHTML = headerHTML('');
     if (myTrips.length > 1 && i !== initIdx) pane.style.display = 'none';
 
     let inner = `<div class="trip-head">
-      <h2 class="trip-name">${t.title}</h2>
+      <h2 class="trip-name">${dispTitle(t)}</h2>
       <span class="trip-dates">${fmtRange(t)}</span>
     </div>`;
 
-    // 1. 行程
-    const md = await loadText('data/trips/' + t.id + '.md');
+    // 1. 行程（公開的亞洲頁面把「## 花費」整段拿掉）
+    let md = await loadText('data/trips/' + t.id + '.md');
+    if (md && hideMoney) md = md.replace(/\n## [^\n]*花費[^\n]*\n[\s\S]*?(?=\n## |$)/g, '');
     if (md) inner += '<h3 class="part-title">🗓️ 行程</h3><div class="trip-md">' + renderTripMD(md) + '</div>';
 
     // 2. 費用
-    if (t.expenses) inner += '<h3 class="part-title">💰 費用</h3>' + pieChartHTML(t.expenses);
+    if (t.expenses && !hideMoney) inner += '<h3 class="part-title">💰 費用</h3>' + pieChartHTML(t.expenses);
 
     // 3. 心得（遊記）
     if (byTrip[t.id]?.length) {

@@ -116,7 +116,10 @@ document.getElementById('header').outerHTML = headerHTML('map');
       const ccs = city.cc ? [city.cc] : t.countries;
       const links = ccs.map(cc =>
         `<a href="country.html?c=${cc}&t=${t.id}">${flagEmoji(cc)} ${countries[cc]?.name || cc}</a>`).join(' ');
-      return `<div class="pin-trip">${fmtRange(t)}｜${t.title}<br>${links}</div>`;
+      // 標題去掉國名前綴（下一行已有國旗＋國名）：日本福岡關西 → 福岡關西
+      const cn = city.cc && countries[city.cc]?.name;
+      const title = (cn && t.title.startsWith(cn) && t.title.length > cn.length) ? t.title.slice(cn.length) : t.title;
+      return `<div class="pin-trip">${fmtRange(t)}｜${title}<br>${links}</div>`;
     }).join('<hr style="border:none;border-top:1px solid #eee;margin:6px 0">');
     marker.bindPopup(`<div class="pin-city">📍 ${city.name}</div>${rows}`);
   }
