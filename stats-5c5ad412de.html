@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>私人基地｜Eva's Travel Map</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔓</text></svg>">
-<link rel="stylesheet" href="css/style.css?v=20260706a">
+<link rel="stylesheet" href="css/style.css?v=20260709b">
 <style>
   /* 私人基地限定風格（跟可愛說明書同款：暖白＋淡藍＋杏色螢光筆） */
   .base-hero {
@@ -152,10 +152,10 @@ document.getElementById('header').outerHTML = headerHTML('stats');
 
   let html = `<h2 class="sec-title" id="stats">📊 旅遊統計 <span class="pl-count">數字裡的旅行足跡</span></h2>
   <div class="stat-grid">
-    <div class="stat-card"><span class="stat-n">${nC}</span><span class="stat-l">🌍 個國家</span></div>
-    <div class="stat-card"><span class="stat-n">${trips.length}</span><span class="stat-l">✈️ 趟旅程</span></div>
-    <div class="stat-card"><span class="stat-n">${totalDays}</span><span class="stat-l">📅 天在路上</span></div>
-    <div class="stat-card"><span class="stat-n">${Math.round(grand / 10000)}<small>萬</small></span><span class="stat-l">💰 記錄到的花費</span></div>
+    <div class="stat-card"><span class="stat-n" data-to="${nC}">0</span><span class="stat-l">🌍 個國家</span></div>
+    <div class="stat-card"><span class="stat-n" data-to="${trips.length}">0</span><span class="stat-l">✈️ 趟旅程</span></div>
+    <div class="stat-card"><span class="stat-n" data-to="${totalDays}">0</span><span class="stat-l">📅 天在路上</span></div>
+    <div class="stat-card"><span class="stat-n"><span data-to="${Math.round(grand / 10000)}">0</span><small>萬</small></span><span class="stat-l">💰 記錄到的花費</span></div>
   </div>`;
 
   // ── 最貴/最省 ──
@@ -229,6 +229,17 @@ document.getElementById('header').outerHTML = headerHTML('stats');
     </div>`).join('') + '</div>';
 
   el.innerHTML = html;
+
+  // 總覽卡數字滾動動畫（與首頁統計框同款 easeOutCubic）
+  el.querySelectorAll('[data-to]').forEach(n => {
+    const to = +n.dataset.to, t0 = performance.now(), dur = 1400;
+    const ease = x => 1 - Math.pow(1 - x, 3);
+    (function frame(now) {
+      const p = Math.min(1, (now - t0) / dur);
+      n.textContent = Math.round(to * ease(p)).toLocaleString();
+      if (p < 1) requestAnimationFrame(frame);
+    })(t0);
+  });
 })();
 </script>
 </body>

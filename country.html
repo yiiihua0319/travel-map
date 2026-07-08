@@ -58,7 +58,7 @@ document.getElementById('header').outerHTML = headerHTML('');
       <div><div class="page-title">${info.name}</div>
       <div class="page-sub" style="margin:0">${myTrips.length} 趟旅程</div></div>
     </div>
-    ${info.ig?.length ? `<div class="ig-row"><span class="ig-label">📸 IG 限時動態精選，點開回顧：</span>${info.ig.map(h =>
+    ${info.ig?.length ? `<div class="ig-row"><span class="ig-label">📸 IG 限時動態精選：</span>${info.ig.map(h =>
       `<a class="ig-chip" href="https://www.instagram.com/stories/highlights/${h.id}/" target="_blank" rel="noopener">${h.name}</a>`).join('')}</div>` : ''}
     <div id="trip-tabs"></div>
     <div id="trip-panes"></div>
