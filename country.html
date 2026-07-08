@@ -13,7 +13,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="css/style.css?v=20260709a">
+<link rel="stylesheet" href="css/style.css?v=20260709b">
 </head>
 <body>
 <div id="header"></div>
@@ -58,8 +58,8 @@ document.getElementById('header').outerHTML = headerHTML('');
       <div><div class="page-title">${info.name}</div>
       <div class="page-sub" style="margin:0">${myTrips.length} 趟旅程</div></div>
     </div>
-    ${info.ig?.length ? `<div class="ig-row">${info.ig.map(h =>
-      `<a class="ig-chip" href="https://www.instagram.com/stories/highlights/${h.id}/" target="_blank" rel="noopener">📸 ${h.name}</a>`).join('')}</div>` : ''}
+    ${info.ig?.length ? `<div class="ig-row"><span class="ig-label">📸 IG 限時動態精選，點開回顧：</span>${info.ig.map(h =>
+      `<a class="ig-chip" href="https://www.instagram.com/stories/highlights/${h.id}/" target="_blank" rel="noopener">${h.name}</a>`).join('')}</div>` : ''}
     <div id="trip-tabs"></div>
     <div id="trip-panes"></div>
     <div id="map-photo"></div>

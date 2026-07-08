@@ -12,7 +12,7 @@
 <meta property="og:image" content="https://yiiihua0319.github.io/travel-map/assets/og-share.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
-<link rel="stylesheet" href="css/style.css?v=20260709a">
+<link rel="stylesheet" href="css/style.css?v=20260709b">
 </head>
 <body>
 <div id="header"></div>
@@ -65,7 +65,7 @@ function rowHTML(t) {
   return `<div class="trip-row">
     <span class="trip-date">${fmtRange(t)}</span>
     <span class="trip-flags">${flagLinks(t)}</span>
-    <span class="trip-title">${t.title}</span>
+    <a class="trip-title" href="country.html?c=${t.countries[0]}&t=${t.id}">${t.title}</a>
   </div>`;
 }
 

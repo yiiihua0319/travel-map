@@ -349,6 +349,8 @@ main { padding-top: 56px; }
   font-variant-numeric: tabular-nums;
 }
 .trip-title { font-size: 15px; }
+a.trip-title { color: var(--text); }
+a.trip-title:hover { color: var(--accent); opacity: 1; }
 .trip-flags { font-size: 14px; }
 .trip-flags a { margin-right: 2px; }
 
@@ -617,7 +619,8 @@ main { padding-top: 56px; }
 .priv-note button:hover { border-color: var(--accent); }
 @media (max-width: 560px) { .pl-list { columns: 1; } }
 
-.ig-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; }
+.ig-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; align-items: center; }
+.ig-label { font-size: 13px; color: var(--text-soft); }
 .ig-chip {
   display: inline-block;
   font-size: 13px;
