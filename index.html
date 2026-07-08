@@ -12,12 +12,13 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
-<link rel="stylesheet" href="css/style.css?v=20260706a">
+<link rel="stylesheet" href="css/style.css?v=20260709a">
 </head>
 <body>
 <div id="header"></div>
 <div id="map"></div>
 <div class="map-stats" id="stats">載入中…</div>
+<div class="replay-year" id="replay-year" hidden></div>
 
 <!-- 歡迎卡（說明書風格）：首次來訪自動顯示，之後可用右下角 📖 再打開 -->
 <div class="welcome-backdrop" id="welcome" hidden>
@@ -101,15 +102,19 @@ document.getElementById('header').outerHTML = headerHTML('map');
     }
   });
 
+  // 國旗小圓釘 + 錯落彈出動畫（回放時會用新的 delay 重設 icon，讓動畫重播）
+  const mkIcon = (city, delay) => L.divIcon({
+    className: 'cpin',
+    html: `<span class="cpin-i" style="animation-delay:${delay}ms">${city.cc ? flagEmoji(city.cc) : '✈️'}</span>`,
+    iconSize: [30, 30], iconAnchor: [15, 15], popupAnchor: [0, -14]
+  });
+
   let pi = 0;
+  const markersByYear = {};   // 城市首次造訪年份 → markers（給足跡回放用）
   for (const city of cityMap.values()) {
-    // 國旗小圓釘 + 錯落彈出動畫
-    const icon = L.divIcon({
-      className: 'cpin',
-      html: `<span class="cpin-i" style="animation-delay:${Math.min(pi++ * 12, 1200)}ms">${city.cc ? flagEmoji(city.cc) : '✈️'}</span>`,
-      iconSize: [30, 30], iconAnchor: [15, 15], popupAnchor: [0, -14]
-    });
-    const marker = L.marker([city.lat, city.lng], { icon, cc: city.cc });
+    const marker = L.marker([city.lat, city.lng], { icon: mkIcon(city, Math.min(pi++ * 12, 1200)), cc: city.cc });
+    const firstYear = Math.min(...city.trips.map(t => +t.dateStart.slice(0, 4)));
+    (markersByYear[firstYear] = markersByYear[firstYear] || []).push({ marker, city });
     cluster.addLayer(marker);
     const rows = city.trips.map(t => {
       // 只連到這個城市所屬的國家（多國旅程不再列出全部國家）
@@ -152,9 +157,72 @@ document.getElementById('header').outerHTML = headerHTML('map');
   map.on('zoomend', syncLabels);
   syncLabels();
 
-  const countrySet = new Set(trips.flatMap(t => t.countries));
-  document.getElementById('stats').innerHTML =
-    `🌍 <strong>${countrySet.size}</strong> 個國家 · ✈️ <strong>${trips.length}</strong> 趟旅程<br>👆 點圖釘看旅程，點國家進遊記`;
+  // ── 統計數字動畫 + 足跡回放 ──
+  const tripDays = t => Math.round((new Date(t.dateEnd) - new Date(t.dateStart)) / 86400000) + 1;
+  const years = Object.keys(markersByYear).map(Number).sort((a, b) => a - b);
+
+  // 每年的「累積」統計：到該年為止去過幾國、幾趟、幾天
+  const cumStats = {};
+  for (const y of years) {
+    const upTo = trips.filter(t => +t.dateStart.slice(0, 4) <= y);
+    cumStats[y] = {
+      c: new Set(upTo.flatMap(t => t.countries)).size,
+      t: upTo.length,
+      d: upTo.reduce((s, t) => s + tripDays(t), 0)
+    };
+  }
+  const finalY = years[years.length - 1];
+
+  document.getElementById('stats').innerHTML = `
+    <div class="ms-nums">
+      <div class="ms-stat"><b id="ms-c">0</b><span>🌍 國家</span></div>
+      <div class="ms-stat"><b id="ms-t">0</b><span>✈️ 旅程</span></div>
+      <div class="ms-stat"><b id="ms-d">0</b><span>📅 天</span></div>
+    </div>
+    <button class="ms-replay" id="ms-replay">▶ 足跡回放</button>
+    <div class="ms-hint">👆 點圖釘看旅程，點國家進遊記</div>`;
+
+  // 數字滾動動畫（easeOutCubic）
+  function countUp(id, to, dur = 1000) {
+    const el = document.getElementById(id);
+    const from = +(el.dataset.v || 0);
+    el.dataset.v = to;
+    const t0 = performance.now();
+    const ease = x => 1 - Math.pow(1 - x, 3);
+    (function frame(now) {
+      const p = Math.min(1, (now - t0) / dur);
+      el.textContent = Math.round(from + (to - from) * ease(p)).toLocaleString();
+      if (p < 1) requestAnimationFrame(frame);
+    })(t0);
+  }
+  const setStats = (s, dur) => { countUp('ms-c', s.c, dur); countUp('ms-t', s.t, dur); countUp('ms-d', s.d, dur); };
+  setStats(cumStats[finalY], 1400);
+
+  // 足跡回放：清空圖釘，一年一年彈回地圖上
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const yearEl = document.getElementById('replay-year');
+  const replayBtn = document.getElementById('ms-replay');
+  replayBtn.onclick = async () => {
+    replayBtn.disabled = true;
+    cluster.clearLayers();
+    for (const id of ['ms-c', 'ms-t', 'ms-d']) { const el = document.getElementById(id); el.dataset.v = 0; el.textContent = '0'; }
+    await sleep(350);
+    for (const y of years) {
+      yearEl.textContent = y;
+      yearEl.hidden = false;
+      yearEl.classList.remove('ry-in'); void yearEl.offsetWidth;  // 重新觸發進場動畫
+      yearEl.classList.add('ry-in');
+      let i = 0;
+      for (const { marker, city } of markersByYear[y]) {
+        marker.setIcon(mkIcon(city, Math.min(i++ * 70, 1000)));
+        cluster.addLayer(marker);
+      }
+      setStats(cumStats[y], 1100);
+      await sleep(1900);
+    }
+    yearEl.hidden = true;
+    replayBtn.disabled = false;
+  };
 })();
 </script>
 </body>
