@@ -9,9 +9,11 @@
 <meta property="og:description" content="各國旅程紀錄：行程、花費圓餅圖、口袋名單、遊記">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://yiiihua0319.github.io/travel-map/country.html">
+<meta property="og:image" content="https://yiiihua0319.github.io/travel-map/assets/og-share.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="css/style.css?v=20260706a">
+<link rel="stylesheet" href="css/style.css?v=20260709a">
 </head>
 <body>
 <div id="header"></div>
@@ -99,7 +101,17 @@ document.getElementById('header').outerHTML = headerHTML('');
     let inner = `<div class="trip-head">
       <h2 class="trip-name">${dispTitle(t)}</h2>
       <span class="trip-dates">${fmtRange(t)}</span>
+      <button class="poster-btn" data-i="${i}" title="產生這趟的分享海報">🖼️ 海報</button>
     </div>`;
+
+    // 一行路線摘要：城市依造訪順序串起來 + 天數
+    const routeCities = (t.cities || []).map(c => c.name).filter((n, j, a) => n && a.indexOf(n) === j);
+    const tdays = Math.round((new Date(t.dateEnd) - new Date(t.dateStart)) / 86400000) + 1;
+    const routeParts = [];
+    if (routeCities.length > 1) routeParts.push(routeCities.join(' → '));
+    else if (routeCities.length === 1) routeParts.push(routeCities[0]);
+    routeParts.push(tdays + ' 天');
+    inner += `<div class="trip-route">🧭 ${routeParts.join('｜')}</div>`;
 
     // 1. 行程（公開的亞洲頁面把「## 花費」整段拿掉）
     let md = await loadText('data/trips/' + t.id + '.md');
@@ -283,6 +295,153 @@ document.getElementById('header').outerHTML = headerHTML('');
       });
     }
   }
+
+  // ── 旅遊海報：Canvas 產生 1080×1920 分享圖（IG 限動比例）──
+  const posterUI = document.createElement('div');
+  posterUI.className = 'poster-backdrop';
+  posterUI.hidden = true;
+  posterUI.innerHTML = `<div class="poster-box">
+    <canvas id="poster-cv" width="1080" height="1920"></canvas>
+    <div class="poster-actions">
+      <button class="wc-btn primary" id="poster-dl">⬇️ 下載海報</button>
+      <button class="wc-btn ig" id="poster-close">關閉</button>
+    </div></div>`;
+  document.body.appendChild(posterUI);
+  let posterName = 'poster.png';
+  posterUI.addEventListener('click', e => { if (e.target === posterUI) posterUI.hidden = true; });
+  posterUI.querySelector('#poster-close').onclick = () => posterUI.hidden = true;
+  posterUI.querySelector('#poster-dl').onclick = () => {
+    document.getElementById('poster-cv').toBlob(b => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(b);
+      a.download = posterName;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+    });
+  };
+
+  function drawPoster(t) {
+    const cv = document.getElementById('poster-cv');
+    const x = cv.getContext('2d');
+    const W = 1080, H = 1920, ACC = '#4a6c8c';
+    const FONT = '-apple-system, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif';
+    const set = (weight, size, color, ls) => {
+      x.font = `${weight} ${size}px ${FONT}`;
+      x.fillStyle = color;
+      try { x.letterSpacing = ls || '0px'; } catch (e) {}
+    };
+    // 依寬度斷行（中文逐字量測）
+    const wrap = (s, maxW, maxLines) => {
+      const lines = []; let cur = '';
+      for (const ch of s) {
+        if (x.measureText(cur + ch).width > maxW && cur) { lines.push(cur); cur = ch; }
+        else cur += ch;
+        if (lines.length === maxLines) return lines;
+      }
+      if (cur) lines.push(cur);
+      return lines;
+    };
+
+    x.clearRect(0, 0, W, H);
+    x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.fillStyle = '#fdfcfa'; x.fillRect(0, 0, W, H);
+
+    // 頁首
+    set(600, 30, '#9aa0a8', '12px');
+    x.fillText("EVA'S TRAVEL MAP", W / 2, 130);
+    x.strokeStyle = '#dfe3e8'; x.lineWidth = 2;
+    x.beginPath(); x.moveTo(W / 2 - 72, 172); x.lineTo(W / 2 + 72, 172); x.stroke();
+
+    // 國旗 + 標題（最多兩行）+ 日期
+    set(400, 56, '#1f2328');
+    x.fillText(t.countries.map(flagEmoji).join('  '), W / 2, 254);
+    set(700, 82, '#1f2328');
+    const tls = wrap(t.title, 880, 2);
+    tls.forEach((l, j) => x.fillText(l, W / 2, 372 + j * 104));
+    const tdays = Math.round((new Date(t.dateEnd) - new Date(t.dateStart)) / 86400000) + 1;
+    set(500, 38, '#6a737d', '3px');
+    x.fillText(`${fmtRange(t)}｜${tdays} 天`, W / 2, 372 + tls.length * 104);
+
+    // 中段：城市星圖（等距投影到面板內，虛線連成路線）
+    const px0 = 100, px1 = 980, py0 = 640, py1 = 1500, pad = 120;
+    const rr = (a, b, c, d, r) => { x.beginPath(); x.roundRect(a, b, c - a, d - b, r); };
+    x.fillStyle = '#ffffff'; rr(px0, py0, px1, py1, 30); x.fill();
+    x.strokeStyle = '#ececec'; x.lineWidth = 2.5; rr(px0, py0, px1, py1, 30); x.stroke();
+
+    const seen = new Set();
+    const pts = (t.cities || []).filter(c => c.lat != null).filter(c => {
+      const k = c.name + c.lat; if (seen.has(k)) return false; seen.add(k); return true;
+    });
+    if (pts.length) {
+      const lats = pts.map(c => c.lat), lngs = pts.map(c => c.lng);
+      const dLat = Math.max(...lats) - Math.min(...lats) || 1e-6;
+      const dLng = Math.max(...lngs) - Math.min(...lngs) || 1e-6;
+      const availW = (px1 - px0) - pad * 2, availH = (py1 - py0) - pad * 2;
+      const sc = Math.min(availW / dLng, availH / dLat);
+      const cx = (Math.min(...lngs) + Math.max(...lngs)) / 2;
+      const cy = (Math.min(...lats) + Math.max(...lats)) / 2;
+      const P = c => [(px0 + px1) / 2 + (c.lng - cx) * sc, (py0 + py1) / 2 - (c.lat - cy) * sc];
+
+      if (pts.length > 1) {
+        x.strokeStyle = ACC; x.globalAlpha = .4; x.lineWidth = 5;
+        x.setLineDash([1, 18]); x.lineCap = 'round';
+        x.beginPath();
+        pts.forEach((c, j) => { const [a, b] = P(c); j ? x.lineTo(a, b) : x.moveTo(a, b); });
+        x.stroke();
+        x.setLineDash([]); x.globalAlpha = 1;
+      }
+      for (const c of pts) {
+        const [a, b] = P(c);
+        x.save();
+        x.shadowColor = ACC; x.shadowBlur = 26;
+        x.fillStyle = ACC; x.beginPath(); x.arc(a, b, 13, 0, 7); x.fill();
+        x.restore();
+        x.fillStyle = '#fff'; x.beginPath(); x.arc(a, b, 5, 0, 7); x.fill();
+      }
+      // 城市標籤：防碰撞（上→下→右→左找空位，都擠不下就不標，密集區保持乾淨）
+      const placed = [];
+      set(500, 30, '#6a737d');
+      for (const c of pts) {
+        const [a, b] = P(c);
+        const w = x.measureText(c.name).width + 16, h = 42;
+        for (const [dx, dy, align] of [[0, -42, 'center'], [0, 46, 'center'], [28, 0, 'left'], [-28, 0, 'right']]) {
+          const lx = a + dx, ly = b + dy;
+          const x0 = align === 'center' ? lx - w / 2 : align === 'left' ? lx : lx - w;
+          const r = { x0, y0: ly - h / 2, x1: x0 + w, y1: ly + h / 2 };
+          if (r.x0 < px0 + 12 || r.x1 > px1 - 12 || r.y0 < py0 + 12 || r.y1 > py1 - 12) continue;
+          if (placed.some(p => !(r.x1 < p.x0 || r.x0 > p.x1 || r.y1 < p.y0 || r.y0 > p.y1))) continue;
+          x.textAlign = align;
+          x.fillText(c.name, lx, ly);
+          x.textAlign = 'center';
+          placed.push(r);
+          break;
+        }
+      }
+    } else {
+      set(400, 120, '#dfe3e8');
+      x.fillText('✈️', W / 2, (py0 + py1) / 2);
+    }
+
+    // 路線文字（最多兩行）
+    const rc = (t.cities || []).map(c => c.name).filter((n, j, a) => n && a.indexOf(n) === j);
+    if (rc.length > 1) {
+      set(600, 34, ACC);
+      wrap(rc.join(' → '), 860, 2).forEach((l, j) => x.fillText(l, W / 2, 1580 + j * 52));
+    }
+
+    // 頁尾
+    set(600, 36, '#1f2328');
+    x.fillText('📸 @yiiihua_0319', W / 2, 1780);
+    set(400, 26, '#9aa0a8', '3px');
+    x.fillText('yiiihua0319.github.io/travel-map', W / 2, 1834);
+  }
+
+  panesEl.querySelectorAll('.poster-btn').forEach(b => b.onclick = () => {
+    const t = myTrips[+b.dataset.i];
+    drawPoster(t);
+    posterName = 'eva-travel-' + t.id + '.png';
+    posterUI.hidden = false;
+  });
 
   // ── 未對應到旅程的遊記 ──
   const oa = document.getElementById('orphan-articles');
