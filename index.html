@@ -365,9 +365,10 @@ document.getElementById('header').outerHTML = headerHTML('map');
   // ── 🛫 飛行回放：從 2022 年底至今所有航班照日期連續飛 ──
   // 純開車/郵輪的旅程不畫（美國只有芝加哥、奧蘭多/紐約/波士頓、夏威夷、2024美西的跨洋段有飛）
   const NO_FLY = new Set(['2026-sequoia', '2026-disney-wonder', '2026-sedona', '2026-bay-area', '2026-east-cal']);
+  const ALL_CITY_FLY = new Set(['2025-us-east', '2023-beijing-chengdu']);   // 站站都有飛：奧蘭多→紐約→波士頓、北京→成都（國內線）
   const tripStops = t => {
     if (NO_FLY.has(t.id)) return [];
-    if (t.id === '2025-us-east') return t.cities.map(c => ({ ll: [c.lat, c.lng], cc: 'US' }));  // 奧蘭多→紐約→波士頓都是飛的
+    if (ALL_CITY_FLY.has(t.id)) return t.cities.map(c => ({ ll: [c.lat, c.lng], cc: c.cc || t.countries[0] }));
     const seen = new Set(), stops = [];   // 其他以國家為單位：每國取第一個城市當停點
     for (const c of (t.cities || [])) {
       const cc = c.cc || t.countries[0];
