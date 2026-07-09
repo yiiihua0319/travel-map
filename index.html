@@ -182,6 +182,7 @@ document.getElementById('header').outerHTML = headerHTML('map');
       <div class="ms-stat"><b id="ms-d">0</b><span>📅 天</span></div>
     </div>
     <button class="ms-replay" id="ms-replay">▶ 足跡回放</button>
+    <button class="ms-replay" id="ms-flyall">🛫 飛行回放</button>
     <div class="ms-hint">👆 點圖釘看旅程，點國家進遊記</div>`;
 
   // 數字滾動動畫（easeOutCubic）
@@ -229,11 +230,11 @@ document.getElementById('header').outerHTML = headerHTML('map');
   // ── 飛行軌跡動畫（Flighty 風）：popup 內每趟旅程可點「✈️ 飛行軌跡」──
   // 出發基地依旅程日期判斷：台北 → 曼徹斯特(歐洲交換) → 台北 → 洛杉磯(USC) → 台北(回台實習)
   const HOME_BASES = [
-    ['2000-01-01', '台北', 25.033, 121.5654],
-    ['2023-09-01', '曼徹斯特', 53.4808, -2.2426],
-    ['2024-06-20', '台北', 25.033, 121.5654],
-    ['2025-08-01', '洛杉磯', 34.0522, -118.2437],
-    ['2026-05-15', '台北', 25.033, 121.5654]
+    ['2000-01-01', '台北', 25.033, 121.5654, 'TW'],
+    ['2023-09-01', '曼徹斯特', 53.4808, -2.2426, 'GB', '🎒 出發去英國交換'],
+    ['2024-06-20', '台北', 25.033, 121.5654, 'TW', '🏠 交換結束，回台北'],
+    ['2025-08-01', '洛杉磯', 34.0522, -118.2437, 'US', '🎓 出發去 USC'],
+    ['2026-05-15', '台北', 25.033, 121.5654, 'TW', '🏠 回台北實習']
   ];
   const homeFor = t => { let h = HOME_BASES[0]; for (const b of HOME_BASES) if (b[0] <= t.dateStart) h = b; return h; };
 
@@ -285,12 +286,16 @@ document.getElementById('header').outerHTML = headerHTML('map');
 
   const PLANE_SVG = '<svg viewBox="0 0 24 24" fill="#4a6c8c"><path d="M21 16v-2l-8-5V3.5C13 2.67 12.33 2 11.5 2S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>';
 
-  let flight = null;   // 進行中的飛行 { layers, toast, raf, timer }
+  let flight = null;   // 進行中的飛行 { layers, toast, raf, timer, all }
   function clearFlight(instant) {
     if (!flight) return;
-    const { layers, toast, raf, timer } = flight;
+    const { layers, toast, raf, timer, all } = flight;
     flight = null;
     cancelAnimationFrame(raf); clearTimeout(timer);
+    if (all) {
+      document.getElementById('ms-flyall').textContent = '🛫 飛行回放';
+      yearEl.hidden = true;
+    }
     if (instant) { layers.forEach(l => map.removeLayer(l)); toast.remove(); return; }
     layers.forEach(l => l.getElement()?.classList.add('fly-fade'));
     toast.classList.add('fly-fade');
@@ -356,6 +361,150 @@ document.getElementById('header').outerHTML = headerHTML('map');
     map.closePopup();
     flyTrip(tripById[el.dataset.fly]);
   });
+
+  // ── 🛫 飛行回放：從 2022 年底至今所有航班照日期連續飛 ──
+  // 純開車/郵輪的旅程不畫（美國只有芝加哥、奧蘭多/紐約/波士頓、夏威夷、2024美西的跨洋段有飛）
+  const NO_FLY = new Set(['2026-sequoia', '2026-disney-wonder', '2026-sedona', '2026-bay-area', '2026-east-cal']);
+  const tripStops = t => {
+    if (NO_FLY.has(t.id)) return [];
+    if (t.id === '2025-us-east') return t.cities.map(c => ({ ll: [c.lat, c.lng], cc: 'US' }));  // 奧蘭多→紐約→波士頓都是飛的
+    const seen = new Set(), stops = [];   // 其他以國家為單位：每國取第一個城市當停點
+    for (const c of (t.cities || [])) {
+      const cc = c.cc || t.countries[0];
+      if (!seen.has(cc)) { seen.add(cc); stops.push({ ll: [c.lat, c.lng], cc }); }
+    }
+    return stops;
+  };
+
+  function buildFlightLog() {
+    const legs = [];
+    let cur = null, curBase = null;
+    const sorted = [...trips].sort((a, b) => a.dateStart < b.dateStart ? -1 : 1);
+    for (const t of sorted) {
+      const home = homeFor(t);
+      const base = [home[2], home[3]];
+      if (!curBase) { cur = base; curBase = home; }
+      else if (home[1] !== curBase[1]) {   // 搬家（換基地）
+        legs.push({ from: cur, to: base, label: home[5] || `✈️ 移動到${home[1]}`, year: +t.dateStart.slice(0, 4), move: true });
+        cur = base; curBase = home;
+      }
+      // 交換期間英國國內小旅行是搭火車，不畫
+      const stops = tripStops(t).filter(s => !(home[4] === 'GB' && s.cc === 'GB'));
+      if (!stops.length) continue;
+      const lbl = `${t.dateStart.slice(0, 7).replace('-', '/')}｜${t.title}`;
+      const y = +t.dateStart.slice(0, 4);
+      for (const s of stops) {
+        if (distKm(cur, s.ll) > 15) legs.push({ from: cur, to: s.ll, label: lbl, year: y });
+        cur = s.ll;
+      }
+      if (distKm(cur, base) > 15) legs.push({ from: cur, to: base, label: lbl, year: y, ret: true });
+      cur = base;
+    }
+    return legs;
+  }
+
+  const flyAllBtn = document.getElementById('ms-flyall');
+  flyAllBtn.onclick = async () => {
+    if (flight && flight.all) { clearFlight(); return; }   // 再按一次＝停止
+    clearFlight(true);
+    const legs = buildFlightLog();
+
+    // 每段航線先取好大圓路徑點，經度接續展開（跨太平洋往返不會橫跳）
+    let prevLng = null;
+    for (const leg of legs) {
+      const pts = gcPoints(leg.from, leg.to);
+      if (prevLng !== null) {
+        while (pts[0][1] - prevLng > 180) for (const p of pts) p[1] -= 360;
+        while (pts[0][1] - prevLng < -180) for (const p of pts) p[1] += 360;
+      }
+      for (let i = 1; i < pts.length; i++) {
+        while (pts[i][1] - pts[i - 1][1] > 180) pts[i][1] -= 360;
+        while (pts[i][1] - pts[i - 1][1] < -180) pts[i][1] += 360;
+      }
+      leg.pts = pts;
+      leg.km = distKm(leg.from, leg.to);
+      prevLng = pts[pts.length - 1][1];
+    }
+    const totalKm = legs.reduce((s, l) => s + l.km, 0);
+
+    flyAllBtn.textContent = '⏹ 停止回放';
+    const toast = document.createElement('div');
+    toast.className = 'fly-toast';
+    document.body.appendChild(toast);
+    const plane = L.marker(legs[0].pts[0], {
+      icon: L.divIcon({ className: 'plane-pin', html: `<span class="plane-i">${PLANE_SVG}</span>`, iconSize: [34, 34], iconAnchor: [17, 17] }),
+      interactive: false, zIndexOffset: 1200
+    }).addTo(map);
+    flight = { layers: [plane], toast, raf: 0, timer: 0, all: true };
+    const myFlight = flight;
+    const planeEl = plane.getElement()?.querySelector('.plane-i');
+
+    // 單段飛行；回程段飛快一點、鏡頭不重新對焦
+    const spanOf = b => Math.max(b.getNorth() - b.getSouth(), b.getEast() - b.getWest());
+    const animLeg = leg => new Promise(resolve => {
+      const pts = leg.pts;
+      const cum = [0];
+      for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + distKm(pts[i - 1], pts[i]));
+      const total = cum[pts.length - 1];
+      const dur = Math.min(1400, Math.max(380, total * 0.18)) * (leg.ret ? 0.55 : 1);
+      const trail = L.polyline([pts[0]], { color: '#4a6c8c', weight: 3, opacity: .9, interactive: false }).addTo(map);
+      myFlight.layers.push(trail);
+      const t0 = performance.now();
+      let fi = 0;
+      (function frame(now) {
+        if (flight !== myFlight) return resolve(false);
+        const p = Math.min(1, (now - t0) / dur);
+        const d = total * p;
+        while (fi < pts.length - 2 && cum[fi + 1] < d) fi++;
+        const k = Math.min(1, (d - cum[fi]) / ((cum[fi + 1] - cum[fi]) || 1e-9));
+        const cur = [pts[fi][0] + (pts[fi + 1][0] - pts[fi][0]) * k, pts[fi][1] + (pts[fi + 1][1] - pts[fi][1]) * k];
+        plane.setLatLng(cur);
+        if (planeEl) planeEl.style.transform = `rotate(${bearing(pts[fi], pts[fi + 1])}deg)`;
+        trail.setLatLngs(pts.slice(0, fi + 1).concat([cur]));
+        if (p < 1) { myFlight.raf = requestAnimationFrame(frame); return; }
+        trail.setStyle({ weight: 2, opacity: .5 });   // 飛完的航線留下淡淡一條
+        if (!leg.ret && !leg.move) {
+          const dot = L.marker(pts[pts.length - 1], {
+            icon: L.divIcon({ className: 'fly-dot', html: '<i></i>', iconSize: [11, 11], iconAnchor: [5.5, 5.5] }),
+            interactive: false
+          }).addTo(map);
+          myFlight.layers.push(dot);
+        }
+        resolve(true);
+      })(t0);
+    });
+
+    let lastYear = 0;
+    for (const leg of legs) {
+      if (flight !== myFlight) return;
+      toast.textContent = `✈️ ${leg.label}`;
+      if (leg.year !== lastYear) {
+        lastYear = leg.year;
+        yearEl.textContent = leg.year;
+        yearEl.hidden = false;
+        yearEl.classList.remove('ry-in'); void yearEl.offsetWidth;
+        yearEl.classList.add('ry-in');
+      }
+      // 鏡頭：這段不在視野內、或視野太遠看不清楚時才移動
+      if (!leg.ret) {
+        const b = L.latLngBounds(leg.pts);
+        const v = map.getBounds();
+        if (!v.contains(b) || spanOf(b) < spanOf(v) * 0.15) {
+          map.flyToBounds(b, { padding: [80, 80], maxZoom: 6, duration: .7 });
+          await sleep(780);
+          if (flight !== myFlight) return;
+        }
+      }
+      if (!await animLeg(leg)) return;
+    }
+
+    // 抵達現在：拉遠看整張航線網，停一下再淡出
+    yearEl.hidden = true;
+    toast.textContent = `🌍 ${legs.length} 段航程｜共約 ${Math.round(totalKm).toLocaleString()} km`;
+    const allPts = legs.flatMap(l => l.pts);
+    map.flyToBounds(L.latLngBounds(allPts), { padding: [60, 60], duration: 1.2 });
+    myFlight.timer = setTimeout(() => clearFlight(), 8000);
+  };
 })();
 </script>
 </body>
