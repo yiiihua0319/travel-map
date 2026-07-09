@@ -107,6 +107,39 @@ main { padding-top: 56px; }
 .ry-in { animation: ry-pop .7s cubic-bezier(.34,1.56,.64,1) backwards; }
 @keyframes ry-pop { from { opacity: 0; transform: translate(-50%, -58%) scale(.82); } }
 
+/* ---------- 飛行軌跡動畫（Flighty 風） ---------- */
+.plane-pin { background: none; border: none; }
+.plane-i {
+  display: block; width: 34px; height: 34px;
+  filter: drop-shadow(0 0 1.5px #fff) drop-shadow(0 0 1.5px #fff) drop-shadow(0 2px 4px rgba(31,35,40,.35));
+  will-change: transform;
+}
+.plane-i svg { display: block; width: 100%; height: 100%; }
+.fly-dot { background: none; border: none; }
+.fly-dot i {
+  display: block; width: 11px; height: 11px; border-radius: 50%;
+  background: #fff; border: 2.5px solid var(--accent);
+  box-shadow: 0 1px 4px rgba(0,0,0,.25);
+}
+.fly-link { display: inline-block; margin-top: 3px; font-size: 12px; font-weight: 600; color: var(--accent); }
+.fly-link:hover { text-decoration: underline; }
+.fly-toast {
+  position: fixed;
+  top: 70px; left: 50%; transform: translateX(-50%);
+  z-index: 950;
+  background: rgba(255,255,255,.95);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 7px 16px;
+  font-size: 13px; color: var(--text);
+  box-shadow: 0 2px 10px rgba(0,0,0,.08);
+  white-space: nowrap; max-width: 92vw; overflow: hidden; text-overflow: ellipsis;
+  pointer-events: none;
+  animation: fly-toast-in .35s cubic-bezier(.34,1.56,.64,1) backwards;
+}
+@keyframes fly-toast-in { from { opacity: 0; transform: translateX(-50%) translateY(-8px); } }
+.fly-fade { transition: opacity .6s ease; opacity: 0 !important; }
+
 /* ---------- 行程路線摘要 + 分享海報 ---------- */
 .trip-route {
   margin: 10px 0 4px;

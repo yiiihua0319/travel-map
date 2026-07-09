@@ -14,7 +14,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
-<link rel="stylesheet" href="css/style.css?v=20260709b">
+<link rel="stylesheet" href="css/style.css?v=20260710a">
 </head>
 <body>
 <div id="header"></div>
@@ -126,7 +126,7 @@ document.getElementById('header').outerHTML = headerHTML('map');
       // 標題去掉國名前綴（下一行已有國旗＋國名）：日本福岡關西 → 福岡關西
       const cn = city.cc && countries[city.cc]?.name;
       const title = (cn && t.title.startsWith(cn) && t.title.length > cn.length) ? t.title.slice(cn.length) : t.title;
-      return `<div class="pin-trip">${fmtRange(t)}｜${title}<br>${links}</div>`;
+      return `<div class="pin-trip">${fmtRange(t)}｜${title}<br>${links} <a class="fly-link" href="#" data-fly="${t.id}">✈️ 飛行軌跡</a></div>`;
     }).join('<hr style="border:none;border-top:1px solid #eee;margin:6px 0">');
     marker.bindPopup(`<div class="pin-city">📍 ${city.name}</div>${rows}`);
   }
@@ -225,6 +225,137 @@ document.getElementById('header').outerHTML = headerHTML('map');
     yearEl.hidden = true;
     replayBtn.disabled = false;
   };
+
+  // ── 飛行軌跡動畫（Flighty 風）：popup 內每趟旅程可點「✈️ 飛行軌跡」──
+  // 出發基地依旅程日期判斷：台北 → 曼徹斯特(歐洲交換) → 台北 → 洛杉磯(USC) → 台北(回台實習)
+  const HOME_BASES = [
+    ['2000-01-01', '台北', 25.033, 121.5654],
+    ['2023-09-01', '曼徹斯特', 53.4808, -2.2426],
+    ['2024-06-20', '台北', 25.033, 121.5654],
+    ['2025-08-01', '洛杉磯', 34.0522, -118.2437],
+    ['2026-05-15', '台北', 25.033, 121.5654]
+  ];
+  const homeFor = t => { let h = HOME_BASES[0]; for (const b of HOME_BASES) if (b[0] <= t.dateStart) h = b; return h; };
+
+  const rad = d => d * Math.PI / 180, deg = r => r * 180 / Math.PI;
+  const distKm = (a, b) => {
+    const dLa = rad(b[0] - a[0]), dLo = rad(b[1] - a[1]);
+    const h = Math.sin(dLa / 2) ** 2 + Math.cos(rad(a[0])) * Math.cos(rad(b[0])) * Math.sin(dLo / 2) ** 2;
+    return 12742 * Math.asin(Math.sqrt(h));
+  };
+  const bearing = (a, b) => {
+    const f1 = rad(a[0]), f2 = rad(b[0]), dl = rad(b[1] - a[1]);
+    return deg(Math.atan2(Math.sin(dl) * Math.cos(f2), Math.cos(f1) * Math.sin(f2) - Math.sin(f1) * Math.cos(f2) * Math.cos(dl)));
+  };
+
+  // 大圓航線取樣（球面 slerp），點數依距離調整
+  function gcPoints(a, b) {
+    const n = Math.max(8, Math.min(96, Math.round(distKm(a, b) / 40)));
+    const v = p => [Math.cos(rad(p[0])) * Math.cos(rad(p[1])), Math.cos(rad(p[0])) * Math.sin(rad(p[1])), Math.sin(rad(p[0]))];
+    const v1 = v(a), v2 = v(b);
+    const w = Math.acos(Math.min(1, Math.max(-1, v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2])));
+    const pts = [];
+    for (let i = 0; i <= n; i++) {
+      const t = i / n;
+      const [A, B] = w < 1e-6 ? [1 - t, t] : [Math.sin((1 - t) * w) / Math.sin(w), Math.sin(t * w) / Math.sin(w)];
+      const x = A * v1[0] + B * v2[0], y = A * v1[1] + B * v2[1], z = A * v1[2] + B * v2[2];
+      pts.push([deg(Math.atan2(z, Math.hypot(x, y))), deg(Math.atan2(y, x))]);
+    }
+    return pts;
+  }
+
+  // 串接各段航線，經度展開（跨太平洋不會橫跳整張地圖）；回傳路徑點與各停點在路徑上的位置
+  function buildRoute(stops) {
+    const pts = [], stopPts = [];
+    for (let i = 0; i < stops.length - 1; i++) {
+      for (const p of gcPoints(stops[i], stops[i + 1])) {
+        if (pts.length) {
+          const prev = pts[pts.length - 1];
+          while (p[1] - prev[1] > 180) p[1] -= 360;
+          while (p[1] - prev[1] < -180) p[1] += 360;
+          if (Math.abs(p[0] - prev[0]) < 1e-9 && Math.abs(p[1] - prev[1]) < 1e-9) continue;
+        }
+        pts.push(p);
+      }
+      if (i === 0) stopPts.push(pts[0]);
+      stopPts.push(pts[pts.length - 1]);
+    }
+    return { pts, stopPts };
+  }
+
+  const PLANE_SVG = '<svg viewBox="0 0 24 24" fill="#4a6c8c"><path d="M21 16v-2l-8-5V3.5C13 2.67 12.33 2 11.5 2S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>';
+
+  let flight = null;   // 進行中的飛行 { layers, toast, raf, timer }
+  function clearFlight(instant) {
+    if (!flight) return;
+    const { layers, toast, raf, timer } = flight;
+    flight = null;
+    cancelAnimationFrame(raf); clearTimeout(timer);
+    if (instant) { layers.forEach(l => map.removeLayer(l)); toast.remove(); return; }
+    layers.forEach(l => l.getElement()?.classList.add('fly-fade'));
+    toast.classList.add('fly-fade');
+    setTimeout(() => { layers.forEach(l => map.removeLayer(l)); toast.remove(); }, 650);
+  }
+
+  async function flyTrip(trip) {
+    clearFlight(true);
+    const home = homeFor(trip);
+    const stops = [[home[2], home[3]], ...trip.cities.map(c => [c.lat, c.lng]), [home[2], home[3]]];
+    const { pts, stopPts } = buildRoute(stops);
+    const cum = [0];
+    for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + distKm(pts[i - 1], pts[i]));
+    const total = cum[pts.length - 1];
+    const dur = Math.min(13000, Math.max(4500, total * 0.9));
+
+    const ghost = L.polyline(pts, { color: '#8aa4bd', weight: 2, opacity: .55, dashArray: '2 7', interactive: false }).addTo(map);
+    const trail = L.polyline([pts[0]], { color: '#4a6c8c', weight: 3, opacity: .9, interactive: false }).addTo(map);
+    const dots = stopPts.map(p => L.marker(p, {
+      icon: L.divIcon({ className: 'fly-dot', html: '<i></i>', iconSize: [11, 11], iconAnchor: [5.5, 5.5] }),
+      interactive: false
+    }).addTo(map));
+    const plane = L.marker(pts[0], {
+      icon: L.divIcon({ className: 'plane-pin', html: `<span class="plane-i">${PLANE_SVG}</span>`, iconSize: [34, 34], iconAnchor: [17, 17] }),
+      interactive: false, zIndexOffset: 1200
+    }).addTo(map);
+    const toast = document.createElement('div');
+    toast.className = 'fly-toast';
+    toast.textContent = `🛫 ${home[1]} 出發往返｜${trip.title}｜約 ${Math.round(total).toLocaleString()} km`;
+    document.body.appendChild(toast);
+    flight = { layers: [ghost, trail, ...dots, plane], toast, raf: 0, timer: 0 };
+    const myFlight = flight;
+
+    map.flyToBounds(L.latLngBounds(pts), { padding: [70, 70], duration: 1.1, maxZoom: 7 });
+    await sleep(1250);
+    if (flight !== myFlight) return;
+
+    const planeEl = plane.getElement()?.querySelector('.plane-i');
+    const ease = x => x < .5 ? 2 * x * x : 1 - (-2 * x + 2) ** 2 / 2;   // easeInOutQuad：起飛降落慢、巡航快
+    const t0 = performance.now();
+    let fi = 0;
+    (function frame(now) {
+      if (flight !== myFlight) return;
+      const p = Math.min(1, (now - t0) / dur);
+      const d = total * ease(p);
+      while (fi < pts.length - 2 && cum[fi + 1] < d) fi++;
+      const segLen = cum[fi + 1] - cum[fi] || 1e-9;
+      const k = Math.min(1, (d - cum[fi]) / segLen);
+      const cur = [pts[fi][0] + (pts[fi + 1][0] - pts[fi][0]) * k, pts[fi][1] + (pts[fi + 1][1] - pts[fi][1]) * k];
+      plane.setLatLng(cur);
+      if (planeEl) planeEl.style.transform = `rotate(${bearing(pts[fi], pts[fi + 1])}deg)`;
+      trail.setLatLngs(pts.slice(0, fi + 1).concat([cur]));
+      if (p < 1) myFlight.raf = requestAnimationFrame(frame);
+      else myFlight.timer = setTimeout(() => clearFlight(), 2800);   // 降落後軌跡停留一下再淡出
+    })(t0);
+  }
+
+  const tripById = Object.fromEntries(trips.map(t => [t.id, t]));
+  document.addEventListener('click', e => {
+    const el = e.target.closest('[data-fly]');
+    if (!el) return;
+    e.preventDefault();
+    map.closePopup();
+    flyTrip(tripById[el.dataset.fly]);
+  });
 })();
 </script>
 </body>
