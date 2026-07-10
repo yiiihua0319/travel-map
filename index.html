@@ -14,7 +14,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
-<link rel="stylesheet" href="css/style.css?v=20260710a">
+<link rel="stylesheet" href="css/style.css?v=20260710d">
 </head>
 <body>
 <div id="header"></div>
@@ -126,7 +126,7 @@ document.getElementById('header').outerHTML = headerHTML('map');
       // 標題去掉國名前綴（下一行已有國旗＋國名）：日本福岡關西 → 福岡關西
       const cn = city.cc && countries[city.cc]?.name;
       const title = (cn && t.title.startsWith(cn) && t.title.length > cn.length) ? t.title.slice(cn.length) : t.title;
-      return `<div class="pin-trip">${fmtRange(t)}｜${title}<br>${links} <a class="fly-link" href="#" data-fly="${t.id}">✈️ 飛行軌跡</a></div>`;
+      return `<div class="pin-trip">${fmtRange(t)}｜${title}<br>${links} <a class="fly-link" href="#" data-fly="${t.id}">🧭 行程軌跡</a></div>`;
     }).join('<hr style="border:none;border-top:1px solid #eee;margin:6px 0">');
     marker.bindPopup(`<div class="pin-city">📍 ${city.name}</div>${rows}`);
   }
@@ -265,9 +265,9 @@ document.getElementById('header').outerHTML = headerHTML('map');
     return pts;
   }
 
-  // 串接各段航線，經度展開（跨太平洋不會橫跳整張地圖）；回傳路徑點與各停點在路徑上的位置
+  // 串接各段路線，經度展開（跨太平洋不會橫跳整張地圖）；回傳路徑點、各停點、每點所屬段索引
   function buildRoute(stops) {
-    const pts = [], stopPts = [];
+    const pts = [], stopPts = [], legOf = [];
     for (let i = 0; i < stops.length - 1; i++) {
       for (const p of gcPoints(stops[i], stops[i + 1])) {
         if (pts.length) {
@@ -276,12 +276,47 @@ document.getElementById('header').outerHTML = headerHTML('map');
           while (p[1] - prev[1] < -180) p[1] += 360;
           if (Math.abs(p[0] - prev[0]) < 1e-9 && Math.abs(p[1] - prev[1]) < 1e-9) continue;
         }
-        pts.push(p);
+        pts.push(p); legOf.push(i);
       }
       if (i === 0) stopPts.push(pts[0]);
       stopPts.push(pts[pts.length - 1]);
     }
-    return { pts, stopPts };
+    return { pts, stopPts, legOf };
+  }
+
+  // ── 行程軌跡：以城市為單位、含交通工具（✈️🚄🚗🚢，使用者口述規則）──
+  const ALL_CAR = new Set(['2026-sequoia', '2026-sedona', '2026-bay-area', '2026-east-cal', '2026-disney-wonder']);
+  const ROUTE_SPECIAL = {   // seq：B=基地、數字=cities 索引
+    '2024-ireland':  { seq: ['B', 0, 1, 0, 'B'], modes: ['plane', 'train', 'train', 'plane'] },                 // 貝爾法斯特火車來回
+    '2025-us-east':  { seq: ['B', 0, 1, 2, 1, 'B'], modes: ['plane', 'plane', 'train', 'train', 'plane'] },     // 紐約⇄波士頓火車來回
+    '2024-us-west':  { seq: ['B', 0, 1, 2, 3, 0, 'B'], modes: ['plane', 'car', 'car', 'car', 'car', 'plane'] }, // 馬蹄灣後開回LA再飛
+    '2023-uk-nl-de': { seq: ['B', 0, 1, 2, 0, 3, 4, 5, 6, 7, 8, 9, 'B'],                                        // 回倫敦搭歐洲之星去阿姆斯特丹
+      modes: ['train', 'train', 'train', 'train', 'train', 'train', 'train', 'train', 'train', 'train', 'train', 'plane'] }
+  };
+  const MODE_OVERRIDE = {   // 段索引→工具（預設：基地進出=plane、城市間=train）
+    '2023-beijing-chengdu': { 1: 'plane' },
+    '2023-be-lu-hu-at': { 2: 'plane' },   // 盧森堡→布達佩斯
+    '2024-fi-no': { 2: 'plane' },         // 特羅姆瑟→卑爾根
+    '2024-baltics': { 1: 'ship' },        // 斯德哥爾摩→塔林渡輪
+    '2024-greece': { 1: 'ship' }          // 雅典→聖托里尼渡輪
+  };
+  const MODE_EMOJI = { train: '🚄', car: '🚗', ship: '🚢' };
+
+  function tripRoute(trip) {
+    const home = homeFor(trip);
+    const base = [home[2], home[3]];
+    const cl = (trip.cities || []).map(c => [c.lat, c.lng]);
+    const sp = ROUTE_SPECIAL[trip.id];
+    const seq = (sp ? sp.seq : ['B', ...cl.keys(), 'B']).map(s => s === 'B' ? base : cl[s]);
+    let modes;
+    if (sp) modes = sp.modes.slice();
+    else {
+      modes = seq.slice(1).map((_, i) => (i === 0 || i === seq.length - 2) ? 'plane' : 'train');
+      if (ALL_CAR.has(trip.id)) modes = modes.map(() => 'car');
+      if (home[4] === 'GB' && trip.countries.every(c => c === 'GB')) modes = modes.map(() => 'train');  // 交換期間英國國內＝火車
+      for (const [i, m] of Object.entries(MODE_OVERRIDE[trip.id] || {})) modes[i] = m;
+    }
+    return { home, seq, modes };
   }
 
   const PLANE_SVG = '<svg viewBox="0 0 24 24" fill="#4a6c8c"><path d="M21 16v-2l-8-5V3.5C13 2.67 12.33 2 11.5 2S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>';
@@ -313,9 +348,8 @@ document.getElementById('header').outerHTML = headerHTML('map');
 
   async function flyTrip(trip) {
     clearFlight(true);
-    const home = homeFor(trip);
-    const stops = [[home[2], home[3]], ...trip.cities.map(c => [c.lat, c.lng]), [home[2], home[3]]];
-    const { pts, stopPts } = buildRoute(stops);
+    const { home, seq, modes } = tripRoute(trip);
+    const { pts, stopPts, legOf } = buildRoute(seq);
     const cum = [0];
     for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + distKm(pts[i - 1], pts[i]));
     const total = cum[pts.length - 1];
@@ -327,13 +361,18 @@ document.getElementById('header').outerHTML = headerHTML('map');
       icon: L.divIcon({ className: 'fly-dot', html: '<i></i>', iconSize: [11, 11], iconAnchor: [5.5, 5.5] }),
       interactive: false
     }).addTo(map));
+    const m0 = modes[0] || 'plane';
     const plane = L.marker(pts[0], {
-      icon: L.divIcon({ className: 'plane-pin', html: `<span class="plane-i">${PLANE_SVG}</span>`, iconSize: [34, 34], iconAnchor: [17, 17] }),
+      icon: L.divIcon({
+        className: 'plane-pin',
+        html: `<span class="plane-i${m0 === 'plane' ? '' : ' ground'}">${m0 === 'plane' ? PLANE_SVG : MODE_EMOJI[m0]}</span>`,
+        iconSize: [34, 34], iconAnchor: [17, 17]
+      }),
       interactive: false, zIndexOffset: 1200
     }).addTo(map);
     const toast = document.createElement('div');
     toast.className = 'fly-toast';
-    toast.textContent = `🛫 ${home[1]} 出發往返｜${trip.title}｜約 ${Math.round(total).toLocaleString()} km`;
+    toast.textContent = `🧭 ${home[1]} 出發往返｜${trip.title}｜約 ${Math.round(total).toLocaleString()} km`;
     document.body.appendChild(toast);
     flight = { layers: [ghost, trail, ...dots, plane], toast, raf: 0, timer: 0 };
     const myFlight = flight;
@@ -344,9 +383,9 @@ document.getElementById('header').outerHTML = headerHTML('map');
     if (flight !== myFlight) return;
 
     const planeEl = plane.getElement()?.querySelector('.plane-i');
-    const ease = x => x < .5 ? 2 * x * x : 1 - (-2 * x + 2) ** 2 / 2;   // easeInOutQuad：起飛降落慢、巡航快
+    const ease = x => x < .5 ? 2 * x * x : 1 - (-2 * x + 2) ** 2 / 2;   // easeInOutQuad：起步收尾慢、中段快
     const t0 = performance.now();
-    let fi = 0;
+    let fi = 0, curMode = m0;
     (function frame(now) {
       if (flight !== myFlight) return;
       const p = Math.min(1, (now - t0) / dur);
@@ -356,7 +395,18 @@ document.getElementById('header').outerHTML = headerHTML('map');
       const k = Math.min(1, (d - cum[fi]) / segLen);
       const cur = [pts[fi][0] + (pts[fi + 1][0] - pts[fi][0]) * k, pts[fi][1] + (pts[fi + 1][1] - pts[fi][1]) * k];
       plane.setLatLng(cur);
-      if (planeEl) planeEl.style.transform = `rotate(${bearing(pts[fi], pts[fi + 1])}deg)`;
+      if (planeEl) {
+        const mode = modes[legOf[Math.min(fi + 1, legOf.length - 1)]] || 'plane';
+        if (mode !== curMode) {
+          curMode = mode;
+          planeEl.innerHTML = mode === 'plane' ? PLANE_SVG : MODE_EMOJI[mode];
+          planeEl.classList.toggle('ground', mode !== 'plane');
+        }
+        // 陸面 emoji 朝左，向東行進時翻面
+        planeEl.style.transform = mode === 'plane'
+          ? `rotate(${bearing(pts[fi], pts[fi + 1])}deg)`
+          : (pts[fi + 1][1] > pts[fi][1] ? 'scaleX(-1)' : 'none');
+      }
       trail.setLatLngs(pts.slice(0, fi + 1).concat([cur]));
       if (p < 1) myFlight.raf = requestAnimationFrame(frame);
       else myFlight.timer = setTimeout(() => clearFlight(), 2800);   // 降落後軌跡停留一下再淡出
