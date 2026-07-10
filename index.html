@@ -302,6 +302,15 @@ document.getElementById('header').outerHTML = headerHTML('map');
     setTimeout(() => { layers.forEach(l => map.removeLayer(l)); toast.remove(); }, 650);
   }
 
+  // 鏡頭移動完（moveend）才繼續，避免航線動畫和鏡頭同時跑造成脫節
+  const flyWait = (bounds, opts) => new Promise(res => {
+    let done = false;
+    const fin = () => { if (!done) { done = true; map.off('moveend', fin); res(); } };
+    map.once('moveend', fin);
+    setTimeout(fin, (opts.duration || 1) * 1000 + 600);
+    map.flyToBounds(bounds, opts);
+  });
+
   async function flyTrip(trip) {
     clearFlight(true);
     const home = homeFor(trip);
@@ -329,8 +338,9 @@ document.getElementById('header').outerHTML = headerHTML('map');
     flight = { layers: [ghost, trail, ...dots, plane], toast, raf: 0, timer: 0 };
     const myFlight = flight;
 
-    map.flyToBounds(L.latLngBounds(pts), { padding: [70, 70], duration: 1.1, maxZoom: 7 });
-    await sleep(1250);
+    await flyWait(L.latLngBounds(pts), { padding: [70, 70], duration: 1.1, maxZoom: 6, easeLinearity: 0.25 });
+    if (flight !== myFlight) return;
+    await sleep(250);
     if (flight !== myFlight) return;
 
     const planeEl = plane.getElement()?.querySelector('.plane-i');
@@ -386,7 +396,7 @@ document.getElementById('header').outerHTML = headerHTML('map');
       const base = [home[2], home[3]];
       if (!curBase) { cur = base; curBase = home; }
       else if (home[1] !== curBase[1]) {   // 搬家（換基地）
-        legs.push({ from: cur, to: base, label: home[5] || `✈️ 移動到${home[1]}`, year: +t.dateStart.slice(0, 4), move: true });
+        legs.push({ from: cur, to: base, label: home[5] || `✈️ 移動到${home[1]}`, year: +t.dateStart.slice(0, 4), move: true, key: 'move' + legs.length });
         cur = base; curBase = home;
       }
       // 交換期間英國國內小旅行是搭火車，不畫
@@ -395,10 +405,10 @@ document.getElementById('header').outerHTML = headerHTML('map');
       const lbl = `${t.dateStart.slice(0, 7).replace('-', '/')}｜${t.title}`;
       const y = +t.dateStart.slice(0, 4);
       for (const s of stops) {
-        if (distKm(cur, s.ll) > 15) legs.push({ from: cur, to: s.ll, label: lbl, year: y });
+        if (distKm(cur, s.ll) > 15) legs.push({ from: cur, to: s.ll, label: lbl, year: y, key: t.id });
         cur = s.ll;
       }
-      if (distKm(cur, base) > 15) legs.push({ from: cur, to: base, label: lbl, year: y, ret: true });
+      if (distKm(cur, base) > 15) legs.push({ from: cur, to: base, label: lbl, year: y, ret: true, key: t.id });
       cur = base;
     }
     return legs;
@@ -447,7 +457,7 @@ document.getElementById('header').outerHTML = headerHTML('map');
       const cum = [0];
       for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + distKm(pts[i - 1], pts[i]));
       const total = cum[pts.length - 1];
-      const dur = Math.min(1400, Math.max(380, total * 0.18)) * (leg.ret ? 0.55 : 1);
+      const dur = Math.min(2200, Math.max(700, total * 0.32)) * (leg.ret ? 0.7 : 1);
       const trail = L.polyline([pts[0]], { color: '#4a6c8c', weight: 3, opacity: .9, interactive: false }).addTo(map);
       myFlight.layers.push(trail);
       const t0 = performance.now();
@@ -475,7 +485,7 @@ document.getElementById('header').outerHTML = headerHTML('map');
       })(t0);
     });
 
-    let lastYear = 0;
+    let lastYear = 0, lastKey = null;
     for (const leg of legs) {
       if (flight !== myFlight) return;
       toast.textContent = `✈️ ${leg.label}`;
@@ -486,24 +496,26 @@ document.getElementById('header').outerHTML = headerHTML('map');
         yearEl.classList.remove('ry-in'); void yearEl.offsetWidth;
         yearEl.classList.add('ry-in');
       }
-      // 鏡頭：這段不在視野內、或視野太遠看不清楚時才移動
-      if (!leg.ret) {
-        const b = L.latLngBounds(leg.pts);
+      // 鏡頭：一趟旅程只對焦一次（含去回所有航段），且已在視野內就不動——減少暈眩感
+      if (leg.key !== lastKey) {
+        lastKey = leg.key;
+        const b = L.latLngBounds(legs.filter(l => l.key === leg.key).flatMap(l => l.pts));
         const v = map.getBounds();
-        if (!v.contains(b) || spanOf(b) < spanOf(v) * 0.15) {
-          map.flyToBounds(b, { padding: [80, 80], maxZoom: 6, duration: .7 });
-          await sleep(780);
+        if (!v.contains(b) || spanOf(b) < spanOf(v) * 0.07) {
+          await flyWait(b, { padding: [90, 90], maxZoom: 5, duration: 1.1, easeLinearity: 0.25 });
           if (flight !== myFlight) return;
         }
       }
       if (!await animLeg(leg)) return;
+      await sleep(leg.ret ? 80 : 220);   // 降落小停頓，節奏不趕
+      if (flight !== myFlight) return;
     }
 
     // 抵達現在：拉遠看整張航線網，停一下再淡出
     yearEl.hidden = true;
     toast.textContent = `🌍 ${legs.length} 段航程｜共約 ${Math.round(totalKm).toLocaleString()} km`;
     const allPts = legs.flatMap(l => l.pts);
-    map.flyToBounds(L.latLngBounds(allPts), { padding: [60, 60], duration: 1.2 });
+    map.flyToBounds(L.latLngBounds(allPts), { padding: [60, 60], duration: 1.6, easeLinearity: 0.25 });
     myFlight.timer = setTimeout(() => clearFlight(), 8000);
   };
 })();
