@@ -2,7 +2,7 @@
 
 const DATA_BASE = '';
 // 每次改資料就 bump 這個版本號，讓瀏覽器/CDN 一定抓到最新的 JSON/MD（避免部署後看到舊快取）
-const SITE_VER = '20260711b';
+const SITE_VER = '20260711c';
 
 function flagEmoji(code) {
   return [...code.toUpperCase()].map(c => String.fromCodePoint(0x1F1A5 + c.charCodeAt(0))).join('');
