@@ -285,7 +285,7 @@ document.getElementById('header').outerHTML = headerHTML('map');
   }
 
   // ── 行程軌跡：以城市為單位、含交通工具（✈️🚄🚗🚢，使用者口述規則）──
-  const ALL_CAR = new Set(['2026-sedona', '2026-bay-area', '2026-east-cal', '2026-disney-wonder']);
+  const ALL_CAR = new Set(['2026-sedona', '2026-bay-area', '2026-east-cal']);
   const ROUTE_SPECIAL = {   // seq：B=基地、數字=cities 索引
     '2024-ireland':  { seq: ['B', 0, 1, 0, 'B'], modes: ['plane', 'train', 'train', 'plane'] },                 // 貝爾法斯特火車來回
     '2025-us-east':  { seq: ['B', 1, 2, 3, 2, 'B'], modes: ['plane', 'plane', 'train', 'train', 'plane'] },     // 洛杉磯出發，紐約⇄波士頓火車來回（cities[0]=洛杉磯≈基地）
@@ -293,6 +293,8 @@ document.getElementById('header').outerHTML = headerHTML('map');
       modes: ['plane', 'car', 'car', 'car', 'car', 'plane', 'plane', 'plane'] },
     '2025-hokkaido': { seq: ['B', 0, 1, 2, 1, 3, 0, 'B'],                                                       // 東京進出，新幹線北上，小樽當日來回
       modes: ['plane', 'train', 'train', 'train', 'train', 'train', 'plane'] },
+    '2026-disney-wonder': { seq: ['B', 0, 1, 2, 0, 'B'],                                                        // 開車到聖地牙哥，郵輪繞 Catalina/Ensenada 回港
+      modes: ['car', 'ship', 'ship', 'ship', 'car'] },
     '2023-uk-nl-de': { seq: ['B', 0, 1, 2, 0, 3, 4, 5, 6, 7, 8, 9, 'B'],                                        // 回倫敦搭歐洲之星去阿姆斯特丹
       modes: ['train', 'train', 'train', 'train', 'train', 'train', 'train', 'train', 'train', 'train', 'train', 'plane'] }
   };
