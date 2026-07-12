@@ -3,7 +3,6 @@
   "source": "Notion Travel Journal (1601fb4f-a467-41c5-887e-0d3e8d820200)",
   "updated": "2026-07-04",
   "notes": [
-   "Sequoia National Park 2026/2 確切日期待確認",
    "2023德捷法瑞斯的斯=斯洛伐克（已從行程頁確認 1/8 Bratislava）",
    "鹽燒藍迪德諾=威爾斯 Llandudno（頁面為威爾斯旗）"
   ]
@@ -1487,34 +1486,15 @@
     "currency": "TWD",
     "items": {
      "住宿": 76082,
-     "交通": 40709,
+     "交通": 38967,
      "食物": 36026,
      "樂園門票": 31977,
      "紀念品": 18641,
      "景點門票": 7606,
      "購物": 1280
     },
-    "note": "美元以32匯率換算台幣"
+    "note": "美元以32匯率換算台幣（不含1/6幫小寶代付計程車，該筆非本人支出已排除）"
    }
-  },
-  {
-   "id": "2026-sequoia",
-   "title": "Sequoia National Park",
-   "dateStart": "2026-02-01",
-   "dateEnd": "2026-02-28",
-   "datePending": true,
-   "countries": [
-    "US"
-   ],
-   "cities": [
-    {
-     "name": "Sequoia NP",
-     "lat": 36.4864,
-     "lng": -118.5658,
-     "cc": "US"
-    }
-   ],
-   "notionId": "304ee7c05698805d8202d72ebe3417ae"
   },
   {
    "id": "2026-hawaii",
