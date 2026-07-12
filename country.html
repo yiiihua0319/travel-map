@@ -190,8 +190,8 @@ document.getElementById('header').outerHTML = headerHTML('');
     // 每個清單對應到哪幾趟旅程（比對旅程標題是否含城市名，或別名對照）
     const LIST_ALIAS = {
       '京都': ['關西'], '神戶': ['關西'], '大阪': ['關西'],
-      '蘇格蘭': ['愛丁堡'], '夏威夷': ['Hawaii'],
-      'AZ': ['Sedona', '亞利桑那'], 'Chicago': ['芝加哥'],
+      '蘇格蘭': ['愛丁堡'],
+      'AZ': ['亞利桑那'], 'Chicago': ['芝加哥'],
       'NYC ORD BOS': ['紐約', '波士頓', '芝加哥'],
     };
     const matchTrip = (listName, t) =>
