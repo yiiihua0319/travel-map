@@ -1,7 +1,7 @@
 {
  "meta": {
   "source": "Notion Travel Journal (1601fb4f-a467-41c5-887e-0d3e8d820200)",
-  "updated": "2026-07-04",
+  "updated": "2026-07-13",
   "notes": [
    "2023德捷法瑞斯的斯=斯洛伐克（已從行程頁確認 1/8 Bratislava）",
    "鹽燒藍迪德諾=威爾斯 Llandudno（頁面為威爾斯旗）"
@@ -1695,6 +1695,36 @@
     }
    ],
    "notionId": "378ee7c05698802fb7f2c2d8bcf06c4f"
+  },
+  {
+   "id": "2026-vegas-yosemite-sf",
+   "title": "美國拉斯維加斯優勝美地舊金山洛杉磯",
+   "dateStart": "2026-08-03",
+   "dateEnd": "2026-08-12",
+   "countries": [
+    "US"
+   ],
+   "cities": [
+    {
+     "name": "拉斯維加斯",
+     "lat": 36.1699,
+     "lng": -115.1398,
+     "cc": "US"
+    },
+    {
+     "name": "優勝美地",
+     "lat": 37.7456,
+     "lng": -119.5936,
+     "cc": "US"
+    },
+    {
+     "name": "舊金山",
+     "lat": 37.7749,
+     "lng": -122.4194,
+     "cc": "US"
+    }
+   ],
+   "notionId": "39cee7c05698807eb565c5e85dc6234c"
   }
  ]
 }

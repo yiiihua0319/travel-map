@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Eva's Travel Map ✈️</title>
-<meta name="description" content="Eva 的旅遊地圖：38 國 49 趟旅程的行程、花費、口袋名單與遊記">
+<meta name="description" content="Eva 的旅遊地圖：38 國 50 趟旅程的行程、花費、口袋名單與遊記">
 <meta property="og:title" content="Eva's Travel Map ✈️">
-<meta property="og:description" content="Eva 的旅遊地圖：38 國 49 趟旅程的行程、花費、口袋名單與遊記">
+<meta property="og:description" content="Eva 的旅遊地圖：38 國 50 趟旅程的行程、花費、口袋名單與遊記">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://yiiihua0319.github.io/travel-map/">
 <meta property="og:image" content="https://yiiihua0319.github.io/travel-map/assets/og-share.png">
@@ -28,7 +28,7 @@
     <button class="wc-close" id="wc-close" aria-label="關閉">✕</button>
     <div class="wc-sticker">🗺️</div>
     <h2 id="wc-title">歡迎來到 <em>Eva's Travel Map</em> ✈️</h2>
-    <p class="wc-lead">這裡收藏了我 <b>38 個國家、49 趟旅程</b>的回憶——行程、花費、口袋名單、遊記，全部整理在這張地圖上。</p>
+    <p class="wc-lead">這裡收藏了我 <b>38 個國家、50 趟旅程</b>的回憶——行程、花費、口袋名單、遊記，全部整理在這張地圖上。</p>
     <div class="wc-tips">
       <div>🌍 <b>點國旗圖釘</b><span>看那一趟的完整紀錄</span></div>
       <div>📍 <b>口袋名單</b><span>我存過的美食、景點、購物清單</span></div>
@@ -234,7 +234,8 @@ document.getElementById('header').outerHTML = headerHTML('map');
     ['2023-09-01', '曼徹斯特', 53.4808, -2.2426, 'GB', '🎒 出發去英國交換'],
     ['2024-06-20', '台北', 25.033, 121.5654, 'TW', '🏠 交換結束，回台北'],
     ['2025-08-01', '洛杉磯', 34.0522, -118.2437, 'US', '🎓 出發去 USC'],
-    ['2026-05-15', '台北', 25.033, 121.5654, 'TW', '🏠 回台北實習']
+    ['2026-05-15', '台北', 25.033, 121.5654, 'TW', '🏠 回台北實習'],
+    ['2026-08-01', '洛杉磯', 34.0522, -118.2437, 'US', '🎒 搬家去美國']
   ];
   const homeFor = t => { let h = HOME_BASES[0]; for (const b of HOME_BASES) if (b[0] <= t.dateStart) h = b; return h; };
 
@@ -285,7 +286,7 @@ document.getElementById('header').outerHTML = headerHTML('map');
   }
 
   // ── 行程軌跡：以城市為單位、含交通工具（✈️🚄🚗🚢，使用者口述規則）──
-  const ALL_CAR = new Set(['2025-disneyland', '2026-sedona', '2026-bay-area', '2026-east-cal']);
+  const ALL_CAR = new Set(['2025-disneyland', '2026-sedona', '2026-bay-area', '2026-east-cal', '2026-vegas-yosemite-sf']);
   const ROUTE_SPECIAL = {   // seq：B=基地、數字=cities 索引
     '2024-ireland':  { seq: ['B', 0, 1, 0, 'B'], modes: ['plane', 'train', 'train', 'plane'] },                 // 貝爾法斯特火車來回
     '2025-ny-boston': { seq: ['B', 0, 1, 0, 'B'], modes: ['plane', 'train', 'train', 'plane'] },                // 紐約⇄波士頓火車來回
@@ -430,7 +431,7 @@ document.getElementById('header').outerHTML = headerHTML('map');
 
   // ── 🛫 飛行回放：從 2022 年底至今所有航班照日期連續飛 ──
   // 純開車/郵輪的旅程不畫（美國只有芝加哥、奧蘭多/紐約/波士頓、夏威夷、2024美西的跨洋段有飛）
-  const NO_FLY = new Set(['2025-disneyland', '2026-disney-wonder', '2026-sedona', '2026-bay-area', '2026-east-cal']);
+  const NO_FLY = new Set(['2025-disneyland', '2026-disney-wonder', '2026-sedona', '2026-bay-area', '2026-east-cal', '2026-vegas-yosemite-sf']);
   const ALL_CITY_FLY = new Set(['2023-beijing-chengdu']);   // 站站都有飛（北京→成都國內線）
   const FLY_SEQ = {                       // 指定飛行停點（城市索引）：只畫真的搭飛機的段
     '2024-us-west': [0, 4, 0]             // LA + 波特蘭支線來回
