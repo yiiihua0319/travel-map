@@ -286,7 +286,7 @@ document.getElementById('header').outerHTML = headerHTML('map');
   }
 
   // ── 行程軌跡：以城市為單位、含交通工具（✈️🚄🚗🚢，使用者口述規則）──
-  const ALL_CAR = new Set(['2025-disneyland', '2026-sedona', '2026-bay-area', '2026-east-cal', '2026-vegas-yosemite-sf']);
+  const ALL_CAR = new Set(['2025-disneyland', '2026-sedona', '2026-east-cal', '2026-vegas-yosemite-sf']);
   const ROUTE_SPECIAL = {   // seq：B=基地、數字=cities 索引
     '2024-ireland':  { seq: ['B', 0, 1, 0, 'B'], modes: ['plane', 'train', 'train', 'plane'] },                 // 貝爾法斯特火車來回
     '2025-ny-boston': { seq: ['B', 0, 1, 0, 'B'], modes: ['plane', 'train', 'train', 'plane'] },                // 紐約⇄波士頓火車來回
@@ -296,6 +296,7 @@ document.getElementById('header').outerHTML = headerHTML('map');
       modes: ['plane', 'train', 'train', 'train', 'train', 'train', 'plane'] },
     '2026-disney-wonder': { seq: ['B', 0, 1, 2, 0, 'B'],                                                        // 開車到聖地牙哥，郵輪繞 Catalina/Ensenada 回港
       modes: ['car', 'ship', 'ship', 'ship', 'car'] },
+    '2026-bay-area': { seq: ['B', 0, 1, 2, 'B'], modes: ['plane', 'car', 'car', 'plane'] },                       // 飛 LAX↔SFO，灣區內開車
     '2023-uk-nl-de': { seq: ['B', 0, 1, 2, 0, 3, 4, 5, 6, 7, 8, 9, 'B'],                                        // 回倫敦搭歐洲之星去阿姆斯特丹
       modes: ['train', 'train', 'train', 'train', 'train', 'train', 'train', 'train', 'train', 'train', 'train', 'plane'] }
   };
@@ -431,7 +432,7 @@ document.getElementById('header').outerHTML = headerHTML('map');
 
   // ── 🛫 飛行回放：從 2022 年底至今所有航班照日期連續飛 ──
   // 純開車/郵輪的旅程不畫（美國只有芝加哥、奧蘭多/紐約/波士頓、夏威夷、2024美西的跨洋段有飛）
-  const NO_FLY = new Set(['2025-disneyland', '2026-disney-wonder', '2026-sedona', '2026-bay-area', '2026-east-cal', '2026-vegas-yosemite-sf']);
+  const NO_FLY = new Set(['2025-disneyland', '2026-disney-wonder', '2026-sedona', '2026-east-cal', '2026-vegas-yosemite-sf']);
   const ALL_CITY_FLY = new Set(['2023-beijing-chengdu']);   // 站站都有飛（北京→成都國內線）
   const FLY_SEQ = {                       // 指定飛行停點（城市索引）：只畫真的搭飛機的段
     '2024-us-west': [0, 4, 0]             // LA + 波特蘭支線來回
