@@ -1649,24 +1649,24 @@
    "notionId": "351ee7c0569880c4983dc565e319f9ec"
   },
   {
-   "id": "2026-east-cal",
-   "title": "East California",
+   "id": "2026-la-disney",
+   "title": "美國洛杉磯迪士尼",
    "dateStart": "2026-04-16",
-   "dateEnd": "2026-04-22",
+   "dateEnd": "2026-04-21",
    "countries": [
     "US"
    ],
    "cities": [
     {
-     "name": "Death Valley",
-     "lat": 36.5323,
-     "lng": -116.9325,
+     "name": "洛杉磯",
+     "lat": 34.1184,
+     "lng": -118.3004,
      "cc": "US"
     },
     {
-     "name": "Mammoth Lakes",
-     "lat": 37.6485,
-     "lng": -118.9721,
+     "name": "安納罕",
+     "lat": 33.8121,
+     "lng": -117.919,
      "cc": "US"
     }
    ],
