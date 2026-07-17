@@ -4,7 +4,7 @@ notion: db4fc3b7-9275-44b8-a4df-2a5fdb2f0930
 
 ## 行程
 
-**Day 1（3/20）San Diego 登船** — Disney Wonder（Pacific Coastal 3 Nights）
+**Day 1（3/20）San Diego 登船（Disney Wonder・Pacific Coastal 3 Nights）**
 - **13:45** 登船 → **14:00** Lunch（Buffet）
 - **15:30** 逃生演習 → **16:45** 啟航
 - **17:00** 歡迎秀 → **18:00** Golden Mickey Show
