@@ -1446,7 +1446,18 @@
      "cc": "US"
     }
    ],
-   "notionId": "2b5ee7c0569880a8af66f52d303b2643"
+   "notionId": "2b5ee7c0569880a8af66f52d303b2643",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "交通": 14834,
+     "食物": 6716,
+     "住宿": 6638,
+     "娛樂": 4955,
+     "紀念品": 635
+    },
+    "note": "美元以32匯率換算台幣；交通含來回機票$297.96；娛樂含Chicago CityPass $144；一筆Lyft未填金額未計入"
+   }
   },
   {
    "id": "2025-disneyland",
