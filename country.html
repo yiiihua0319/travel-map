@@ -13,14 +13,14 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="css/style.css?v=20260709b">
+<link rel="stylesheet" href="css/style.css?v=20260720a">
 </head>
 <body>
 <div id="header"></div>
 <main>
   <div class="container">
-    <a class="back-link" href="list.html">← 回旅程列表</a>
-    <div id="content">載入中…</div>
+    <a class="back-link" id="back" href="list.html"></a>
+    <div id="content"></div>
   </div>
 </main>
 
@@ -28,6 +28,8 @@
 <script src="js/common.js"></script>
 <script>
 document.getElementById('header').outerHTML = headerHTML('');
+document.getElementById('back').textContent = T('backToList');
+document.getElementById('content').textContent = T('loading');
 
 (async () => {
   const qs = new URLSearchParams(location.search);
@@ -35,13 +37,14 @@ document.getElementById('header').outerHTML = headerHTML('');
   const wantTrip = qs.get('t'); // 從地圖/列表點特定旅程進來時，直接停在那趟的分頁
   const [tripsData, countries, placesData] = await Promise.all([
     loadJSON('data/trips.json'), loadJSON('data/countries.json'),
-    loadJSON('data/places.json').catch(() => ({}))
+    loadJSON('data/places.json').catch(() => ({})), I18N_READY
   ]);
   const info = countries[code];
   const el = document.getElementById('content');
-  if (!info) { el.innerHTML = '<div class="empty-note">找不到這個國家 🥲</div>'; return; }
+  if (!info) { el.innerHTML = '<div class="empty-note">' + T('noCountry') + '</div>'; return; }
 
-  document.title = info.name + '｜Eva\'s Travel Map';
+  const dName = cName(code, countries);   // 顯示用國名（依語言）
+  document.title = dName + '｜Eva\'s Travel Map';
   const myTrips = tripsData.trips
     .filter(t => t.countries.includes(code))
     .sort((a, b) => a.dateStart.localeCompare(b.dateStart));
@@ -55,10 +58,10 @@ document.getElementById('header').outerHTML = headerHTML('');
   el.innerHTML = `
     <div class="country-head">
       <span class="country-flag">${flagEmoji(code)}</span>
-      <div><div class="page-title">${info.name}</div>
-      <div class="page-sub" style="margin:0">${myTrips.length} 趟旅程</div></div>
+      <div><div class="page-title">${dName}</div>
+      <div class="page-sub" style="margin:0">${nTrips(myTrips.length)}</div></div>
     </div>
-    ${info.ig?.length ? `<div class="ig-row"><span class="ig-label">📸 IG 限時動態精選：</span>${info.ig.map(h =>
+    ${info.ig?.length ? `<div class="ig-row"><span class="ig-label">${T('igHighlights')}</span>${info.ig.map(h =>
       `<a class="ig-chip" href="https://www.instagram.com/stories/highlights/${h.id}/" target="_blank" rel="noopener">${h.name}</a>`).join('')}</div>` : ''}
     <div id="trip-tabs"></div>
     <div id="trip-panes"></div>
@@ -67,10 +70,14 @@ document.getElementById('header').outerHTML = headerHTML('');
     <div id="orphan-articles"></div>`;
 
   // ── 分頁籤（多趟旅程以城市/旅程為單位）──
+  const stripCountry = t => {
+    const full = tripTitle(t);
+    const s = (full.startsWith(dName) && full.length > dName.length) ? full.slice(dName.length).trim() : full;
+    return s || full;
+  };
   const tabLabel = t => {
-    let s = t.title.startsWith(info.name) ? t.title.slice(info.name.length) : t.title;
-    if (!s) s = t.title;
-    return s + '（' + t.dateStart.slice(2, 7).replace('-', '/') + '）';
+    const d = t.dateStart.slice(2, 7).replace('-', '/');
+    return stripCountry(t) + (isEN() ? ` (${d})` : `（${d}）`);
   };
   const tabsEl = document.getElementById('trip-tabs');
   const panesEl = document.getElementById('trip-panes');
@@ -87,8 +94,7 @@ document.getElementById('header').outerHTML = headerHTML('');
   const ASIA = new Set(['JP', 'KR', 'CN', 'HK']);
   const hideMoney = ASIA.has(code) && !isPriv();
   // 標題去掉重複的國名前綴（頁面上方已有國名）：日本關西 → 關西
-  const dispTitle = t => (t.title.startsWith(info.name) && t.title.length > info.name.length)
-    ? t.title.slice(info.name.length) : t.title;
+  const dispTitle = stripCountry;
 
   // ── 每趟旅程：行程 → 費用 → 心得 ──
   for (let i = 0; i < myTrips.length; i++) {
@@ -101,36 +107,39 @@ document.getElementById('header').outerHTML = headerHTML('');
     let inner = `<div class="trip-head">
       <h2 class="trip-name">${dispTitle(t)}</h2>
       <span class="trip-dates">${fmtRange(t)}</span>
-      <button class="poster-btn" data-i="${i}" title="產生這趟的分享海報">🖼️ 海報</button>
+      <button class="poster-btn" data-i="${i}" title="${T('posterTip')}">${T('posterBtn')}</button>
     </div>`;
 
     // 一行路線摘要：城市依造訪順序串起來 + 天數
-    const routeCities = (t.cities || []).map(c => c.name).filter((n, j, a) => n && a.indexOf(n) === j);
+    const routeCities = (t.cities || []).map(c => c.name).filter((n, j, a) => n && a.indexOf(n) === j).map(cityName);
     const tdays = Math.round((new Date(t.dateEnd) - new Date(t.dateStart)) / 86400000) + 1;
     const routeParts = [];
     if (routeCities.length > 1) routeParts.push(routeCities.join(' → '));
     else if (routeCities.length === 1) routeParts.push(routeCities[0]);
-    routeParts.push(tdays + ' 天');
+    routeParts.push(nDays(tdays));
     inner += `<div class="trip-route">🧭 ${routeParts.join('｜')}</div>`;
 
     // 1. 行程（公開的亞洲頁面把「## 花費」整段拿掉）
     let md = await loadText('data/trips/' + t.id + '.md');
     if (md && hideMoney) md = md.replace(/\n## [^\n]*花費[^\n]*\n[\s\S]*?(?=\n## |$)/g, '');
-    if (md) inner += '<h3 class="part-title">🗓️ 行程</h3><div class="trip-md">' + renderTripMD(md) + '</div>';
+    // 行程與遊記只有中文版：英文介面下加一行說明
+    const cnNote = isEN() ? `<p class="cn-only">${T('cnOnly')}</p>` : '';
+    if (md) inner += '<h3 class="part-title">' + T('partItinerary') + '</h3>' + cnNote
+      + '<div class="trip-md">' + renderTripMD(md) + '</div>';
 
     // 2. 費用
-    if (t.expenses && !hideMoney) inner += '<h3 class="part-title">💰 費用</h3>' + pieChartHTML(t.expenses);
+    if (t.expenses && !hideMoney) inner += '<h3 class="part-title">' + T('partExpense') + '</h3>' + pieChartHTML(t.expenses);
 
     // 3. 心得（遊記）
     if (byTrip[t.id]?.length) {
-      inner += '<h3 class="part-title">✍️ 心得</h3>';
+      inner += '<h3 class="part-title">' + T('partStory') + '</h3>' + (md ? '' : cnNote);
       for (const f of [...new Set(byTrip[t.id])]) {
         const amd = await loadText(f);
         if (amd) inner += '<div class="md-section"><div class="md-body">' + renderMD(amd) + '</div></div>';
       }
     }
     if (!md && !t.expenses && !byTrip[t.id]?.length) {
-      inner += '<div class="empty-note">這趟的紀錄整理中 ✈️</div>';
+      inner += '<div class="empty-note">' + T('tripEmpty') + '</div>';
     }
     pane.innerHTML = inner;
     panesEl.appendChild(pane);
@@ -152,10 +161,10 @@ document.getElementById('header').outerHTML = headerHTML('');
   // 多國旅程只取屬於這個國家的城市（沒標 cc 的舊資料照舊顯示）
   for (const t of myTrips) for (const c of (t.cities || [])) if (!c.cc || c.cc === code) pins.push(c);
   let mpHTML = '';
-  if (pins.length) mpHTML += '<h2 class="sec-title">🗺️ 造訪地點</h2><div id="country-map"></div>';
+  if (pins.length) mpHTML += '<h2 class="sec-title">' + T('secPlaces') + '</h2><div id="country-map"></div>';
   if (info.images?.length) {
-    mpHTML += '<h2 class="sec-title">📷 照片</h2><div class="img-grid">' +
-      info.images.map(u => `<img src="${u}" loading="lazy" alt="${info.name}">`).join('') + '</div>';
+    mpHTML += '<h2 class="sec-title">' + T('secPhotos') + '</h2><div class="img-grid">' +
+      info.images.map(u => `<img src="${u}" loading="lazy" alt="${dName}">`).join('') + '</div>';
   }
   mp.innerHTML = mpHTML;
 
@@ -174,7 +183,7 @@ document.getElementById('header').outerHTML = headerHTML('');
         html: `<span class="cpin-i" style="animation-delay:${pj++ * 60}ms">📍</span>`,
         iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -13]
       });
-      group.push(L.marker([p.lat, p.lng], { icon }).addTo(cmap).bindPopup('📍 ' + p.name));
+      group.push(L.marker([p.lat, p.lng], { icon }).addTo(cmap).bindPopup('📍 ' + cityName(p.name)));
     }
     if (group.length === 1) cmap.setView(group[0].getLatLng(), 6);
     else cmap.fitBounds(L.featureGroup(group).getBounds().pad(0.4));
@@ -184,7 +193,7 @@ document.getElementById('header').outerHTML = headerHTML('');
   const pv = document.getElementById('places');
   const groups = placesData[code] || [];
   if (groups.length) {
-    const CATMETA = { food: ['🍜', '美食'], sight: ['🏞️', '景點'], shop: ['🛍️', '購物'], stay: ['🏨', '住宿'], other: ['📍', '其他'] };
+    const CATMETA = { food: ['🍜', T('catFood')], sight: ['🏞️', T('catSight')], shop: ['🛍️', T('catShop')], stay: ['🏨', T('catStay')], other: ['📍', T('catOther')] };
     const catOf = c => CATMETA[c] || CATMETA.other;
 
     // 每個清單對應到哪幾趟旅程（比對旅程標題是否含城市名，或別名對照）
@@ -202,9 +211,9 @@ document.getElementById('header').outerHTML = headerHTML('');
     for (const g of groups) for (const p of g.places) catCount[p.cat] = (catCount[p.cat] || 0) + 1;
     const totalP = groups.reduce((s, g) => s + g.places.length, 0);
 
-    let ph = `<h2 class="sec-title">📍 我的口袋名單 <span class="pl-count" id="pl-count">${totalP} 個地點</span></h2>`;
+    let ph = `<h2 class="sec-title">${T('secPocket')} <span class="pl-count" id="pl-count">${nPlaces(totalP)}</span></h2>`;
     // 分類分頁（美食 / 景點 / 購物…當作 tab），數量會依所選城市即時更新
-    ph += '<div class="pl-cat-bar"><button class="pl-cat active" data-cat="all">全部 <span class="pl-catn"></span></button>';
+    ph += `<div class="pl-cat-bar"><button class="pl-cat active" data-cat="all">${T('catAll')} <span class="pl-catn"></span></button>`;
     for (const k of ['food', 'sight', 'shop', 'stay', 'other'])
       if (catCount[k]) ph += `<button class="pl-cat" data-cat="${k}">${catOf(k)[0]} ${catOf(k)[1]} <span class="pl-catn"></span></button>`;
     ph += '</div><div class="pl-flat">';
@@ -214,9 +223,9 @@ document.getElementById('header').outerHTML = headerHTML('');
       const idxs = myTrips.map((t, i) => matchTrip(g.list, t) ? i : -1).filter(i => i >= 0);
       const attr = idxs.length ? ` data-trips="${idxs.join(',')}"` : ' data-all';
       ph += `<div class="pl-city"${attr}>
-        <div class="pl-city-h">${g.list}<span class="pl-n">${g.places.length}</span></div>
+        <div class="pl-city-h">${cityName(g.list)}<span class="pl-n">${g.places.length}</span></div>
         <ul class="pl-list">` +
-        g.places.map(p => `<li data-cat="${p.cat || 'other'}"${p.ll ? ` data-ll="${p.ll[0]},${p.ll[1]}"` : ''}>${isPriv() ? `<button class="pl-chk" data-k="${p.url}" title="去過了打勾">⬜</button>` : ''}<span class="pl-emoji">${catOf(p.cat)[0]}</span><a href="${p.url}" target="_blank" rel="noopener">${p.name}</a>${p.note ? `<span class="pl-note">${p.note}</span>` : ''}</li>`).join('') +
+        g.places.map(p => `<li data-cat="${p.cat || 'other'}"${p.ll ? ` data-ll="${p.ll[0]},${p.ll[1]}"` : ''}>${isPriv() ? `<button class="pl-chk" data-k="${p.url}" title="${T('checkTip')}">⬜</button>` : ''}<span class="pl-emoji">${catOf(p.cat)[0]}</span><a href="${p.url}" target="_blank" rel="noopener">${p.name}</a>${p.note ? `<span class="pl-note">${p.note}</span>` : ''}</li>`).join('') +
         '</ul></div>';
     }
     ph += '</div>';
@@ -273,7 +282,7 @@ document.getElementById('header').outerHTML = headerHTML('');
         b.style.display = (k === 'all' || n) ? '' : 'none';
         b.classList.toggle('active', k === curCat);
       });
-      document.getElementById('pl-count').textContent = (curCat === 'all' ? catN.all : catN[curCat]) + ' 個地點';
+      document.getElementById('pl-count').textContent = nPlaces(curCat === 'all' ? catN.all : catN[curCat]);
       // 這趟城市完全沒有口袋名單就整段隱藏（例如 Sequoia、郵輪）
       pv.style.display = catN.all ? '' : 'none';
     };
@@ -303,8 +312,8 @@ document.getElementById('header').outerHTML = headerHTML('');
   posterUI.innerHTML = `<div class="poster-box">
     <canvas id="poster-cv" width="1080" height="1920"></canvas>
     <div class="poster-actions">
-      <button class="wc-btn primary" id="poster-dl">⬇️ 下載海報</button>
-      <button class="wc-btn ig" id="poster-close">關閉</button>
+      <button class="wc-btn primary" id="poster-dl">${T('posterDl')}</button>
+      <button class="wc-btn ig" id="poster-close">${T('wcClose')}</button>
     </div></div>`;
   document.body.appendChild(posterUI);
   let posterName = 'poster.png';
@@ -356,11 +365,11 @@ document.getElementById('header').outerHTML = headerHTML('');
     set(400, 56, '#1f2328');
     x.fillText(t.countries.map(flagEmoji).join('  '), W / 2, 254);
     set(700, 82, '#1f2328');
-    const tls = wrap(t.title, 880, 2);
+    const tls = wrap(tripTitle(t), 880, 2);
     tls.forEach((l, j) => x.fillText(l, W / 2, 372 + j * 104));
     const tdays = Math.round((new Date(t.dateEnd) - new Date(t.dateStart)) / 86400000) + 1;
     set(500, 38, '#6a737d', '3px');
-    x.fillText(`${fmtRange(t)}｜${tdays} 天`, W / 2, 372 + tls.length * 104);
+    x.fillText(`${fmtRange(t)}｜${nDays(tdays)}`, W / 2, 372 + tls.length * 104);
 
     // 中段：城市星圖（等距投影到面板內，虛線連成路線）
     const px0 = 100, px1 = 980, py0 = 640, py1 = 1500, pad = 120;
@@ -403,7 +412,8 @@ document.getElementById('header').outerHTML = headerHTML('');
       set(500, 30, '#6a737d');
       for (const c of pts) {
         const [a, b] = P(c);
-        const w = x.measureText(c.name).width + 16, h = 42;
+        const cn = cityName(c.name);
+        const w = x.measureText(cn).width + 16, h = 42;
         for (const [dx, dy, align] of [[0, -42, 'center'], [0, 46, 'center'], [28, 0, 'left'], [-28, 0, 'right']]) {
           const lx = a + dx, ly = b + dy;
           const x0 = align === 'center' ? lx - w / 2 : align === 'left' ? lx : lx - w;
@@ -411,7 +421,7 @@ document.getElementById('header').outerHTML = headerHTML('');
           if (r.x0 < px0 + 12 || r.x1 > px1 - 12 || r.y0 < py0 + 12 || r.y1 > py1 - 12) continue;
           if (placed.some(p => !(r.x1 < p.x0 || r.x0 > p.x1 || r.y1 < p.y0 || r.y0 > p.y1))) continue;
           x.textAlign = align;
-          x.fillText(c.name, lx, ly);
+          x.fillText(cn, lx, ly);
           x.textAlign = 'center';
           placed.push(r);
           break;
@@ -423,7 +433,7 @@ document.getElementById('header').outerHTML = headerHTML('');
     }
 
     // 路線文字（最多兩行）
-    const rc = (t.cities || []).map(c => c.name).filter((n, j, a) => n && a.indexOf(n) === j);
+    const rc = (t.cities || []).map(c => c.name).filter((n, j, a) => n && a.indexOf(n) === j).map(cityName);
     if (rc.length > 1) {
       set(600, 34, ACC);
       wrap(rc.join(' → '), 860, 2).forEach((l, j) => x.fillText(l, W / 2, 1580 + j * 52));
@@ -446,7 +456,8 @@ document.getElementById('header').outerHTML = headerHTML('');
   // ── 未對應到旅程的遊記 ──
   const oa = document.getElementById('orphan-articles');
   if (orphan.length) {
-    oa.innerHTML = '<h2 class="sec-title">✍️ 其他遊記</h2>';
+    oa.innerHTML = '<h2 class="sec-title">' + T('secStories') + '</h2>' +
+      (isEN() ? `<p class="cn-only">${T('cnOnly')}</p>` : '');
     for (const f of orphan) {
       const amd = await loadText(f);
       if (!amd) continue;

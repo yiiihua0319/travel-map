@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>私人基地｜Eva's Travel Map</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔓</text></svg>">
-<link rel="stylesheet" href="css/style.css?v=20260709b">
+<link rel="stylesheet" href="css/style.css?v=20260720a">
 <style>
   /* 私人基地限定風格（跟可愛說明書同款：暖白＋淡藍＋杏色螢光筆） */
   .base-hero {
@@ -45,6 +45,7 @@
   }
   .base-menu a:hover { border-color: #4a6c8c; opacity: 1; }
   .base-menu a span { font-size: 24px; }
+  .base-menu a i { font-style: normal; }
   .base-menu a small { font-weight: 400; color: #6b7684; font-size: 11.5px; }
   /* 打卡進度 */
   .vp-row {
@@ -68,17 +69,17 @@
   <div class="container">
     <div class="base-hero">
       <div class="stk">🔓</div>
-      <h1>歡迎回來，<em>Eva 的私人基地</em></h1>
-      <p class="hi" id="greet">這裡只有你看得到 🤫</p>
+      <h1 id="base-h1"></h1>
+      <p class="hi" id="greet"></p>
       <div class="base-menu">
-        <a href="#checkin"><span>✅</span>打卡進度<small>吃過踩過的口袋名單</small></a>
-        <a href="#stats"><span>📊</span>旅遊統計<small>花費・天數・時間軸</small></a>
-        <a href="index.html"><span>🗺️</span>回地圖<small>公開版首頁</small></a>
+        <a href="#checkin"><span>✅</span><i id="m1"></i><small id="m1s"></small></a>
+        <a href="#stats"><span>📊</span><i id="m2"></i><small id="m2s"></small></a>
+        <a href="index.html"><span>🗺️</span><i id="m3"></i><small id="m3s"></small></a>
       </div>
     </div>
     <div id="checkin-sec"></div>
     <div id="stats-anchor"></div>
-    <div id="content">載入中…</div>
+    <div id="content"></div>
   </div>
 </main>
 
@@ -88,17 +89,26 @@
 localStorage.setItem('tm_priv', '1');
 document.getElementById('header').outerHTML = headerHTML('stats');
 
+document.title = T('privTitle');
+document.getElementById('content').textContent = T('loading');
+document.getElementById('base-h1').innerHTML = T('baseWelcome') + `<em>${T('baseName')}</em>`;
+const MENU = [['m1', 'menuCheckin', 'menuCheckinS'], ['m2', 'menuStats', 'menuStatsS'], ['m3', 'menuMap', 'menuMapS']];
+for (const [id, k, ks] of MENU) {
+  document.getElementById(id).textContent = T(k);
+  document.getElementById(id + 's').textContent = T(ks);
+}
+
 // 依時間打招呼
 {
   const h = new Date().getHours();
-  const g = h < 5 ? '夜貓子還不睡 🌙' : h < 11 ? '早安 ☀️' : h < 18 ? '午安 🌤️' : '晚安 🌙';
-  document.getElementById('greet').textContent = g + '　這裡只有你看得到 🤫';
+  const g = h < 5 ? T('greetNight') : h < 11 ? T('greetMorning') : h < 18 ? T('greetNoon') : T('greetEvening');
+  document.getElementById('greet').textContent = g + '　' + T('baseOnlyYou');
 }
 
 (async () => {
   const [tripsData, countries, placesData] = await Promise.all([
     loadJSON('data/trips.json'), loadJSON('data/countries.json'),
-    loadJSON('data/places.json').catch(() => ({}))
+    loadJSON('data/places.json').catch(() => ({})), I18N_READY
   ]);
   const trips = tripsData.trips;
   const el = document.getElementById('content');
@@ -116,26 +126,26 @@ document.getElementById('header').outerHTML = headerHTML('stats');
     }
     rows.sort((a, b) => b.done - a.done || b.tot - a.tot);
     const sec = document.getElementById('checkin-sec');
-    let h = `<h2 class="sec-title" id="checkin">✅ 打卡進度 <span class="pl-count">全部 ${gDone}／${gTot} 個地點</span></h2>`;
+    let h = `<h2 class="sec-title" id="checkin">${T('ckTitle')} <span class="pl-count">${isEN() ? `${gDone} / ${gTot} places overall` : `全部 ${gDone}／${gTot} 個地點`}</span></h2>`;
     if (!gDone) {
-      h += `<div class="vp-empty">還沒開始打卡～去任何國家頁的「📍 我的口袋名單」，點地點前面的 ⬜ 就能記錄吃過踩過的地方！</div>`;
+      h += `<div class="vp-empty">${T('ckEmpty')}</div>`;
     } else {
       const shown = rows.filter(r => r.done);
       h += shown.map(r => `<a class="vp-row" href="country.html?c=${r.cc}">
         <span class="vp-flag">${flagEmoji(r.cc)}</span>
-        <span class="vp-name">${countries[r.cc]?.name || r.cc}</span>
+        <span class="vp-name">${cName(r.cc, countries)}</span>
         <span class="vp-track"><span class="vp-fill" style="width:${(r.done / r.tot * 100).toFixed(1)}%"></span></span>
         <span class="vp-n">${r.done}／${r.tot}</span>
       </a>`).join('');
       const rest = rows.length - shown.length;
-      if (rest > 0) h += `<p class="stat-note">還有 ${rest} 個國家沒開張，加油打卡 💪</p>`;
+      if (rest > 0) h += `<p class="stat-note">${isEN() ? `${rest} more ${rest === 1 ? 'country' : 'countries'} with nothing ticked off yet 💪` : `還有 ${rest} 個國家沒開張，加油打卡 💪`}</p>`;
     }
-    h += `<div class="priv-note" style="margin-top:20px">🔓 私人模式已在此瀏覽器啟用（每台裝置各開一次這頁）
-      <button id="priv-off">關閉私人模式</button></div>`;
+    h += `<div class="priv-note" style="margin-top:20px">${T('privOn')}
+      <button id="priv-off">${T('privOff')}</button></div>`;
     sec.innerHTML = h;
     document.getElementById('priv-off').onclick = () => {
       localStorage.removeItem('tm_priv');
-      alert('已關閉私人模式（打卡紀錄仍保留，再開這頁即可恢復）');
+      alert(T('privOffMsg'));
       location.href = 'index.html';
     };
   }
@@ -150,57 +160,59 @@ document.getElementById('header').outerHTML = headerHTML('stats');
   const withE = trips.filter(t => t.expenses);
   const grand = withE.reduce((s, t) => s + total(t), 0);
 
-  let html = `<h2 class="sec-title" id="stats">📊 旅遊統計 <span class="pl-count">數字裡的旅行足跡</span></h2>
+  let html = `<h2 class="sec-title" id="stats">${T('statsTitle')} <span class="pl-count">${T('statsSub')}</span></h2>
   <div class="stat-grid">
-    <div class="stat-card"><span class="stat-n" data-to="${nC}">0</span><span class="stat-l">🌍 個國家</span></div>
-    <div class="stat-card"><span class="stat-n" data-to="${trips.length}">0</span><span class="stat-l">✈️ 趟旅程</span></div>
-    <div class="stat-card"><span class="stat-n" data-to="${totalDays}">0</span><span class="stat-l">📅 天在路上</span></div>
-    <div class="stat-card"><span class="stat-n"><span data-to="${Math.round(grand / 10000)}">0</span><small>萬</small></span><span class="stat-l">💰 記錄到的花費</span></div>
+    <div class="stat-card"><span class="stat-n" data-to="${nC}">0</span><span class="stat-l">${T('statCountriesL')}</span></div>
+    <div class="stat-card"><span class="stat-n" data-to="${trips.length}">0</span><span class="stat-l">${T('statTripsL')}</span></div>
+    <div class="stat-card"><span class="stat-n" data-to="${totalDays}">0</span><span class="stat-l">${T('statDaysL')}</span></div>
+    <div class="stat-card"><span class="stat-n"><span data-to="${isEN() ? Math.round(grand / 1000) : Math.round(grand / 10000)}">0</span><small>${isEN() ? 'K' : '萬'}</small></span><span class="stat-l">${T('statSpendL')}</span></div>
   </div>`;
 
   // ── 最貴/最省 ──
   const ranked = [...withE].sort((a, b) => total(b) - total(a));
   const hi = ranked[0], lo = ranked[ranked.length - 1];
   const tripLink = t => `country.html?c=${t.countries[0]}&t=${t.id}`;
-  html += `<h2 class="sec-title">🏆 最貴 vs 最省</h2>
+  html += `<h2 class="sec-title">${T('hiloTitle')}</h2>
   <div class="hilo">
     <a class="hilo-card" href="${tripLink(hi)}">
-      <span class="hilo-tag">💸 最貴的一趟</span>
-      <b>${hi.title}</b>
+      <span class="hilo-tag">${T('hiloHigh')}</span>
+      <b>${tripTitle(hi)}</b>
       <span class="hilo-amt">${nt(total(hi))}</span>
-      <span class="hilo-days">${fmtRange(hi)} · ${days(hi)} 天</span>
+      <span class="hilo-days">${fmtRange(hi)} · ${nDays(days(hi))}</span>
     </a>
     <a class="hilo-card" href="${tripLink(lo)}">
-      <span class="hilo-tag">🪙 最省的一趟</span>
-      <b>${lo.title}</b>
+      <span class="hilo-tag">${T('hiloLow')}</span>
+      <b>${tripTitle(lo)}</b>
       <span class="hilo-amt">${nt(total(lo))}</span>
-      <span class="hilo-days">${fmtRange(lo)} · ${days(lo)} 天</span>
+      <span class="hilo-days">${fmtRange(lo)} · ${nDays(days(lo))}</span>
     </a>
   </div>`;
 
   // ── 花費排行 Top 10 ──
   const top = ranked.slice(0, 10);
   const maxT = total(top[0]);
-  html += `<h2 class="sec-title">💰 花費排行 Top 10</h2><div class="hbars">` +
+  html += `<h2 class="sec-title">${T('topTitle')}</h2><div class="hbars">` +
     top.map((t, i) => `<a class="hbar" href="${tripLink(t)}">
       <span class="hbar-rank">${i + 1}</span>
-      <span class="hbar-label">${flagEmoji(t.countries[0])} ${t.title}</span>
+      <span class="hbar-label">${flagEmoji(t.countries[0])} ${tripTitle(t)}</span>
       <span class="hbar-track"><span class="hbar-fill" style="width:${(total(t) / maxT * 100).toFixed(1)}%"></span></span>
       <span class="hbar-val">${Math.round(total(t) / 1000)}K</span>
     </a>`).join('') + `</div>
-    <p class="stat-note">僅計有記帳的 ${withE.length} 趟；部分旅程只記錄部分幣別</p>`;
+    <p class="stat-note">${isEN()
+      ? `Based on the ${withE.length} trips with recorded expenses; some trips only track certain currencies`
+      : `僅計有記帳的 ${withE.length} 趟；部分旅程只記錄部分幣別`}</p>`;
 
   // ── 每年旅行天數 ──
   const byY = {};
   for (const t of trips) { const y = t.dateStart.slice(0, 4); byY[y] = byY[y] || { d: 0, n: 0 }; byY[y].d += days(t); byY[y].n++; }
   const years = Object.keys(byY).sort();
   const maxD = Math.max(...years.map(y => byY[y].d));
-  html += `<h2 class="sec-title">📅 每年旅行天數</h2><div class="ybars">` +
+  html += `<h2 class="sec-title">${T('yearTitle')}</h2><div class="ybars">` +
     years.map(y => `<div class="ybar">
-      <span class="ybar-val">${byY[y].d}天</span>
+      <span class="ybar-val">${isEN() ? byY[y].d + 'd' : byY[y].d + '天'}</span>
       <span class="ybar-track"><span class="ybar-fill" style="height:${(byY[y].d / maxD * 100).toFixed(1)}%"></span></span>
       <span class="ybar-year">${y}</span>
-      <span class="ybar-trips">${byY[y].n} 趟</span>
+      <span class="ybar-trips">${isEN() ? `${byY[y].n} ${byY[y].n === 1 ? 'trip' : 'trips'}` : `${byY[y].n} 趟`}</span>
     </div>`).join('') + '</div>';
 
   // ── 錢都花去哪（類別總覽圓餅圖）──
@@ -211,7 +223,7 @@ document.getElementById('header').outerHTML = headerHTML('stats');
   sorted.slice(0, 7).forEach(([k, v]) => items[k] = (items[k] || 0) + Math.round(v));
   const rest = sorted.slice(7).reduce((s, [, v]) => s + v, 0);
   if (rest) items['其他'] = (items['其他'] || 0) + Math.round(rest);
-  html += '<h2 class="sec-title">🧾 錢都花去哪</h2>' +
+  html += `<h2 class="sec-title">${T('whereTitle')}</h2>` +
     pieChartHTML({ currency: 'TWD', items, note: '全部有記帳旅程加總（已換算台幣）' });
 
   // ── 造訪國家時間軸（首次踩點）──
@@ -220,12 +232,12 @@ document.getElementById('header').outerHTML = headerHTML('stats');
     for (const cc of t.countries) if (!first[cc]) first[cc] = t.dateStart.slice(0, 4);
   const byYear = {};
   for (const [cc, y] of Object.entries(first)) (byYear[y] = byYear[y] || []).push(cc);
-  html += '<h2 class="sec-title">🗓️ 解鎖國家時間軸</h2><div class="tl">' +
+  html += `<h2 class="sec-title">${T('unlockTitle')}</h2><div class="tl">` +
     Object.keys(byYear).sort().map(y => `<div class="tl-row">
       <span class="tl-year">${y}</span>
-      <span class="tl-n">+${byYear[y].length} 國</span>
+      <span class="tl-n">+${byYear[y].length}${isEN() ? '' : ' 國'}</span>
       <span class="tl-flags">${byYear[y].map(cc =>
-        `<a href="country.html?c=${cc}" title="${countries[cc]?.name || cc}">${flagEmoji(cc)}</a>`).join(' ')}</span>
+        `<a href="country.html?c=${cc}" title="${cName(cc, countries)}">${flagEmoji(cc)}</a>`).join(' ')}</span>
     </div>`).join('') + '</div>';
 
   el.innerHTML = html;

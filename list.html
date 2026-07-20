@@ -12,24 +12,24 @@
 <meta property="og:image" content="https://yiiihua0319.github.io/travel-map/assets/og-share.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
-<link rel="stylesheet" href="css/style.css?v=20260709b">
+<link rel="stylesheet" href="css/style.css?v=20260720a">
 </head>
 <body>
 <div id="header"></div>
 <main>
   <div class="container">
-    <div class="page-title">旅程列表</div>
-    <div class="page-sub" id="sub">載入中…</div>
-    <input class="search-box" id="q" type="search" placeholder="🔍 搜尋國家、城市、旅程或年份…" autocomplete="off">
+    <div class="page-title" id="pt"></div>
+    <div class="page-sub" id="sub"></div>
+    <input class="search-box" id="q" type="search" placeholder="" autocomplete="off">
     <div class="sort-toggle">
-      <button id="btn-date" class="active">依日期</button>
-      <button id="btn-country">依國家</button>
+      <button id="btn-date" class="active"></button>
+      <button id="btn-country"></button>
     </div>
     <div id="list"></div>
-    <h2 class="sec-title">🧳 旅行小知識</h2>
+    <h2 class="sec-title" id="tips-h"></h2>
     <div class="ig-row">
-      <a class="ig-chip" href="tips.html?f=esn-card">💳 ESN Card 辦卡教學</a>
-      <a class="ig-chip" href="tips.html?f=eurail">🚄 Eurail Pass 歐洲火車通票</a>
+      <a class="ig-chip" id="tip-esn" href="tips.html?f=esn-card"></a>
+      <a class="ig-chip" id="tip-eurail" href="tips.html?f=eurail"></a>
     </div>
   </div>
 </main>
@@ -38,14 +38,25 @@
 <script>
 document.getElementById('header').outerHTML = headerHTML('list');
 
+// 靜態文案依語言填入
+document.getElementById('pt').textContent = T('listTitle');
+document.getElementById('sub').textContent = T('loading');
+document.getElementById('q').placeholder = T('searchPh');
+document.getElementById('btn-date').textContent = T('sortDate');
+document.getElementById('btn-country').textContent = T('sortCountry');
+document.getElementById('tips-h').textContent = T('tipsHead');
+document.getElementById('tip-esn').textContent = T('tipEsn');
+document.getElementById('tip-eurail').textContent = T('tipEurail');
+document.title = T('listTitle') + "｜Eva's Travel Map";
+
 let trips = [], countries = {};
 
 // 每趟旅程可被搜尋的文字：標題＋國家名＋國碼＋城市名＋年份
 function searchText(t) {
   return [
-    t.title,
-    ...t.countries.map(cc => (countries[cc]?.name || '') + cc),
-    ...(t.cities || []).map(c => c.name),
+    t.title, tripTitle(t),
+    ...t.countries.map(cc => (countries[cc]?.name || '') + cName(cc, countries) + cc),
+    ...(t.cities || []).map(c => c.name + ' ' + cityName(c.name)),
     t.dateStart.slice(0, 4)
   ].join(' ').toLowerCase();
 }
@@ -58,19 +69,19 @@ function visibleTrips() {
 
 function flagLinks(t) {
   return t.countries.map(cc =>
-    `<a href="country.html?c=${cc}&t=${t.id}" title="${countries[cc]?.name || cc}">${flagEmoji(cc)}</a>`).join('');
+    `<a href="country.html?c=${cc}&t=${t.id}" title="${cName(cc, countries)}">${flagEmoji(cc)}</a>`).join('');
 }
 
 function rowHTML(t) {
   return `<div class="trip-row">
     <span class="trip-date">${fmtRange(t)}</span>
     <span class="trip-flags">${flagLinks(t)}</span>
-    <a class="trip-title" href="country.html?c=${t.countries[0]}&t=${t.id}">${t.title}</a>
+    <a class="trip-title" href="country.html?c=${t.countries[0]}&t=${t.id}">${tripTitle(t)}</a>
   </div>`;
 }
 
 function emptyHTML() {
-  return '<div class="empty-note">找不到符合的旅程 🧐 換個關鍵字試試？</div>';
+  return '<div class="empty-note">' + T('noResult') + '</div>';
 }
 
 function renderByDate() {
@@ -95,11 +106,11 @@ function renderByCountry() {
     byC.get(cc).push(t);
   }
   const order = [...byC.keys()].sort((a, b) =>
-    (countries[a]?.name || a).localeCompare(countries[b]?.name || b, 'zh-Hant'));
+    cName(a, countries).localeCompare(cName(b, countries), isEN() ? 'en' : 'zh-Hant'));
   let html = '';
   for (const cc of order) {
     const list = byC.get(cc).sort((a, b) => b.dateStart.localeCompare(a.dateStart));
-    html += `<div class="group-label"><a href="country.html?c=${cc}">${flagEmoji(cc)} ${countries[cc]?.name || cc}（${list.length}）→</a></div>`;
+    html += `<div class="group-label"><a href="country.html?c=${cc}">${flagEmoji(cc)} ${cName(cc, countries)}${isEN() ? ` (${list.length})` : `（${list.length}）`} →</a></div>`;
     html += list.map(rowHTML).join('');
   }
   document.getElementById('list').innerHTML = html;
@@ -107,11 +118,12 @@ function renderByCountry() {
 
 (async () => {
   const [tripsData, cData] = await Promise.all([
-    loadJSON('data/trips.json'), loadJSON('data/countries.json')
+    loadJSON('data/trips.json'), loadJSON('data/countries.json'), I18N_READY
   ]);
   trips = tripsData.trips; countries = cData;
   const nC = new Set(trips.flatMap(t => t.countries)).size;
-  document.getElementById('sub').textContent = `${trips.length} 趟旅程 · ${nC} 個國家`;
+  const subText = () => isEN() ? `${trips.length} trips · ${nC} countries` : `${trips.length} 趟旅程 · ${nC} 個國家`;
+  document.getElementById('sub').textContent = subText();
   renderByDate();
 
   const bd = document.getElementById('btn-date'), bc = document.getElementById('btn-country');
@@ -123,8 +135,8 @@ function renderByCountry() {
   q.addEventListener('input', () => {
     const vt = visibleTrips();
     document.getElementById('sub').textContent = q.value.trim()
-      ? `找到 ${vt.length} 趟旅程`
-      : `${trips.length} 趟旅程 · ${nC} 個國家`;
+      ? (isEN() ? `${vt.length} ${vt.length === 1 ? 'trip' : 'trips'} found` : `找到 ${vt.length} 趟旅程`)
+      : subText();
     bd.classList.contains('active') ? renderByDate() : renderByCountry();
   });
 })();

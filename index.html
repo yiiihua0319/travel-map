@@ -14,40 +14,53 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
-<link rel="stylesheet" href="css/style.css?v=20260710d">
+<link rel="stylesheet" href="css/style.css?v=20260720a">
 </head>
 <body>
 <div id="header"></div>
 <div id="map"></div>
-<div class="map-stats" id="stats">載入中…</div>
+<div class="map-stats" id="stats"></div>
 <div class="replay-year" id="replay-year" hidden></div>
 
 <!-- 歡迎卡（說明書風格）：首次來訪自動顯示，之後可用右下角 📖 再打開 -->
 <div class="welcome-backdrop" id="welcome" hidden>
   <div class="welcome-card" role="dialog" aria-labelledby="wc-title">
-    <button class="wc-close" id="wc-close" aria-label="關閉">✕</button>
+    <button class="wc-close" id="wc-close">✕</button>
     <div class="wc-sticker">🗺️</div>
-    <h2 id="wc-title">歡迎來到 <em>Eva's Travel Map</em> ✈️</h2>
-    <p class="wc-lead">這裡收藏了我 <b>38 個國家、50 趟旅程</b>的回憶——行程、花費、口袋名單、遊記，全部整理在這張地圖上。</p>
+    <h2 id="wc-title"></h2>
+    <p class="wc-lead" id="wc-lead"></p>
     <div class="wc-tips">
-      <div>🌍 <b>點國旗圖釘</b><span>看那一趟的完整紀錄</span></div>
-      <div>📍 <b>口袋名單</b><span>我存過的美食、景點、購物清單</span></div>
-      <div>✍️ <b>遊記</b><span>各國的故事慢慢讀</span></div>
+      <div id="wc-t1">🌍 </div>
+      <div id="wc-t2">📍 </div>
+      <div id="wc-t3">✍️ </div>
     </div>
-    <p class="wc-ask">有建議或想看的內容嗎？來 IG 跟我說 💬</p>
+    <p class="wc-ask" id="wc-ask"></p>
     <div class="wc-actions">
-      <button class="wc-btn primary" id="wc-go">開始探索 🧭</button>
+      <button class="wc-btn primary" id="wc-go"></button>
       <a class="wc-btn ig" href="https://www.instagram.com/yiiihua_0319/" target="_blank" rel="noopener">📸 @yiiihua_0319</a>
     </div>
   </div>
 </div>
-<button class="about-chip" id="about-chip" hidden>📖 關於這裡</button>
+<button class="about-chip" id="about-chip" hidden></button>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script src="js/common.js"></script>
 <script>
 document.getElementById('header').outerHTML = headerHTML('map');
+
+// 靜態文案依語言填入
+document.title = T('mapTitle');
+document.getElementById('stats').textContent = T('loading');
+document.getElementById('wc-close').setAttribute('aria-label', T('wcClose'));
+document.getElementById('wc-title').innerHTML = `${T('wcTitle')} <em>Eva's Travel Map</em> ✈️`;
+document.getElementById('wc-lead').innerHTML = T('wcLead');
+document.getElementById('wc-t1').innerHTML = '🌍 ' + T('wcTip1');
+document.getElementById('wc-t2').innerHTML = '📍 ' + T('wcTip2');
+document.getElementById('wc-t3').innerHTML = '✍️ ' + T('wcTip3');
+document.getElementById('wc-ask').textContent = T('wcAsk');
+document.getElementById('wc-go').textContent = T('wcGo');
+document.getElementById('about-chip').textContent = T('aboutChip');
 
 // ── 歡迎卡：第一次來訪自動打開，之後右下角 📖 隨時可再看 ──
 {
@@ -65,7 +78,8 @@ document.getElementById('header').outerHTML = headerHTML('map');
 (async () => {
   const [tripsData, countries] = await Promise.all([
     loadJSON('data/trips.json'),
-    loadJSON('data/countries.json')
+    loadJSON('data/countries.json'),
+    I18N_READY
   ]);
   const trips = tripsData.trips;
 
@@ -122,26 +136,32 @@ document.getElementById('header').outerHTML = headerHTML('map');
       // 只連到這個城市所屬的國家（多國旅程不再列出全部國家）
       const ccs = city.cc ? [city.cc] : t.countries;
       const links = ccs.map(cc =>
-        `<a href="country.html?c=${cc}&t=${t.id}">${flagEmoji(cc)} ${countries[cc]?.name || cc}</a>`).join(' ');
+        `<a href="country.html?c=${cc}&t=${t.id}">${flagEmoji(cc)} ${cName(cc, countries)}</a>`).join(' ');
       // 標題去掉國名前綴（下一行已有國旗＋國名）：日本福岡關西 → 福岡關西
-      const cn = city.cc && countries[city.cc]?.name;
-      const title = (cn && t.title.startsWith(cn) && t.title.length > cn.length) ? t.title.slice(cn.length) : t.title;
-      return `<div class="pin-trip">${fmtRange(t)}｜${title}<br>${links} <a class="fly-link" href="#" data-fly="${t.id}">🧭 行程軌跡</a></div>`;
+      const cn = city.cc && cName(city.cc, countries);
+      const full = tripTitle(t);
+      const title = (cn && full.startsWith(cn) && full.length > cn.length) ? full.slice(cn.length).trim() : full;
+      return `<div class="pin-trip">${fmtRange(t)}｜${title}<br>${links} <a class="fly-link" href="#" data-fly="${t.id}">${T('flyLink')}</a></div>`;
     }).join('<hr style="border:none;border-top:1px solid #eee;margin:6px 0">');
-    marker.bindPopup(`<div class="pin-city">📍 ${city.name}</div>${rows}`);
+    marker.bindPopup(`<div class="pin-city">📍 ${cityName(city.name)}</div>${rows}`);
   }
   map.addLayer(cluster);
 
   // ── 自製繁體中文地名層（底圖無字；縮小看洲/海洋，放大看造訪國家）──
-  const LBL_CONT = [['亞洲', 47, 95], ['歐洲', 57, 40], ['非洲', 9, 21], ['北美洲', 50, -100], ['南美洲', -14, -60], ['大洋洲', -26, 140]];
-  const LBL_OCEAN = [['太平洋', 3, -155], ['大西洋', 12, -38], ['印度洋', -22, 82]];
+  const CONT_EN = { '亞洲': 'Asia', '歐洲': 'Europe', '非洲': 'Africa', '北美洲': 'North America', '南美洲': 'South America', '大洋洲': 'Oceania',
+    '太平洋': 'Pacific Ocean', '大西洋': 'Atlantic Ocean', '印度洋': 'Indian Ocean' };
+  const geoName = n => isEN() ? (CONT_EN[n] || n) : n;
+  const LBL_CONT = [['亞洲', 47, 95], ['歐洲', 57, 40], ['非洲', 9, 21], ['北美洲', 50, -100], ['南美洲', -14, -60], ['大洋洲', -26, 140]]
+    .map(([n, a, b]) => [geoName(n), a, b]);
+  const LBL_OCEAN = [['太平洋', 3, -155], ['大西洋', 12, -38], ['印度洋', -22, 82]]
+    .map(([n, a, b]) => [geoName(n), a, b]);
   const CTR_OVERRIDE = { US: [39.5, -98], CN: [33, 103], NO: [61.5, 9], JP: [37.5, 138.5], GB: [53.8, -3.6] };
   const ctrByCc = {};
   for (const t of trips) for (const c of (t.cities || [])) if (c.cc) (ctrByCc[c.cc] = ctrByCc[c.cc] || []).push([c.lat, c.lng]);
   const LBL_CTRY = Object.entries(ctrByCc).map(([cc, pts]) => {
     const [lat, lng] = CTR_OVERRIDE[cc] ||
       [pts.reduce((s, p) => s + p[0], 0) / pts.length, pts.reduce((s, p) => s + p[1], 0) / pts.length];
-    return [countries[cc]?.name || cc, lat, lng];
+    return [cName(cc, countries), lat, lng];
   });
   const mkLabel = (n, lat, lng, cls) => L.marker([lat, lng], {
     icon: L.divIcon({ className: 'mlbl-wrap', html: `<span class="mlbl ${cls}">${n}</span>`, iconSize: [0, 0] }),
@@ -177,13 +197,13 @@ document.getElementById('header').outerHTML = headerHTML('map');
 
   document.getElementById('stats').innerHTML = `
     <div class="ms-nums">
-      <div class="ms-stat"><b id="ms-c">0</b><span>🌍 國家</span></div>
-      <div class="ms-stat"><b id="ms-t">0</b><span>✈️ 旅程</span></div>
-      <div class="ms-stat"><b id="ms-d">0</b><span>📅 天</span></div>
+      <div class="ms-stat"><b id="ms-c">0</b><span>${T('statCountries')}</span></div>
+      <div class="ms-stat"><b id="ms-t">0</b><span>${T('statTrips')}</span></div>
+      <div class="ms-stat"><b id="ms-d">0</b><span>${T('statDays')}</span></div>
     </div>
-    <button class="ms-replay" id="ms-replay">▶ 足跡回放</button>
-    <button class="ms-replay" id="ms-flyall">🛫 飛行回放</button>
-    <div class="ms-hint">👆 點圖釘看旅程，點國家進遊記</div>`;
+    <button class="ms-replay" id="ms-replay">${T('replayFoot')}</button>
+    <button class="ms-replay" id="ms-flyall">${T('replayFly')}</button>
+    <div class="ms-hint">${T('mapHint')}</div>`;
 
   // 數字滾動動畫（easeOutCubic）
   function countUp(id, to, dur = 1000) {
@@ -229,14 +249,17 @@ document.getElementById('header').outerHTML = headerHTML('map');
 
   // ── 飛行軌跡動畫（Flighty 風）：popup 內每趟旅程可點「✈️ 飛行軌跡」──
   // 出發基地依旅程日期判斷：台北 → 曼徹斯特(歐洲交換) → 台北 → 洛杉磯(USC) → 台北(回台實習)
+  // 欄位：日期, 中文名, lat, lng, 國碼, 中文搬家標籤, 英文名, 英文搬家標籤
   const HOME_BASES = [
-    ['2000-01-01', '台北', 25.033, 121.5654, 'TW'],
-    ['2023-09-01', '曼徹斯特', 53.4808, -2.2426, 'GB', '🎒 出發去英國交換'],
-    ['2024-06-20', '台北', 25.033, 121.5654, 'TW', '🏠 交換結束，回台北'],
-    ['2025-08-01', '洛杉磯', 34.0522, -118.2437, 'US', '🎓 出發去 USC'],
-    ['2026-05-15', '台北', 25.033, 121.5654, 'TW', '🏠 回台北實習'],
-    ['2026-08-01', '洛杉磯', 34.0522, -118.2437, 'US', '🎒 搬家去美國']
+    ['2000-01-01', '台北', 25.033, 121.5654, 'TW', '', 'Taipei', ''],
+    ['2023-09-01', '曼徹斯特', 53.4808, -2.2426, 'GB', '🎒 出發去英國交換', 'Manchester', '🎒 Leaving for my exchange in the UK'],
+    ['2024-06-20', '台北', 25.033, 121.5654, 'TW', '🏠 交換結束，回台北', 'Taipei', '🏠 Exchange over, back to Taipei'],
+    ['2025-08-01', '洛杉磯', 34.0522, -118.2437, 'US', '🎓 出發去 USC', 'Los Angeles', '🎓 Off to USC'],
+    ['2026-05-15', '台北', 25.033, 121.5654, 'TW', '🏠 回台北實習', 'Taipei', '🏠 Back to Taipei for my internship'],
+    ['2026-08-01', '洛杉磯', 34.0522, -118.2437, 'US', '🎒 搬家去美國', 'Los Angeles', '🎒 Moving to the US']
   ];
+  const baseName = h => isEN() ? h[6] : h[1];
+  const moveLabel = h => (isEN() ? h[7] : h[5]) || '';
   const homeFor = t => { let h = HOME_BASES[0]; for (const b of HOME_BASES) if (b[0] <= t.dateStart) h = b; return h; };
 
   const rad = d => d * Math.PI / 180, deg = r => r * 180 / Math.PI;
@@ -336,7 +359,7 @@ document.getElementById('header').outerHTML = headerHTML('map');
     flight = null;
     cancelAnimationFrame(raf); clearTimeout(timer);
     if (all) {
-      document.getElementById('ms-flyall').textContent = '🛫 飛行回放';
+      document.getElementById('ms-flyall').textContent = T('replayFly');
       yearEl.hidden = true;
     }
     if (instant) { layers.forEach(l => map.removeLayer(l)); toast.remove(); return; }
@@ -380,7 +403,9 @@ document.getElementById('header').outerHTML = headerHTML('map');
     }).addTo(map);
     const toast = document.createElement('div');
     toast.className = 'fly-toast';
-    toast.textContent = `🧭 ${home[1]} 出發往返｜${trip.title}｜約 ${Math.round(total).toLocaleString()} km`;
+    toast.textContent = isEN()
+      ? `🧭 Round trip from ${baseName(home)}｜${tripTitle(trip)}｜~${Math.round(total).toLocaleString()} km`
+      : `🧭 ${baseName(home)} 出發往返｜${tripTitle(trip)}｜約 ${Math.round(total).toLocaleString()} km`;
     document.body.appendChild(toast);
     flight = { layers: [ghost, trail, ...dots, plane], toast, raf: 0, timer: 0 };
     const myFlight = flight;
@@ -459,13 +484,13 @@ document.getElementById('header').outerHTML = headerHTML('map');
       const base = [home[2], home[3]];
       if (!curBase) { cur = base; curBase = home; }
       else if (home[1] !== curBase[1]) {   // 搬家（換基地）
-        legs.push({ from: cur, to: base, label: home[5] || `✈️ 移動到${home[1]}`, year: +t.dateStart.slice(0, 4), move: true, key: 'move' + legs.length });
+        legs.push({ from: cur, to: base, label: moveLabel(home) || (isEN() ? `✈️ Moving to ${baseName(home)}` : `✈️ 移動到${baseName(home)}`), year: +t.dateStart.slice(0, 4), move: true, key: 'move' + legs.length });
         cur = base; curBase = home;
       }
       // 交換期間英國國內小旅行是搭火車，不畫
       const stops = tripStops(t).filter(s => !(home[4] === 'GB' && s.cc === 'GB'));
       if (!stops.length) continue;
-      const lbl = `${t.dateStart.slice(0, 7).replace('-', '/')}｜${t.title}`;
+      const lbl = `${t.dateStart.slice(0, 7).replace('-', '/')}｜${tripTitle(t)}`;
       const y = +t.dateStart.slice(0, 4);
       for (const s of stops) {
         if (distKm(cur, s.ll) > 15) legs.push({ from: cur, to: s.ll, label: lbl, year: y, key: t.id });
@@ -502,7 +527,7 @@ document.getElementById('header').outerHTML = headerHTML('map');
     }
     const totalKm = legs.reduce((s, l) => s + l.km, 0);
 
-    flyAllBtn.textContent = '⏹ 停止回放';
+    flyAllBtn.textContent = T('replayStop');
     const toast = document.createElement('div');
     toast.className = 'fly-toast';
     document.body.appendChild(toast);
@@ -577,7 +602,9 @@ document.getElementById('header').outerHTML = headerHTML('map');
 
     // 抵達現在：拉遠看整張航線網，停一下再淡出
     yearEl.hidden = true;
-    toast.textContent = `🌍 ${legs.length} 段航程｜共約 ${Math.round(totalKm).toLocaleString()} km`;
+    toast.textContent = isEN()
+      ? `🌍 ${legs.length} flights｜~${Math.round(totalKm).toLocaleString()} km in total`
+      : `🌍 ${legs.length} 段航程｜共約 ${Math.round(totalKm).toLocaleString()} km`;
     const allPts = legs.flatMap(l => l.pts);
     map.flyToBounds(L.latLngBounds(allPts), { padding: [60, 60], duration: 1.6, easeLinearity: 0.25 });
     myFlight.timer = setTimeout(() => clearFlight(), 8000);
