@@ -2,7 +2,7 @@
 
 const DATA_BASE = '';
 // 每次改資料就 bump 這個版本號，讓瀏覽器/CDN 一定抓到最新的 JSON/MD（避免部署後看到舊快取）
-const SITE_VER = '20260720b';
+const SITE_VER = '20260720c';
 
 function flagEmoji(code) {
   return [...code.toUpperCase()].map(c => String.fromCodePoint(0x1F1A5 + c.charCodeAt(0))).join('');
@@ -59,10 +59,10 @@ const UI = {
   statCountries: ['🌍 國家', '🌍 Countries'],
   statTrips:     ['✈️ 旅程', '✈️ Trips'],
   statDays:      ['📅 天', '📅 Days'],
-  replayFoot:    ['▶ 足跡回放', '▶ Replay footsteps'],
-  replayFly:     ['🛫 飛行回放', '🛫 Flight replay'],
-  replayStop:    ['⏹ 停止回放', '⏹ Stop replay'],
-  mapHint:       ['👆 點圖釘看旅程，點國家進遊記', '👆 Tap a pin for trips, tap a country for the story'],
+  replayFoot:    ['▶ 足跡回放', '▶ Footsteps'],
+  replayFly:     ['🛫 飛行回放', '🛫 Flights'],
+  replayStop:    ['⏹ 停止回放', '⏹ Stop'],
+  mapHint:       ['👆 點圖釘看旅程，點國家進遊記', '👆 Tap a pin for trips, a country for its story'],
   flyLink:       ['🧭 行程軌跡', '🧭 Route'],
 
   // 列表頁
