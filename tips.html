@@ -8,7 +8,7 @@
 <meta property="og:image" content="https://yiiihua0319.github.io/travel-map/assets/og-share.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
-<link rel="stylesheet" href="css/style.css?v=20260720a">
+<link rel="stylesheet" href="css/style.css?v=20260720b">
 </head>
 <body>
 <div id="header"></div>
@@ -41,14 +41,14 @@ const TIPS = {
     document.title = T('tipsHead').replace(/^\S+\s*/, '') + "｜Eva's Travel Map";
     el.innerHTML = `<div class="page-title">${T('tipsHead')}</div>` +
       `<div class="page-sub">${T('tipsSub')}</div>` +
-      (isEN() ? `<p class="cn-only">${T('cnOnly')}</p>` : '') +
       Object.entries(TIPS).map(([k, v]) =>
         `<div class="trip-row"><a href="tips.html?f=${k}">${v.title}</a></div>`).join('');
     return;
   }
   document.title = tip.title + '｜Eva\'s Travel Map';
-  const md = await loadText(tip.file);
-  el.innerHTML = (isEN() ? `<p class="cn-only" style="margin-top:0">${T('cnOnly')}</p>` : '') + (md
+  const en = isEN() ? await loadText(enPath(tip.file)) : null;
+  const md = en || await loadText(tip.file);
+  el.innerHTML = (isEN() && md && !en ? `<p class="cn-only" style="margin-top:0">${T('cnOnly')}</p>` : '') + (md
     ? '<div class="md-section" style="margin-top:0"><div class="md-body">' + renderMD(md) + '</div></div>'
     : '<div class="empty-note">' + T('tipLoadFail') + '</div>');
 })();

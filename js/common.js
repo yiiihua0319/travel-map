@@ -2,7 +2,7 @@
 
 const DATA_BASE = '';
 // 每次改資料就 bump 這個版本號，讓瀏覽器/CDN 一定抓到最新的 JSON/MD（避免部署後看到舊快取）
-const SITE_VER = '20260720a';
+const SITE_VER = '20260720b';
 
 function flagEmoji(code) {
   return [...code.toUpperCase()].map(c => String.fromCodePoint(0x1F1A5 + c.charCodeAt(0))).join('');
@@ -150,6 +150,17 @@ const cityName = n => isEN() ? (DIC.cities[n] || n) : n;
 const tripTitle = tr => isEN() ? (DIC.trips[tr.id] || tr.title) : tr.title;
 const catName = k => isEN() ? (DIC.expenseCats[k] || k) : k;
 const noteText = n => isEN() ? (DIC.expenseNotes[n] || n) : n;
+/* 旅程短標題：去掉開頭重複的國名（旁邊通常已有國旗），英文名比中文長很多時特別需要 */
+function shortTitle(tr, countries) {
+  const full = tripTitle(tr);
+  for (const cc of tr.countries) {
+    const n = cName(cc, countries);
+    if (n && full.startsWith(n) && full.length > n.length) return full.slice(n.length).trim();
+  }
+  return full;
+}
+/* 遊記英文版路徑：data/medium/york.md → data/medium/en/york.md */
+const enPath = f => f.replace(/\/([^/]+\.md)$/, '/en/$1');
 const nDays = n => isEN() ? `${n} days` : `${n} 天`;
 const nTrips = n => isEN() ? `${n} ${n === 1 ? 'trip' : 'trips'}` : `${n} 趟旅程`;
 const nPlaces = n => isEN() ? `${n} ${n === 1 ? 'place' : 'places'}` : `${n} 個地點`;
@@ -218,8 +229,8 @@ function renderTripMD(md) {
     if (line.startsWith('## ')) {
       flushCards();
       const h = line.slice(3).trim();
-      inExpense = /花費/.test(h);
-      if (h !== '行程') html += '<h2>' + inline(h) + '</h2>';
+      inExpense = /花費|Expenses/i.test(h);
+      if (h !== '行程' && h !== 'Itinerary') html += '<h2>' + inline(h) + '</h2>';
       continue;
     }
     const dm = line.match(/^- \*\*(.+?)\*\*\s*(.*)$/);

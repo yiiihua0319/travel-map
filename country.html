@@ -13,7 +13,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="css/style.css?v=20260720a">
+<link rel="stylesheet" href="css/style.css?v=20260720b">
 </head>
 <body>
 <div id="header"></div>
@@ -119,12 +119,15 @@ document.getElementById('content').textContent = T('loading');
     routeParts.push(nDays(tdays));
     inner += `<div class="trip-route">🧭 ${routeParts.join('｜')}</div>`;
 
-    // 1. 行程（公開的亞洲頁面把「## 花費」整段拿掉）
-    let md = await loadText('data/trips/' + t.id + '.md');
-    if (md && hideMoney) md = md.replace(/\n## [^\n]*花費[^\n]*\n[\s\S]*?(?=\n## |$)/g, '');
-    // 行程與遊記只有中文版：英文介面下加一行說明
+    // 1. 行程（英文模式優先讀 en/ 版；公開的亞洲頁面把「## 花費」整段拿掉）
+    let md = isEN() ? await loadText('data/trips/en/' + t.id + '.md') : null;
+    const mdTranslated = !!md;
+    if (!md) md = await loadText('data/trips/' + t.id + '.md');
+    if (md && hideMoney) md = md.replace(/\n## [^\n]*(花費|Expenses)[^\n]*\n[\s\S]*?(?=\n## |$)/g, '');
+    // 還沒有英文版的內容才提示「只有中文」
     const cnNote = isEN() ? `<p class="cn-only">${T('cnOnly')}</p>` : '';
-    if (md) inner += '<h3 class="part-title">' + T('partItinerary') + '</h3>' + cnNote
+    if (md) inner += '<h3 class="part-title">' + T('partItinerary') + '</h3>'
+      + (isEN() && !mdTranslated ? cnNote : '')
       + '<div class="trip-md">' + renderTripMD(md) + '</div>';
 
     // 2. 費用
@@ -132,10 +135,13 @@ document.getElementById('content').textContent = T('loading');
 
     // 3. 心得（遊記）
     if (byTrip[t.id]?.length) {
-      inner += '<h3 class="part-title">' + T('partStory') + '</h3>' + (md ? '' : cnNote);
+      inner += '<h3 class="part-title">' + T('partStory') + '</h3>';
       for (const f of [...new Set(byTrip[t.id])]) {
-        const amd = await loadText(f);
-        if (amd) inner += '<div class="md-section"><div class="md-body">' + renderMD(amd) + '</div></div>';
+        const en = isEN() ? await loadText(enPath(f)) : null;
+        const amd = en || await loadText(f);
+        if (amd) inner += '<div class="md-section">'
+          + (isEN() && !en ? cnNote : '')
+          + '<div class="md-body">' + renderMD(amd) + '</div></div>';
       }
     }
     if (!md && !t.expenses && !byTrip[t.id]?.length) {
@@ -339,15 +345,19 @@ document.getElementById('content').textContent = T('loading');
       x.fillStyle = color;
       try { x.letterSpacing = ls || '0px'; } catch (e) {}
     };
-    // 依寬度斷行（中文逐字量測）
+    // 依寬度斷行：中文逐字斷，英文整個單字一起斷（不然會從單字中間切開）
     const wrap = (s, maxW, maxLines) => {
+      const units = s.match(/[A-Za-z0-9'’&./-]+|\s+|[\s\S]/g) || [];
       const lines = []; let cur = '';
-      for (const ch of s) {
-        if (x.measureText(cur + ch).width > maxW && cur) { lines.push(cur); cur = ch; }
-        else cur += ch;
-        if (lines.length === maxLines) return lines;
+      for (const u of units) {
+        if (/^\s+$/.test(u)) { if (cur) cur += ' '; continue; }
+        if (x.measureText(cur + u).width > maxW && cur.trim()) {
+          lines.push(cur.trim());
+          if (lines.length === maxLines) return lines;
+          cur = u;
+        } else cur += u;
       }
-      if (cur) lines.push(cur);
+      if (cur.trim() && lines.length < maxLines) lines.push(cur.trim());
       return lines;
     };
 
@@ -456,14 +466,15 @@ document.getElementById('content').textContent = T('loading');
   // ── 未對應到旅程的遊記 ──
   const oa = document.getElementById('orphan-articles');
   if (orphan.length) {
-    oa.innerHTML = '<h2 class="sec-title">' + T('secStories') + '</h2>' +
-      (isEN() ? `<p class="cn-only">${T('cnOnly')}</p>` : '');
+    oa.innerHTML = '<h2 class="sec-title">' + T('secStories') + '</h2>';
     for (const f of orphan) {
-      const amd = await loadText(f);
+      const en = isEN() ? await loadText(enPath(f)) : null;
+      const amd = en || await loadText(f);
       if (!amd) continue;
       const sec = document.createElement('div');
       sec.className = 'md-section';
-      sec.innerHTML = '<div class="md-body">' + renderMD(amd) + '</div>';
+      sec.innerHTML = (isEN() && !en ? `<p class="cn-only">${T('cnOnly')}</p>` : '')
+        + '<div class="md-body">' + renderMD(amd) + '</div>';
       oa.appendChild(sec);
     }
   }

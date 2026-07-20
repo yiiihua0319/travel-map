@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>私人基地｜Eva's Travel Map</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔓</text></svg>">
-<link rel="stylesheet" href="css/style.css?v=20260720a">
+<link rel="stylesheet" href="css/style.css?v=20260720b">
 <style>
   /* 私人基地限定風格（跟可愛說明書同款：暖白＋淡藍＋杏色螢光筆） */
   .base-hero {
@@ -194,7 +194,7 @@ for (const [id, k, ks] of MENU) {
   html += `<h2 class="sec-title">${T('topTitle')}</h2><div class="hbars">` +
     top.map((t, i) => `<a class="hbar" href="${tripLink(t)}">
       <span class="hbar-rank">${i + 1}</span>
-      <span class="hbar-label">${flagEmoji(t.countries[0])} ${tripTitle(t)}</span>
+      <span class="hbar-label">${flagEmoji(t.countries[0])} ${shortTitle(t, countries)}</span>
       <span class="hbar-track"><span class="hbar-fill" style="width:${(total(t) / maxT * 100).toFixed(1)}%"></span></span>
       <span class="hbar-val">${Math.round(total(t) / 1000)}K</span>
     </a>`).join('') + `</div>
