@@ -1771,6 +1771,51 @@
     }
    ],
    "notionId": "39cee7c05698807eb565c5e85dc6234c"
+  },
+  {
+   "id": "2026-mammoth",
+   "title": "美國猛獁湖",
+   "dateStart": "2026-10-08",
+   "dateEnd": "2026-10-10",
+   "countries": [
+    "US"
+   ],
+   "cities": [
+    {
+     "name": "孤松鎮",
+     "lat": 36.606,
+     "lng": -118.0629,
+     "cc": "US"
+    },
+    {
+     "name": "猛獁湖",
+     "lat": 37.6485,
+     "lng": -118.9721,
+     "cc": "US"
+    },
+    {
+     "name": "優勝美地",
+     "lat": 37.7456,
+     "lng": -119.5936,
+     "cc": "US"
+    },
+    {
+     "name": "畢夏普",
+     "lat": 37.3635,
+     "lng": -118.3951,
+     "cc": "US"
+    }
+   ],
+   "notionId": "3f2ee7c0569881cfa093edef663ab78a",
+   "expenses": {
+    "currency": "TWD",
+    "items": {
+     "交通": 4247,
+     "住宿": 3200,
+     "食物": 2982
+    },
+    "note": "美元以32匯率換算台幣；5人分攤後的個人金額；交通含租車Enterprise $84.56與油資/Uber/Lyft；已排除幫朋友代付的Mushroom Focaccia $8.25"
+   }
   }
  ]
 }
