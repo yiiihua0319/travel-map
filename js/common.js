@@ -32,6 +32,12 @@ function toggleLang() {
 
 const UI = {
   navMap:        ['地圖', 'Map'],
+  descList:      ['52 趟旅程列表，依日期或國家瀏覽，可搜尋',
+                  'All 52 trips, browsable by date or country, with search'],
+  descCountry:   ['各國旅程紀錄：行程、花費圓餅圖、口袋名單、遊記',
+                  'Trip records by country: itineraries, spending charts, saved places and write-ups'],
+  descTips:      ['Eva 的歐洲旅行省錢技巧：ESN 卡、Eurail Pass 使用心得',
+                  "Eva's money-saving tips for travelling Europe: the ESN Card and the Eurail Pass"],
   navList:       ['旅程列表', 'Trips'],
   navStats:      ['統計 🔓', 'Stats 🔓'],
   langBtn:       ['EN', '中文'],
@@ -100,7 +106,7 @@ const UI = {
   checkTip:      ['去過了打勾', 'Mark as visited'],
 
   // 私人基地
-  privTitle:     ['私人基地｜Eva\'s Travel Map', "Private Base｜Eva's Travel Map"],
+  privTitle:     ['私人基地', 'Private Base'],
   baseWelcome:   ['歡迎回來，', 'Welcome back, '],
   baseName:      ['Eva 的私人基地', "Eva's private base"],
   baseOnlyYou:   ['這裡只有你看得到 🤫', 'Only you can see this 🤫'],
@@ -139,7 +145,7 @@ const UI = {
 function T(key) { const v = UI[key]; return v ? v[isEN() ? 1 : 0] : key; }
 
 /* 資料型翻譯：國家 / 城市 / 旅程名 / 花費分類與備註（中文模式直接回原值） */
-let DIC = { countries: {}, cities: {}, trips: {}, expenseCats: {}, expenseNotes: {} };
+let DIC = { countries: {}, cities: {}, trips: {}, expenseCats: {}, expenseNotes: {}, places: {}, placeNotes: {}, igNames: {} };
 const I18N_READY = isEN()
   ? loadJSON('data/i18n.json').then(d => { DIC = d; }).catch(() => {})
   : Promise.resolve();
@@ -161,6 +167,23 @@ function shortTitle(tr, countries) {
 }
 /* 遊記英文版路徑：data/medium/york.md → data/medium/en/york.md */
 const enPath = f => f.replace(/\/([^/]+\.md)$/, '/en/$1');
+/* 口袋名單地點名與備註。places.json 有些字是 CJK 相容字（如 樂 U+F914），
+   和字典裡的一般字不同碼，所以查不到時再用 NFC 正規化查一次 */
+const dicLookup = (dic, s) => dic[s] || dic[s.normalize('NFC')] || s;
+const placeName = n => isEN() ? dicLookup(DIC.places || {}, n) : n;
+const placeNote = n => isEN() ? dicLookup(DIC.placeNotes || {}, n) : n;
+const igName = n => isEN() ? dicLookup(DIC.igNames || {}, n) : n;
+
+/* 分隔符：中文用全形｜，英文用半形間隔號（全形標點在英文介面看起來很突兀） */
+const SEP = () => isEN() ? ' · ' : '｜';
+/* 頁面標題與 meta 描述（英文模式下把 HTML 裡的中文 meta 換掉） */
+function setPageMeta(title, desc) {
+  if (title) document.title = title + SEP() + "Eva's Travel Map";
+  if (!desc) return;
+  for (const sel of ['meta[name="description"]', 'meta[property="og:description"]'])
+    document.querySelector(sel)?.setAttribute('content', desc);
+  if (title) document.querySelector('meta[property="og:title"]')?.setAttribute('content', title + SEP() + "Eva's Travel Map");
+}
 const nDays = n => isEN() ? `${n} days` : `${n} 天`;
 const nTrips = n => isEN() ? `${n} ${n === 1 ? 'trip' : 'trips'}` : `${n} 趟旅程`;
 const nPlaces = n => isEN() ? `${n} ${n === 1 ? 'place' : 'places'}` : `${n} 個地點`;

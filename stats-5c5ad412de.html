@@ -89,7 +89,7 @@
 localStorage.setItem('tm_priv', '1');
 document.getElementById('header').outerHTML = headerHTML('stats');
 
-document.title = T('privTitle');
+setPageMeta(T('privTitle'));
 document.getElementById('content').textContent = T('loading');
 document.getElementById('base-h1').innerHTML = T('baseWelcome') + `<em>${T('baseName')}</em>`;
 const MENU = [['m1', 'menuCheckin', 'menuCheckinS'], ['m2', 'menuStats', 'menuStatsS'], ['m3', 'menuMap', 'menuMapS']];
@@ -102,7 +102,7 @@ for (const [id, k, ks] of MENU) {
 {
   const h = new Date().getHours();
   const g = h < 5 ? T('greetNight') : h < 11 ? T('greetMorning') : h < 18 ? T('greetNoon') : T('greetEvening');
-  document.getElementById('greet').textContent = g + '　' + T('baseOnlyYou');
+  document.getElementById('greet').textContent = g + (isEN() ? '  ' : '　') + T('baseOnlyYou');
 }
 
 (async () => {

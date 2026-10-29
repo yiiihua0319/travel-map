@@ -44,7 +44,7 @@ document.getElementById('content').textContent = T('loading');
   if (!info) { el.innerHTML = '<div class="empty-note">' + T('noCountry') + '</div>'; return; }
 
   const dName = cName(code, countries);   // 顯示用國名（依語言）
-  document.title = dName + '｜Eva\'s Travel Map';
+  setPageMeta(dName, T('descCountry'));
   const myTrips = tripsData.trips
     .filter(t => t.countries.includes(code))
     .sort((a, b) => a.dateStart.localeCompare(b.dateStart));
@@ -62,7 +62,7 @@ document.getElementById('content').textContent = T('loading');
       <div class="page-sub" style="margin:0">${nTrips(myTrips.length)}</div></div>
     </div>
     ${info.ig?.length ? `<div class="ig-row"><span class="ig-label">${T('igHighlights')}</span>${info.ig.map(h =>
-      `<a class="ig-chip" href="https://www.instagram.com/stories/highlights/${h.id}/" target="_blank" rel="noopener">${h.name}</a>`).join('')}</div>` : ''}
+      `<a class="ig-chip" href="https://www.instagram.com/stories/highlights/${h.id}/" target="_blank" rel="noopener">${igName(h.name)}</a>`).join('')}</div>` : ''}
     <div id="trip-tabs"></div>
     <div id="trip-panes"></div>
     <div id="map-photo"></div>
@@ -117,7 +117,7 @@ document.getElementById('content').textContent = T('loading');
     if (routeCities.length > 1) routeParts.push(routeCities.join(' → '));
     else if (routeCities.length === 1) routeParts.push(routeCities[0]);
     routeParts.push(nDays(tdays));
-    inner += `<div class="trip-route">🧭 ${routeParts.join('｜')}</div>`;
+    inner += `<div class="trip-route">🧭 ${routeParts.join(SEP())}</div>`;
 
     // 1. 行程（英文模式優先讀 en/ 版；公開的亞洲頁面把「## 花費」整段拿掉）
     let md = isEN() ? await loadText('data/trips/en/' + t.id + '.md') : null;
@@ -231,7 +231,7 @@ document.getElementById('content').textContent = T('loading');
       ph += `<div class="pl-city"${attr}>
         <div class="pl-city-h">${cityName(g.list)}<span class="pl-n">${g.places.length}</span></div>
         <ul class="pl-list">` +
-        g.places.map(p => `<li data-cat="${p.cat || 'other'}"${p.ll ? ` data-ll="${p.ll[0]},${p.ll[1]}"` : ''}>${isPriv() ? `<button class="pl-chk" data-k="${p.url}" title="${T('checkTip')}">⬜</button>` : ''}<span class="pl-emoji">${catOf(p.cat)[0]}</span><a href="${p.url}" target="_blank" rel="noopener">${p.name}</a>${p.note ? `<span class="pl-note">${p.note}</span>` : ''}</li>`).join('') +
+        g.places.map(p => `<li data-cat="${p.cat || 'other'}"${p.ll ? ` data-ll="${p.ll[0]},${p.ll[1]}"` : ''}>${isPriv() ? `<button class="pl-chk" data-k="${p.url}" title="${T('checkTip')}">⬜</button>` : ''}<span class="pl-emoji">${catOf(p.cat)[0]}</span><a href="${p.url}" target="_blank" rel="noopener">${placeName(p.name)}</a>${p.note ? `<span class="pl-note">${placeNote(p.note)}</span>` : ''}</li>`).join('') +
         '</ul></div>';
     }
     ph += '</div>';
@@ -379,7 +379,7 @@ document.getElementById('content').textContent = T('loading');
     tls.forEach((l, j) => x.fillText(l, W / 2, 372 + j * 104));
     const tdays = Math.round((new Date(t.dateEnd) - new Date(t.dateStart)) / 86400000) + 1;
     set(500, 38, '#6a737d', '3px');
-    x.fillText(`${fmtRange(t)}｜${nDays(tdays)}`, W / 2, 372 + tls.length * 104);
+    x.fillText(`${fmtRange(t)}${SEP()}${nDays(tdays)}`, W / 2, 372 + tls.length * 104);
 
     // 中段：城市星圖（等距投影到面板內，虛線連成路線）
     const px0 = 100, px1 = 980, py0 = 640, py1 = 1500, pad = 120;

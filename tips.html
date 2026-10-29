@@ -38,14 +38,14 @@ const TIPS = {
 
   if (!tip) {
     // 沒指定就列出全部
-    document.title = T('tipsHead').replace(/^\S+\s*/, '') + "｜Eva's Travel Map";
+    setPageMeta(T('tipsHead').replace(/^\S+\s*/, ''), T('descTips'));
     el.innerHTML = `<div class="page-title">${T('tipsHead')}</div>` +
       `<div class="page-sub">${T('tipsSub')}</div>` +
       Object.entries(TIPS).map(([k, v]) =>
         `<div class="trip-row"><a href="tips.html?f=${k}">${v.title}</a></div>`).join('');
     return;
   }
-  document.title = tip.title + '｜Eva\'s Travel Map';
+  setPageMeta(tip.title, T('descTips'));
   const en = isEN() ? await loadText(enPath(tip.file)) : null;
   const md = en || await loadText(tip.file);
   el.innerHTML = (isEN() && md && !en ? `<p class="cn-only" style="margin-top:0">${T('cnOnly')}</p>` : '') + (md

@@ -51,6 +51,8 @@ document.getElementById('header').outerHTML = headerHTML('map');
 
 // 靜態文案依語言填入
 document.title = T('mapTitle');
+document.querySelector('meta[name="description"]')?.setAttribute('content', T('mapDesc'));
+document.querySelector('meta[property="og:description"]')?.setAttribute('content', T('mapDesc'));
 document.getElementById('stats').textContent = T('loading');
 document.getElementById('wc-close').setAttribute('aria-label', T('wcClose'));
 document.getElementById('wc-title').innerHTML = `${T('wcTitle')} <em>Eva's Travel Map</em> ✈️`;
@@ -141,7 +143,7 @@ document.getElementById('about-chip').textContent = T('aboutChip');
       const cn = city.cc && cName(city.cc, countries);
       const full = tripTitle(t);
       const title = (cn && full.startsWith(cn) && full.length > cn.length) ? full.slice(cn.length).trim() : full;
-      return `<div class="pin-trip">${fmtRange(t)}｜${title}<br>${links} <a class="fly-link" href="#" data-fly="${t.id}">${T('flyLink')}</a></div>`;
+      return `<div class="pin-trip">${fmtRange(t)}${SEP()}${title}<br>${links} <a class="fly-link" href="#" data-fly="${t.id}">${T('flyLink')}</a></div>`;
     }).join('<hr style="border:none;border-top:1px solid #eee;margin:6px 0">');
     marker.bindPopup(`<div class="pin-city">📍 ${cityName(city.name)}</div>${rows}`);
   }
@@ -406,7 +408,7 @@ document.getElementById('about-chip').textContent = T('aboutChip');
     const toast = document.createElement('div');
     toast.className = 'fly-toast';
     toast.textContent = isEN()
-      ? `🧭 Round trip from ${baseName(home)}｜${tripTitle(trip)}｜~${Math.round(total).toLocaleString()} km`
+      ? `🧭 Round trip from ${baseName(home)} · ${tripTitle(trip)} · ~${Math.round(total).toLocaleString()} km`
       : `🧭 ${baseName(home)} 出發往返｜${tripTitle(trip)}｜約 ${Math.round(total).toLocaleString()} km`;
     document.body.appendChild(toast);
     flight = { layers: [ghost, trail, ...dots, plane], toast, raf: 0, timer: 0 };
@@ -492,7 +494,7 @@ document.getElementById('about-chip').textContent = T('aboutChip');
       // 交換期間英國國內小旅行是搭火車，不畫
       const stops = tripStops(t).filter(s => !(home[4] === 'GB' && s.cc === 'GB'));
       if (!stops.length) continue;
-      const lbl = `${t.dateStart.slice(0, 7).replace('-', '/')}｜${tripTitle(t)}`;
+      const lbl = `${t.dateStart.slice(0, 7).replace('-', '/')}${SEP()}${tripTitle(t)}`;
       const y = +t.dateStart.slice(0, 4);
       for (const s of stops) {
         if (distKm(cur, s.ll) > 15) legs.push({ from: cur, to: s.ll, label: lbl, year: y, key: t.id });
@@ -605,7 +607,7 @@ document.getElementById('about-chip').textContent = T('aboutChip');
     // 抵達現在：拉遠看整張航線網，停一下再淡出
     yearEl.hidden = true;
     toast.textContent = isEN()
-      ? `🌍 ${legs.length} flights｜~${Math.round(totalKm).toLocaleString()} km in total`
+      ? `🌍 ${legs.length} flights · ~${Math.round(totalKm).toLocaleString()} km in total`
       : `🌍 ${legs.length} 段航程｜共約 ${Math.round(totalKm).toLocaleString()} km`;
     const allPts = legs.flatMap(l => l.pts);
     map.flyToBounds(L.latLngBounds(allPts), { padding: [60, 60], duration: 1.6, easeLinearity: 0.25 });
