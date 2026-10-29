@@ -2,7 +2,7 @@
 
 const DATA_BASE = '';
 // 每次改資料就 bump 這個版本號，讓瀏覽器/CDN 一定抓到最新的 JSON/MD（避免部署後看到舊快取）
-const SITE_VER = '20261011a';
+const SITE_VER = '20261029a';
 
 function flagEmoji(code) {
   return [...code.toUpperCase()].map(c => String.fromCodePoint(0x1F1A5 + c.charCodeAt(0))).join('');
@@ -44,11 +44,11 @@ const UI = {
 
   // 首頁
   mapTitle:      ["Eva's Travel Map ✈️", "Eva's Travel Map ✈️"],
-  mapDesc:       ['Eva 的旅遊地圖：38 國 51 趟旅程的行程、花費、口袋名單與遊記',
-                  "Eva's travel map: itineraries, expenses, saved places and stories from 51 trips across 38 countries"],
+  mapDesc:       ['Eva 的旅遊地圖：38 國 52 趟旅程的行程、花費、口袋名單與遊記',
+                  "Eva's travel map: itineraries, expenses, saved places and stories from 52 trips across 38 countries"],
   wcTitle:       ['歡迎來到', 'Welcome to'],
-  wcLead:        ['這裡收藏了我 <b>38 個國家、51 趟旅程</b>的回憶——行程、花費、口袋名單、遊記，全部整理在這張地圖上。',
-                  'This is where I keep the memories of <b>51 trips across 38 countries</b> — itineraries, expenses, saved places and stories, all pinned to one map.'],
+  wcLead:        ['這裡收藏了我 <b>38 個國家、52 趟旅程</b>的回憶——行程、花費、口袋名單、遊記，全部整理在這張地圖上。',
+                  'This is where I keep the memories of <b>52 trips across 38 countries</b> — itineraries, expenses, saved places and stories, all pinned to one map.'],
   wcTip1:        ['<b>點國旗圖釘</b><span>看那一趟的完整紀錄</span>', '<b>Tap a flag pin</b><span>for the full record of that trip</span>'],
   wcTip2:        ['<b>口袋名單</b><span>我存過的美食、景點、購物清單</span>', '<b>Saved places</b><span>the food, sights and shops I bookmarked</span>'],
   wcTip3:        ['<b>遊記</b><span>各國的故事慢慢讀</span>', '<b>Stories</b><span>take your time with the write-ups</span>'],

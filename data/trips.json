@@ -1431,6 +1431,36 @@
    }
   },
   {
+   "id": "2026-vegas-yosemite-sf",
+   "title": "美國拉斯維加斯優勝美地舊金山洛杉磯",
+   "dateStart": "2025-08-02",
+   "dateEnd": "2025-08-14",
+   "countries": [
+    "US"
+   ],
+   "cities": [
+    {
+     "name": "拉斯維加斯",
+     "lat": 36.1699,
+     "lng": -115.1398,
+     "cc": "US"
+    },
+    {
+     "name": "優勝美地",
+     "lat": 37.7456,
+     "lng": -119.5936,
+     "cc": "US"
+    },
+    {
+     "name": "舊金山",
+     "lat": 37.7749,
+     "lng": -122.4194,
+     "cc": "US"
+    }
+   ],
+   "notionId": "39cee7c05698807eb565c5e85dc6234c"
+  },
+  {
    "id": "2025-chicago",
    "title": "美國芝加哥",
    "dateStart": "2025-11-24",
@@ -1743,34 +1773,22 @@
    "notionId": "378ee7c05698802fb7f2c2d8bcf06c4f"
   },
   {
-   "id": "2026-vegas-yosemite-sf",
-   "title": "美國拉斯維加斯優勝美地舊金山洛杉磯",
-   "dateStart": "2026-08-02",
-   "dateEnd": "2026-08-14",
+   "id": "2026-okinawa",
+   "title": "日本沖繩",
+   "dateStart": "2026-08-15",
+   "dateEnd": "2026-08-18",
    "countries": [
-    "US"
+    "JP"
    ],
    "cities": [
     {
-     "name": "拉斯維加斯",
-     "lat": 36.1699,
-     "lng": -115.1398,
-     "cc": "US"
-    },
-    {
-     "name": "優勝美地",
-     "lat": 37.7456,
-     "lng": -119.5936,
-     "cc": "US"
-    },
-    {
-     "name": "舊金山",
-     "lat": 37.7749,
-     "lng": -122.4194,
-     "cc": "US"
+     "name": "那霸",
+     "lat": 26.2124,
+     "lng": 127.6809,
+     "cc": "JP"
     }
    ],
-   "notionId": "39cee7c05698807eb565c5e85dc6234c"
+   "notionId": "407ee7c05698810c8cdff891351ded2e"
   },
   {
    "id": "2026-mammoth",

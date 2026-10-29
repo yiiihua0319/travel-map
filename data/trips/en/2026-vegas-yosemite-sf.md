@@ -1,4 +1,4 @@
-# 🌉 Las Vegas, Yosemite & San Francisco 2026 (8/2–8/14)
+# 🌉 Las Vegas, Yosemite & San Francisco 2025 (8/2–8/14)
 
 notion: 39cee7c0-5698-807e-b565-c5e85dc6234c
 
